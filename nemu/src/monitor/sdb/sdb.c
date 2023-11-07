@@ -114,11 +114,15 @@ static int cmd_q(char *args) {
 }
 
 static int cmd_si(char *args) {
-  uint64_t exec_num = 1;
+  uint64_t exec_num = 0;
 
-  if (strlen(args) > 0 && sscanf(args, "%ld", &exec_num) < 1) {
-    printf("Invalid argument '%s'\n", args);
-    return 1;
+  if (args == NULL) {
+    exec_num = 1;
+  } else {
+    if (sscanf(args, "%ld", &exec_num) < 1) {
+      printf("Invalid argument '%s'\n", args);
+      return 1;
+    }
   }
 
   cpu_exec(exec_num);
@@ -128,7 +132,7 @@ static int cmd_si(char *args) {
 static int cmd_info(char *args) {
   char *sub_command = "";
 
-  if (sscanf(args, "%s", sub_command) < 1) {
+  if (args == NULL || sscanf(args, "%s", sub_command) < 1) {
     printf("Invalid argument '%s'\n", args);
     return 1;
   } else if (strcmp(sub_command, "r")) {
@@ -147,7 +151,7 @@ static int cmd_x(char *args) {
   paddr_t base_addr = 0;
   uint32_t max_offset = 0;
 
-  if (sscanf(args, "%u %u", &max_offset, &base_addr) < 2) {
+  if (args == NULL || sscanf(args, "%u %u", &max_offset, &base_addr) < 2) {
     printf("Invalid argument '%s'\n", args);
     return 1;
   }
