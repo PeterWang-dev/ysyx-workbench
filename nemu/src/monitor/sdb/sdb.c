@@ -115,7 +115,20 @@ static int cmd_q(char *args) {
 }
 
 static int cmd_si(char *args) {
-  cpu_exec(1);
+  char *arg = strtok(args, " ");
+  uint64_t exec_num = 1;
+
+  if (arg != NULL) {
+    errno = 0;
+    exec_num = strtoll(arg, NULL, 10);
+
+    if (errno != 0) {
+      printf("Invalid number '%s'\n", arg);
+      return -1;
+    }
+  }
+
+  cpu_exec(exec_num);
   return 0;
 }
 
