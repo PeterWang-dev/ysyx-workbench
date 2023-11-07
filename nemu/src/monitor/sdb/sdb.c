@@ -19,7 +19,6 @@
 #include "memory/paddr.h"
 #include "utils.h"
 #include <cpu/cpu.h>
-#include <errno.h>
 #include <isa.h>
 #include <readline/history.h>
 #include <readline/readline.h>
@@ -115,17 +114,11 @@ static int cmd_q(char *args) {
 }
 
 static int cmd_si(char *args) {
-  char *arg = strtok(args, " ");
   uint64_t exec_num = 1;
 
-  if (arg != NULL) {
-    errno = 0;
-    exec_num = strtoll(arg, NULL, 10);
-
-    if (errno != 0) {
-      printf("Invalid number '%s'\n", arg);
-      return -1;
-    }
+  if (strlen(args) > 0 && sscanf(args, "%ld", &exec_num)) {
+    printf("Invalid argument '%s'\n", args);
+    return -1;
   }
 
   cpu_exec(exec_num);
@@ -133,50 +126,31 @@ static int cmd_si(char *args) {
 }
 
 static int cmd_info(char *args) {
-  char *arg = strtok(args, " ");
+  char *sub_command = "";
 
-  if (arg == NULL) {
+  if (sscanf(args, "%s", sub_command)) {
     printf("%s - %s\n", cmd_table[4].name, cmd_table[4].description);
-  } else if (strcmp(arg, "r")) {
+  } else if (strcmp(sub_command, "r")) {
     isa_reg_display();
-  } else if (strcmp(arg, "w")) {
+  } else if (strcmp(sub_command, "w")) {
     Assert(0, "not implemented yet");
   } else {
-    printf("Unknown subcommand '%s'\n", arg);
+    printf("Unknown subcommand '%s'\n", sub_command);
   }
+
   return 0;
 }
 
 static int cmd_x(char *args) {
-  char *arg = strtok(args, " ");
+  paddr_t base_addr = 0;
+  uint32_t max_offset = 0;
 
-  if (arg == NULL) {
-    printf("%s - %s\n", cmd_table[5].name, cmd_table[5].description);
-  } else {
-    errno = 0;
-    long max_offset = strtol(arg, NULL, 10);
+  if (sscanf(args, "%u %u", &max_offset, &base_addr) < 2) {
+    printf("Invalid argument '%s'\n", args);
+  }
 
-    if (errno != 0) {
-      printf("Invalid number '%s'\n", arg);
-      return -1;
-    }
-
-    arg = strtok(NULL, " ");
-
-    if (arg == NULL) {
-      printf("%s - %s\n", cmd_table[5].name, cmd_table[5].description);
-    } else {
-      long base_addr = strtoul(arg, NULL, 16);
-
-      if (errno != 0 || base_addr > CONFIG_MSIZE) {
-        printf("Invalid address '%s'\n", arg);
-        return -1;
-      }
-
-      for (int i = 0; i < max_offset; i++) {
-        paddr_read(base_addr, 4);
-      }
-    }
+  for (int i = 0; i < max_offset; i++) {
+    paddr_read(base_addr + i, 4);
   }
 
   return 0;
