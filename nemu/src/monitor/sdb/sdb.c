@@ -128,20 +128,20 @@ static int cmd_si(char *args) {
 }
 
 static int cmd_info(char *args) {
-  char *sub_command = "";
+  char sub_command = ' ';
 
   if (args == NULL) {
     printf("Expect argument\n");
     return 1;
-  } else if (sscanf(args, "%s", sub_command) < 1) {
+  } else if (sscanf(args, "%c", &sub_command) < 1) {
     printf("Invalid argument '%s'\n", args);
     return 1;
-  } else if (strcmp(sub_command, "r")) {
+  } else if (sub_command == 'r') {
     isa_reg_display();
-  } else if (strcmp(sub_command, "w")) {
+  } else if (sub_command == 'w') {
     Assert(0, "not implemented yet");
   } else {
-    printf("Unknown subcommand '%s'\n", sub_command);
+    printf("Unknown subcommand '%c'\n", sub_command);
     return 1;
   }
 
