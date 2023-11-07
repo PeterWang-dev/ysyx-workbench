@@ -68,13 +68,12 @@ static struct {
     {"help", "Display information about all supported commands", cmd_help},
     {"c", "Continue the execution of the program", cmd_c},
     {"q", "Exit NEMU", cmd_q},
-    {"si [N]",
+    {"si",
      "Let the program execute N instructions in a single step "
      "and then pause execution. When N is not given, the default is 1 ",
      cmd_si},
-    {"info [SUBCMD]", "Print register status or watchpoint information",
-     cmd_info},
-    {"x [N] [EXPR]",
+    {"info", "Print register status or watchpoint information", cmd_info},
+    {"x",
      "Evaluate EXPR, use the result as the starting memory address, "
      "and output N consecutive 4 bytes in hexadecimal form",
      cmd_x}
