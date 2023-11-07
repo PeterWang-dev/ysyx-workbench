@@ -161,7 +161,7 @@ static int cmd_x(char *args) {
   }
 
   for (int i = 0; i < max_offset; i++) {
-    printf("0x%X", paddr_read(base_addr + i, 4));
+    printf("0x%x\n", paddr_read(base_addr + i, 4));
   }
 
   return 0;
