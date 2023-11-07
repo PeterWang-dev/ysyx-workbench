@@ -155,7 +155,7 @@ static int cmd_x(char *args) {
   if (args == NULL) {
     printf("Expect argument\n");
     return 1;
-  } else if (sscanf(args, "%u %u", &max_offset, &base_addr) < 2) {
+  } else if (sscanf(args, "%u %x", &max_offset, &base_addr) < 2) {
     printf("Invalid argument '%s'\n", args);
     return 1;
   }
