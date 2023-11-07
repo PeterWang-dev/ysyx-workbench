@@ -118,7 +118,7 @@ static int cmd_si(char *args) {
 
   if (strlen(args) > 0 && sscanf(args, "%ld", &exec_num) < 1) {
     printf("Invalid argument '%s'\n", args);
-    return -1;
+    return 1;
   }
 
   cpu_exec(exec_num);
@@ -129,13 +129,15 @@ static int cmd_info(char *args) {
   char *sub_command = "";
 
   if (sscanf(args, "%s", sub_command) < 1) {
-    printf("%s - %s\n", cmd_table[4].name, cmd_table[4].description);
+    printf("Invalid argument '%s'\n", args);
+    return 1;
   } else if (strcmp(sub_command, "r")) {
     isa_reg_display();
   } else if (strcmp(sub_command, "w")) {
     Assert(0, "not implemented yet");
   } else {
     printf("Unknown subcommand '%s'\n", sub_command);
+    return 1;
   }
 
   return 0;
@@ -147,6 +149,7 @@ static int cmd_x(char *args) {
 
   if (sscanf(args, "%u %u", &max_offset, &base_addr) < 2) {
     printf("Invalid argument '%s'\n", args);
+    return 1;
   }
 
   for (int i = 0; i < max_offset; i++) {
