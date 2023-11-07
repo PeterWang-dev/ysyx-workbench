@@ -18,6 +18,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
+#include "utils.h"
 
 static int is_batch_mode = false;
 
@@ -49,21 +50,37 @@ static int cmd_c(char *args) {
 
 
 static int cmd_q(char *args) {
+  nemu_state.state = NEMU_QUIT;
   return -1;
 }
 
 static int cmd_help(char *args);
 
+// static int cmd_si(char *args);
+
+// static int cmd_info(char *args);
+
+// static int cmd_x(char *args);
+
 static struct {
   const char *name;
   const char *description;
-  int (*handler) (char *);
-} cmd_table [] = {
-  { "help", "Display information about all supported commands", cmd_help },
-  { "c", "Continue the execution of the program", cmd_c },
-  { "q", "Exit NEMU", cmd_q },
-
-  /* TODO: Add more commands */
+  int (*handler)(char *);
+} cmd_table[] = {
+    {"help", "Display information about all supported commands", cmd_help},
+    {"c", "Continue the execution of the program", cmd_c},
+    {"q", "Exit NEMU", cmd_q},
+    // {"si [N]",
+    //  "Let the program execute N instructions in a single step and "
+    //  "then pause execution. When N is not given, the default is 1 ",
+    //  cmd_si},
+    // {"info [SUBCMD]", "Print register status or watchpoint information",
+    //  cmd_info},
+    // {"x [N] [EXPR]",
+    //  "Evaluate EXPR, use the result as the starting memory address, "
+    //  "and output N consecutive 4 bytes in hexadecimal form",
+    //  cmd_x}
+    /* TODO: Add more commands */
 
 };
 
