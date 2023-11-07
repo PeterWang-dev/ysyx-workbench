@@ -116,7 +116,7 @@ static int cmd_q(char *args) {
 static int cmd_si(char *args) {
   uint64_t exec_num = 1;
 
-  if (strlen(args) > 0 && sscanf(args, "%ld", &exec_num)) {
+  if (strlen(args) > 0 && sscanf(args, "%ld", &exec_num) < 1) {
     printf("Invalid argument '%s'\n", args);
     return -1;
   }
@@ -128,7 +128,7 @@ static int cmd_si(char *args) {
 static int cmd_info(char *args) {
   char *sub_command = "";
 
-  if (sscanf(args, "%s", sub_command)) {
+  if (sscanf(args, "%s", sub_command) < 1) {
     printf("%s - %s\n", cmd_table[4].name, cmd_table[4].description);
   } else if (strcmp(sub_command, "r")) {
     isa_reg_display();
