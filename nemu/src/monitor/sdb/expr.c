@@ -22,8 +22,9 @@
 
 enum {
   TK_NOTYPE = 256,
-  TK_EQ,
+  TK_PARENTHESES,
   TK_NUM,
+  TK_EQ,
   /* TODO: Add more token types */
 
 };
@@ -32,14 +33,17 @@ static struct rule {
   const char *regex;
   int token_type;
 } rules[] = {
-
     /* TODO: Add more rules.
      * Pay attention to the precedence level of different rules.
      */
-
-    {" +", TK_NOTYPE}, // spaces
-    {"\\+", '+'},      // plus
-    {"==", TK_EQ},     // equal
+    {" +", TK_NOTYPE},        // spaces
+    {"(.*)", TK_PARENTHESES}, // parentheses
+    {"\\d+", TK_NUM},         // decimal number
+    {"\\*", '*'},             // multiply
+    {"\\\\", '\\'},           // divide
+    {"\\+", '+'},             // plus
+    {"-", '-'},               // minus
+    {"==", TK_EQ},            // equal
 };
 
 #define NR_REGEX ARRLEN(rules)
