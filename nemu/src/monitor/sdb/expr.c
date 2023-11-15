@@ -21,7 +21,6 @@
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
-#include <stdbool.h>
 
 enum {
   TK_NOTYPE = 256,
@@ -131,7 +130,12 @@ static bool make_token(char *e) {
     }
   }
 
-  // for
+  Log("tokens are successfully generated");
+  Log("printing token info");
+  for (int i = 0; i < nr_token; i++) {
+    Log("token[%d]: type: %d, content:%s", i, tokens[i].type, tokens[i].str);
+  }
+  
   return true;
 }
 
