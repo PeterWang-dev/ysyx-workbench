@@ -34,7 +34,7 @@ static struct rule {
 } rules[] = {
     {" +", TK_NOTYPE},            // spaces
     {"\\(.*\\)", TK_PARENTHESES}, // parentheses
-    {"[:number:]+", TK_NUM},      // decimal number
+    {"\\d+", TK_NUM},      // decimal number
     {"\\*", '*'},                 // multiply
     {"\\\\", '\\'},               // divide
     {"\\+", '+'},                 // plus
