@@ -7,7 +7,7 @@ TRACER = tracer-ysyx
 GITFLAGS = -q --author='$(TRACER) <tracer@ysyx.org>' --no-verify --allow-empty
 
 YSYX_HOME = $(NEMU_HOME)/..
-WORK_BRANCH = $(shell git rev-parse --abbrev-ref HEAD)
+WORK_BRANCH = $(shell git rev-parse --abbrev-ref HEAD | tr '/' '-') # replace slash in branch
 # WORK_INDEX = $(YSYX_HOME)/.git/index.$(WORK_BRANCH)
 GIT_DIR = $(shell cat $(YSYX_HOME)/.git | cut -c 9- )
 WORK_INDEX = $(YSYX_HOME)/$(GIT_DIR)/index.$(WORK_BRANCH) # point to submodule .git dir
