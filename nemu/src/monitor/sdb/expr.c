@@ -21,10 +21,12 @@
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
+#include <stdbool.h>
 
 enum {
   TK_NOTYPE = 256,
-  TK_PARENTHESES,
+  TK_PARENTHESES_LEFT,
+  TK_PARENTHESES_RIGHT,
   TK_NUM,
   TK_EQ,
 };
@@ -33,14 +35,15 @@ static struct rule {
   const char *regex;
   int token_type;
 } rules[] = {
-    {" +", TK_NOTYPE},            // spaces
-    {"\\(.*\\)", TK_PARENTHESES}, // parentheses
-    {"\\*", '*'},                 // multiply
-    {"\\\\", '\\'},               // divide
-    {"\\+", '+'},                 // plus
-    {"-", '-'},                   // minus
-    {"==", TK_EQ},                // equal
-    {"[[:digit:]]+", TK_NUM},     // decimal number
+    {" +", TK_NOTYPE},             // spaces
+    {"\\(", TK_PARENTHESES_LEFT},  // left parenthese
+    {"\\)", TK_PARENTHESES_RIGHT}, // right parenthese
+    {"\\*", '*'},                  // multiply
+    {"\\\\", '\\'},                // divide
+    {"\\+", '+'},                  // plus
+    {"-", '-'},                    // minus
+    {"==", TK_EQ},                 // equal
+    {"[[:digit:]]+", TK_NUM},      // decimal number
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -92,31 +95,31 @@ static bool make_token(char *e) {
 
         position += substr_len;
 
-        /* TODO: Now a new token is recognized with rules[i]. Add codes
-         * to record the token in the array `tokens'. For certain types
-         * of tokens, some extra actions should be performed.
-         */
+        if (rules[i].token_type != TK_NOTYPE)
+          tokens[nr_token].type = rules[i].token_type;
 
         switch (rules[i].token_type) {
-        case TK_NOTYPE:
-          break;
-        case TK_PARENTHESES:
-          break;
-        case '*':
-          break;
-        case '\\':
-          break;
-        case '+':
-          break;
-        case '-':
-          break;
-        case TK_EQ:
-          break;
         case TK_NUM:
-          break;
+          if (substr_len > 32) {
+            printf("number %s is too long", substr_start);
+            return false;
+          }
+
+          char *ch;
+          int pch = 0;
+          for (ch = substr_start; ch < substr_start + substr_len; ch++) {
+            tokens[nr_token].str[pch++] = *ch;
+          }
+          tokens[nr_token].str[pch] = '\0';
+
         default:
-          Assert(0, "Should not reached here");
+          break;
         }
+
+        nr_token++;
+
+        Log("generated token %d: type: %d, contents: %s", nr_token,
+            tokens[nr_token].type, tokens[nr_token].str);
 
         break;
       }
