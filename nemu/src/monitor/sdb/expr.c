@@ -94,8 +94,12 @@ static bool make_token(char *e) {
 
         position += substr_len;
 
-        if (rules[i].token_type != TK_NOTYPE)
-          tokens[nr_token].type = rules[i].token_type;
+        int ptoken = nr_token;
+
+        if (rules[i].token_type != TK_NOTYPE) {
+          tokens[ptoken].type = rules[i].token_type;
+          nr_token++;
+        }
 
         switch (rules[i].token_type) {
         case TK_NUM:
@@ -107,18 +111,16 @@ static bool make_token(char *e) {
           char *ch;
           int pch = 0;
           for (ch = substr_start; ch < substr_start + substr_len; ch++) {
-            tokens[nr_token].str[pch++] = *ch;
+            tokens[ptoken].str[pch++] = *ch;
           }
-          tokens[nr_token].str[pch] = '\0';
+          tokens[ptoken].str[pch] = '\0';
 
         default:
           break;
         }
 
         Log("generated token %d: type: %d, contents: %s", nr_token,
-            tokens[nr_token].type, tokens[nr_token].str);
-
-        nr_token++;
+            tokens[ptoken].type, tokens[ptoken].str);
 
         break;
       }
@@ -135,7 +137,7 @@ static bool make_token(char *e) {
   for (int i = 0; i < nr_token; i++) {
     Log("token[%d]: type: %d, content:%s", i, tokens[i].type, tokens[i].str);
   }
-  
+
   return true;
 }
 
