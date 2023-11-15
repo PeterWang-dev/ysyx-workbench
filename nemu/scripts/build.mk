@@ -37,7 +37,7 @@ $(OBJ_DIR)/%.o: %.c
 $(OBJ_DIR)/%.o: %.cc
 	@echo + CXX $<
 	@mkdir -p $(dir $@)
-	@$(CXX) $(CFLAGS) $(CXXFLAGS) -std=c++17 -c -o $@ $<
+	@$(CXX) $(CFLAGS) $(CXXFLAGS) -std=c++14 -c -o $@ $<
 	$(call call_fixdep, $(@:.o=.d), $@)
 
 # Depencies
