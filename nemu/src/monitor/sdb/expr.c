@@ -116,10 +116,10 @@ static bool make_token(char *e) {
           break;
         }
 
-        nr_token++;
-
         Log("generated token %d: type: %d, contents: %s", nr_token,
             tokens[nr_token].type, tokens[nr_token].str);
+
+        nr_token++;
 
         break;
       }
