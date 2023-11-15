@@ -1,5 +1,6 @@
-/***************************************************************************************
+/*******************************************************************************
  * Copyright (c) 2014-2022 Zihao Yu, Nanjing University
+ *               2023-2024 PeterWang-dev (https://github.com/PeterWang-dev)
  *
  * NEMU is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan
@@ -11,7 +12,7 @@
  * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  *
  * See the Mulan PSL v2 for more details.
- ***************************************************************************************/
+ *******************************************************************************/
 
 #include "debug.h"
 #include <isa.h>
@@ -34,12 +35,12 @@ static struct rule {
 } rules[] = {
     {" +", TK_NOTYPE},            // spaces
     {"\\(.*\\)", TK_PARENTHESES}, // parentheses
-    {"[[:digit:]]+", TK_NUM},      // decimal number
     {"\\*", '*'},                 // multiply
     {"\\\\", '\\'},               // divide
     {"\\+", '+'},                 // plus
     {"-", '-'},                   // minus
     {"==", TK_EQ},                // equal
+    {"[[:digit:]]+", TK_NUM},     // decimal number
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -98,6 +99,20 @@ static bool make_token(char *e) {
 
         switch (rules[i].token_type) {
         case TK_NOTYPE:
+          break;
+        case TK_PARENTHESES:
+          break;
+        case '*':
+          break;
+        case '\\':
+          break;
+        case '+':
+          break;
+        case '-':
+          break;
+        case TK_EQ:
+          break;
+        case TK_NUM:
           break;
         default:
           Assert(0, "Should not reached here");
