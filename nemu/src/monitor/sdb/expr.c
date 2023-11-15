@@ -32,7 +32,7 @@ static struct rule {
   int token_type;
 } rules[] = {
     {" +", TK_NOTYPE},        // spaces
-    {"(.*)", TK_PARENTHESES}, // parentheses
+    {"\\(.*\\)", TK_PARENTHESES}, // parentheses
     {"\\d+", TK_NUM},         // decimal number
     {"\\*", '*'},             // multiply
     {"\\\\", '\\'},           // divide
