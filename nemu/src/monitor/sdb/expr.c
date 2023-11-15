@@ -1,18 +1,20 @@
-/***************************************************************************************
-* Copyright (c) 2014-2022 Zihao Yu, Nanjing University
-*
-* NEMU is licensed under Mulan PSL v2.
-* You can use this software according to the terms and conditions of the Mulan PSL v2.
-* You may obtain a copy of Mulan PSL v2 at:
-*          http://license.coscl.org.cn/MulanPSL2
-*
-* THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
-* EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
-* MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
-*
-* See the Mulan PSL v2 for more details.
-***************************************************************************************/
+/*******************************************************************************
+ * Copyright (c) 2014-2022 Zihao Yu, Nanjing University
+ *               2023-2024 PeterWang-dev (https://github.com/PeterWang-dev)
+ *
+ * NEMU is licensed under Mulan PSL v2.
+ * You can use this software according to the terms and conditions of the Mulan
+ * PSL v2. You may obtain a copy of Mulan PSL v2 at:
+ *          http://license.coscl.org.cn/MulanPSL2
+ *
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
+ * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ *
+ * See the Mulan PSL v2 for more details.
+ *******************************************************************************/
 
+#include "debug.h"
 #include <isa.h>
 
 /* We use the POSIX regex functions to process regular expressions.
@@ -21,24 +23,26 @@
 #include <regex.h>
 
 enum {
-  TK_NOTYPE = 256, TK_EQ,
-
-  /* TODO: Add more token types */
-
+  TK_NOTYPE = 256,
+  TK_PARENTHESES_LEFT,
+  TK_PARENTHESES_RIGHT,
+  TK_NUM,
+  TK_EQ,
 };
 
 static struct rule {
   const char *regex;
   int token_type;
 } rules[] = {
-
-  /* TODO: Add more rules.
-   * Pay attention to the precedence level of different rules.
-   */
-
-  {" +", TK_NOTYPE},    // spaces
-  {"\\+", '+'},         // plus
-  {"==", TK_EQ},        // equal
+    {" +", TK_NOTYPE},             // spaces
+    {"\\(", TK_PARENTHESES_LEFT},  // left parenthese
+    {"\\)", TK_PARENTHESES_RIGHT}, // right parenthese
+    {"\\*", '*'},                  // multiply
+    {"\\\\", '\\'},                // divide
+    {"\\+", '+'},                  // plus
+    {"-", '-'},                    // minus
+    {"==", TK_EQ},                 // equal
+    {"[[:digit:]]+", TK_NUM},      // decimal number
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -53,7 +57,7 @@ void init_regex() {
   char error_msg[128];
   int ret;
 
-  for (i = 0; i < NR_REGEX; i ++) {
+  for (i = 0; i < NR_REGEX; i++) {
     ret = regcomp(&re[i], rules[i].regex, REG_EXTENDED);
     if (ret != 0) {
       regerror(ret, &re[i], error_msg, 128);
@@ -68,7 +72,7 @@ typedef struct token {
 } Token;
 
 static Token tokens[32] __attribute__((used)) = {};
-static int nr_token __attribute__((used))  = 0;
+static int nr_token __attribute__((used)) = 0;
 
 static bool make_token(char *e) {
   int position = 0;
@@ -79,24 +83,44 @@ static bool make_token(char *e) {
 
   while (e[position] != '\0') {
     /* Try all rules one by one. */
-    for (i = 0; i < NR_REGEX; i ++) {
-      if (regexec(&re[i], e + position, 1, &pmatch, 0) == 0 && pmatch.rm_so == 0) {
+    for (i = 0; i < NR_REGEX; i++) {
+      if (regexec(&re[i], e + position, 1, &pmatch, 0) == 0 &&
+          pmatch.rm_so == 0) {
         char *substr_start = e + position;
         int substr_len = pmatch.rm_eo;
 
-        Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
-            i, rules[i].regex, position, substr_len, substr_len, substr_start);
+        Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s", i,
+            rules[i].regex, position, substr_len, substr_len, substr_start);
 
         position += substr_len;
 
-        /* TODO: Now a new token is recognized with rules[i]. Add codes
-         * to record the token in the array `tokens'. For certain types
-         * of tokens, some extra actions should be performed.
-         */
+        int ptoken = nr_token;
+
+        if (rules[i].token_type != TK_NOTYPE) {
+          tokens[ptoken].type = rules[i].token_type;
+          nr_token++;
+        }
 
         switch (rules[i].token_type) {
-          default: TODO();
+        case TK_NUM:
+          if (substr_len > 32) {
+            printf("number %s is too long", substr_start);
+            return false;
+          }
+
+          char *ch;
+          int pch = 0;
+          for (ch = substr_start; ch < substr_start + substr_len; ch++) {
+            tokens[ptoken].str[pch++] = *ch;
+          }
+          tokens[ptoken].str[pch] = '\0';
+
+        default:
+          break;
         }
+
+        Log("generated token %d: type: %d, contents: %s", nr_token,
+            tokens[ptoken].type, tokens[ptoken].str);
 
         break;
       }
@@ -108,9 +132,14 @@ static bool make_token(char *e) {
     }
   }
 
+  Log("tokens are successfully generated");
+  Log("printing token info");
+  for (i = 0; i < nr_token; i++) {
+    Log("token[%d]: type: %d, content:%s", i, tokens[i].type, tokens[i].str);
+  }
+
   return true;
 }
-
 
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {

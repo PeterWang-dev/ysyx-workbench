@@ -1,17 +1,18 @@
-/***************************************************************************************
+/*******************************************************************************
  * Copyright (c) 2014-2022 Zihao Yu, Nanjing University
+ *               2023-2024 PeterWang-dev (https://github.com/PeterWang-dev)
  *
  * NEMU is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan
- *PSL v2. You may obtain a copy of Mulan PSL v2 at:
+ * PSL v2. You may obtain a copy of Mulan PSL v2 at:
  *          http://license.coscl.org.cn/MulanPSL2
  *
  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
- *KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
- *NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  *
  * See the Mulan PSL v2 for more details.
- ***************************************************************************************/
+ *******************************************************************************/
 
 #include "sdb.h"
 #include "common.h"
@@ -59,6 +60,8 @@ static int cmd_info(char *args);
 
 static int cmd_x(char *args);
 
+static int cmd_p(char *args);
+
 static struct {
   const char *name;
   const char *description;
@@ -75,7 +78,8 @@ static struct {
     {"x",
      "Evaluate EXPR, use the result as the starting memory address, "
      "and output N consecutive 4 bytes in hexadecimal form",
-     cmd_x}
+     cmd_x},
+    {"p", "Find the value of the expression EXPR", cmd_p}
     /* TODO: Add more commands */
 };
 
@@ -118,7 +122,9 @@ static int cmd_si(char *args) {
 
   if (args == NULL) {
     exec_num = 1;
-  } else if (sscanf(args, "%ld", &exec_num) < 1) {
+  }
+
+  if (sscanf(args, "%ld", &exec_num) < 1) {
     printf("Invalid argument '%s'\n", args);
     return 1;
   }
@@ -133,10 +139,14 @@ static int cmd_info(char *args) {
   if (args == NULL) {
     printf("Expect argument\n");
     return 1;
-  } else if (sscanf(args, "%c", &sub_command) < 1) {
+  }
+
+  if (sscanf(args, "%c", &sub_command) < 1) {
     printf("Invalid argument '%s'\n", args);
     return 1;
-  } else if (sub_command == 'r') {
+  }
+
+  if (sub_command == 'r') {
     isa_reg_display();
   } else if (sub_command == 'w') {
     Assert(0, "not implemented yet");
@@ -155,13 +165,35 @@ static int cmd_x(char *args) {
   if (args == NULL) {
     printf("Expect argument\n");
     return 1;
-  } else if (sscanf(args, "%u %x", &max_offset, &base_addr) < 2) {
+  }
+
+  if (sscanf(args, "%u %x", &max_offset, &base_addr) < 2) {
     printf("Invalid argument '%s'\n", args);
     return 1;
   }
 
   for (int i = 0; i < max_offset; i++) {
     printf("0x%x\n", paddr_read(base_addr + 4 * i, 4));
+  }
+
+  return 0;
+}
+
+static int print_counter = 0;
+static int cmd_p(char *args) {
+  if (args == NULL) {
+    printf("Expect argument\n");
+    return 1;
+  }
+
+  bool stat = false;
+  word_t result = expr(args, &stat);
+
+  if (stat == true) {
+    printf("$%d = %u", ++print_counter, result);
+  } else {
+    printf("Invalid expression");
+    return 1;
   }
 
   return 0;
