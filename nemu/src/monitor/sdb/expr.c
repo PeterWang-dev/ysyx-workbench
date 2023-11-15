@@ -134,7 +134,7 @@ static bool make_token(char *e) {
 
   Log("tokens are successfully generated");
   Log("printing token info");
-  for (int i = 0; i < nr_token; i++) {
+  for (i = 0; i < nr_token; i++) {
     Log("token[%d]: type: %d, content:%s", i, tokens[i].type, tokens[i].str);
   }
 
