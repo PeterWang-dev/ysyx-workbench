@@ -1,4 +1,4 @@
-/***************************************************************************************
+/*******************************************************************************
  * Copyright (c) 2014-2022 Zihao Yu, Nanjing University
  *
  * NEMU is licensed under Mulan PSL v2.
@@ -11,7 +11,7 @@
  * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  *
  * See the Mulan PSL v2 for more details.
- ***************************************************************************************/
+ ******************************************************************************/
 
 #include <isa.h>
 #include <memory/paddr.h>
