@@ -192,7 +192,7 @@ static int cmd_p(char *args) {
   if (stat == true) {
     printf("$%d = %u", ++print_counter, result);
   } else {
-    printf("Invalid expression");
+    printf("Evaluation error\n");
     return 1;
   }
 
