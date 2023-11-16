@@ -216,7 +216,7 @@ static int find_op(int sp, int ep) {
 
 static sword_t eval(int sp, int ep, bool *success) {
   /* special cases */
-  if (sp > ep) { // such as no expr in parentheses
+  if (sp > ep) { // such as no expr in parentheses or missing arguments
     printf("invalid expression\n");
     *success = false;
     return 0;
@@ -274,6 +274,11 @@ static sword_t eval(int sp, int ep, bool *success) {
     res = lres * rres;
     break;
   case '/':
+    if (rres == 0) {
+      printf("arithmatic error: divided by 0");
+      *success = false;
+      return 0;
+    }
     res = lres / rres;
     break;
   default:
