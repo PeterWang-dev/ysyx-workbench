@@ -187,12 +187,12 @@ static int cmd_p(char *args) {
   }
 
   bool stat = false;
-  word_t result = expr(args, &stat);
+  sword_t result = expr(args, &stat);
 
   if (stat == true) {
-    printf("$%d = %u", ++print_counter, result);
+    printf("$%d = %d\n", ++print_counter, result);
   } else {
-    printf("Invalid expression");
+    printf("Evaluation error\n");
     return 1;
   }
 
