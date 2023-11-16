@@ -275,7 +275,7 @@ static sword_t eval(int sp, int ep, bool *success) {
     break;
   case '/':
     if (rres == 0) {
-      printf("arithmatic error: divided by 0");
+      printf("arithmatic error: divided by 0\n");
       *success = false;
       return 0;
     }
