@@ -37,12 +37,12 @@ static struct rule {
     {" +", TK_NOTYPE},             // spaces
     {"\\(", TK_PARENTHESES_LEFT},  // left parenthese
     {"\\)", TK_PARENTHESES_RIGHT}, // right parenthese
+    {"-?[[:digit:]]+", TK_NUM},    // decimal number
     {"\\*", '*'},                  // multiply
     {"\\/", '/'},                  // divide
     {"\\+", '+'},                  // plus
     {"-", '-'},                    // minus
     {"==", TK_EQ},                 // equal
-    {"[[:digit:]]+", TK_NUM},      // decimal number
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -235,7 +235,7 @@ static sword_t eval(int sp, int ep, bool *success) {
   }
 
   /* normal evaluation */
-  word_t res = 0;
+  sword_t res = 0;
 
   // find main operator
   int mop_pos = find_op(sp, ep);
@@ -246,8 +246,8 @@ static sword_t eval(int sp, int ep, bool *success) {
   }
 
   // recursive evaluate
-  word_t lres = eval(sp, mop_pos - 1, success);
-  word_t rres = eval(mop_pos + 1, ep, success);
+  sword_t lres = eval(sp, mop_pos - 1, success);
+  sword_t rres = eval(mop_pos + 1, ep, success);
 
   // arithmatic evaluate
   switch (tokens[mop_pos].type) {
