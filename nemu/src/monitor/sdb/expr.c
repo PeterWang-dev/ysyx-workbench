@@ -163,7 +163,8 @@ static int find_op(int sp, int ep) {
   Assert(sp <= ep, "start pos %d should smaller or equal than %d", sp, ep);
 
   bool is_valid = true; // marker to demostrate if in paretheses
-  int main_op = -1;     // lowest level (last) operation
+  int main_op = 0;      // lowest level (last) operation
+  int op_index = -1;
 
   int i;
   for (i = sp; i <= ep; i++) {
@@ -190,12 +191,15 @@ static int find_op(int sp, int ep) {
       switch (main_op) {
       case '*' | '/' | -1:
         // left associative and highest order make main_op always be updated
-        main_op = i;
+        op_index = i;
+        main_op = tokens[i].type;
         break;
       case '+' | '-':
         // only update in same level when current main_op is lowest order
-        if (tokens[i].type == '+' || tokens[i].type == '-')
-          main_op = i;
+        if (tokens[i].type == '+' || tokens[i].type == '-') {
+          op_index = i;
+          main_op = tokens[i].type;
+        }
         break;
       default:
         Assert(0, "should not reach here");
@@ -204,7 +208,7 @@ static int find_op(int sp, int ep) {
     }
   }
 
-  return main_op;
+  return op_index;
 }
 
 static sword_t eval(int sp, int ep, bool *success) {
