@@ -167,7 +167,7 @@ static int find_op(int sp, int ep) {
 
   int i;
   for (i = sp; i <= ep; i++) {
-    Assert(tokens[i].type == TK_NOTYPE,
+    Assert(tokens[i].type != TK_NOTYPE,
            "spaces should not exists after making token");
 
     /* Rule 1: elems which is not an operator is definately not a main_op */
