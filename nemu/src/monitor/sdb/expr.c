@@ -219,11 +219,11 @@ static word_t eval(int sp, int ep, bool *success) {
            "contents in TK_NUM token should not be empty");
 
     char *str = tokens[sp].str;
-    char **err_ptr = NULL;
+    char *endptr = str;
 
-    word_t number = strtol(str, err_ptr, 10);
+    word_t number = strtol(str, &endptr, 10);
 
-    if (**err_ptr == '\0') {
+    if (*endptr == '\0') {
       *success = true;
       return number;
     } else {
