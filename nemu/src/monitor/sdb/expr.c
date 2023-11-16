@@ -253,8 +253,14 @@ static sword_t eval(int sp, int ep, bool *success) {
   }
 
   // recursive evaluate
-  sword_t lres = eval(sp, mop_pos - 1, success);
-  sword_t rres = eval(mop_pos + 1, ep, success);
+  bool lstat = false;
+  sword_t lres = eval(sp, mop_pos - 1, &lstat);
+  bool rstat = false;
+  sword_t rres = eval(mop_pos + 1, ep, &rstat);
+  if (!(lstat && rstat)) {
+    *success = false;
+    return 0;
+  }
 
   // arithmatic evaluate
   switch (tokens[mop_pos].type) {
