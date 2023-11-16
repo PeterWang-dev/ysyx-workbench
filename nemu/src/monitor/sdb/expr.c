@@ -163,8 +163,8 @@ static int find_op(int sp, int ep) {
   Assert(sp <= ep, "start pos %d should smaller or equal than %d", sp, ep);
 
   bool is_valid = true; // marker to demostrate if in paretheses
-  int main_op = 0;      // lowest level (last) operation
-  int op_index = -1;
+  int main_op = -1;     // lowest level (last) operator
+  int op_index = -1;    // index of lowest level (last) operator
 
   int i;
   for (i = sp; i <= ep; i++) {
