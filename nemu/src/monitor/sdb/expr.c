@@ -189,12 +189,15 @@ static int find_op(int sp, int ep) {
     /*         (obeys arithmatic rules and left associative rule) */
     if (is_valid) {
       switch (main_op) {
-      case '*' | '/' | -1:
+      case -1:
+      case '*':
+      case '/':
         // left associative and highest order make main_op always be updated
         op_index = i;
         main_op = tokens[i].type;
         break;
-      case '+' | '-':
+      case '+':
+      case '-':
         // only update in same level when current main_op is lowest order
         if (tokens[i].type == '+' || tokens[i].type == '-') {
           op_index = i;
