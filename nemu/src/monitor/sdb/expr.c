@@ -207,11 +207,10 @@ static int find_op(int sp, int ep) {
   return main_op;
 }
 
-static word_t eval(int sp, int ep, bool *success) {
+static sword_t eval(int sp, int ep, bool *success) {
   /* special cases */
   if (sp > ep) { // such as no expr in parentheses
     printf("invalid expression\n");
-
     *success = false;
     return 0;
   } else if (sp == ep) { // TK_NUM
@@ -221,14 +220,13 @@ static word_t eval(int sp, int ep, bool *success) {
     char *str = tokens[sp].str;
     char *endptr = str;
 
-    word_t number = strtol(str, &endptr, 10);
+    sword_t number = strtol(str, &endptr, 10);
 
     if (*endptr == '\0') {
       *success = true;
       return number;
     } else {
       printf("str %s number conversion failed!", str);
-
       *success = false;
       return 0;
     }
@@ -238,7 +236,14 @@ static word_t eval(int sp, int ep, bool *success) {
 
   /* normal evaluation */
   word_t res = 0;
-  int mop_pos = find_op(sp, ep); // find main op
+
+  // find main operator
+  int mop_pos = find_op(sp, ep);
+  if (mop_pos < 0) {
+    printf("invalid expression\n");
+    *success = false;
+    return 0;
+  }
 
   // recursive evaluate
   word_t lres = eval(sp, mop_pos - 1, success);
@@ -267,13 +272,13 @@ static word_t eval(int sp, int ep, bool *success) {
   return res;
 }
 
-word_t expr(char *e, bool *success) {
+sword_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     *success = false;
     return 0;
   }
 
-  word_t res = eval(0, nr_token - 1, success);
+  sword_t res = eval(0, nr_token - 1, success);
 
   return res;
 }
