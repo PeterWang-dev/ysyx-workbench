@@ -115,11 +115,11 @@ static bool make_token(char *e) {
         }
 
         if (rules[i].token_type != TK_NOTYPE) {
-          Log("generated token %d: type: %d, contents: %s", nr_token,
-              tokens[ptoken].type, tokens[ptoken].str);
-
           tokens[ptoken].type = rules[i].token_type;
           nr_token++;
+
+          Log("generated token %d: type: %d, contents: %s", nr_token,
+              tokens[ptoken].type, tokens[ptoken].str);
         }
 
         break;
