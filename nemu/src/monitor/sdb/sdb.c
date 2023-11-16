@@ -190,7 +190,7 @@ static int cmd_p(char *args) {
   word_t result = expr(args, &stat);
 
   if (stat == true) {
-    printf("$%d = %u", ++print_counter, result);
+    printf("$%d = %u\n", ++print_counter, result);
   } else {
     printf("Evaluation error\n");
     return 1;
