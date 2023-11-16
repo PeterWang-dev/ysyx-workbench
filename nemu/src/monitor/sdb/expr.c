@@ -96,11 +96,6 @@ static bool make_token(char *e) {
 
         int ptoken = nr_token;
 
-        if (rules[i].token_type != TK_NOTYPE) {
-          tokens[ptoken].type = rules[i].token_type;
-          nr_token++;
-        }
-
         switch (rules[i].token_type) {
         case TK_NUM:
           if (substr_len > 32) {
@@ -119,8 +114,13 @@ static bool make_token(char *e) {
           break;
         }
 
-        Log("generated token %d: type: %d, contents: %s", nr_token,
-            tokens[ptoken].type, tokens[ptoken].str);
+        if (rules[i].token_type != TK_NOTYPE) {
+          Log("generated token %d: type: %d, contents: %s", nr_token,
+              tokens[ptoken].type, tokens[ptoken].str);
+
+          tokens[ptoken].type = rules[i].token_type;
+          nr_token++;
+        }
 
         break;
       }
@@ -228,7 +228,7 @@ static word_t eval(int sp, int ep, bool *success) {
       return number;
     } else {
       printf("str %s number conversion failed!", str);
-      
+
       *success = false;
       return 0;
     }
