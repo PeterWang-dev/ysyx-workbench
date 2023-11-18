@@ -15,12 +15,14 @@
  *******************************************************************************/
 
 #include "debug.h"
+#include <errno.h>
 #include <isa.h>
 
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
+#include <stddef.h>
 
 enum {
   TK_NOTYPE = 256,
@@ -98,8 +100,8 @@ static bool make_token(char *e) {
 
         switch (rules[i].token_type) {
         case TK_NUM:
-          if (substr_len > 32) {
-            printf("number %s is too long", substr_start);
+          if (substr_len >= 32) {
+            printf("number %s is out of range\n", substr_start);
             return false;
           }
 
@@ -214,35 +216,45 @@ static int find_op(int sp, int ep) {
   return op_index;
 }
 
-static sword_t eval(int sp, int ep, bool *success) {
-  /* special cases */
+static word_t eval(int sp, int ep, bool *success) { // long or word_t?
   if (sp > ep) { // such as no expr in parentheses or missing arguments
     printf("invalid expression\n");
     *success = false;
     return 0;
-  } else if (sp == ep) { // TK_NUM
+  }
+
+  if (sp == ep) { // TK_NUM
     Assert(*tokens[sp].str != '\0',
            "contents in TK_NUM token should not be empty");
 
     char *str = tokens[sp].str;
     char *endptr = str;
 
-    sword_t number = strtol(str, &endptr, 10);
+    errno = 0;
+    /* how to deal with negtive numbers? */
+    long number = strtol(str, &endptr, 10);
+    // convertion occurs here may cause error, handling result
+    if (*endptr != '\0') {
+      // invalid number, should not reach here by design using regex
+      Assert(0, "str %s number conversion failed", str);
+    }
 
-    if (*endptr == '\0') {
-      *success = true;
-      return number;
-    } else {
-      printf("str %s number conversion failed!", str);
+    if (errno == ERANGE || number > UINT32_MAX || number < 0) { // out of range
+      printf("number %ld out of range\n", number);
       *success = false;
       return 0;
     }
-  } else if (check_parentheses(sp, ep) == true) { // TK_PARENTHESES
+
+    *success = true;
+    return (word_t)number;
+  }
+
+  if (check_parentheses(sp, ep) == true) { // TK_PARENTHESES
     return eval(sp + 1, ep - 1, success);
   }
 
   /* normal evaluation */
-  sword_t res = 0;
+  long res = 0;
 
   // find main operator
   int mop_pos = find_op(sp, ep);
@@ -254,9 +266,9 @@ static sword_t eval(int sp, int ep, bool *success) {
 
   // recursive evaluate
   bool lstat = false;
-  sword_t lres = eval(sp, mop_pos - 1, &lstat);
+  word_t lres = eval(sp, mop_pos - 1, &lstat);
   bool rstat = false;
-  sword_t rres = eval(mop_pos + 1, ep, &rstat);
+  word_t rres = eval(mop_pos + 1, ep, &rstat);
   if (!(lstat && rstat)) {
     *success = false;
     return 0;
@@ -271,7 +283,7 @@ static sword_t eval(int sp, int ep, bool *success) {
     res = lres - rres;
     break;
   case '*':
-    res = lres * rres;
+    res = (word_t) (lres * rres); // overflow may occur in multiplication
     break;
   case '/':
     if (rres == 0) {
@@ -290,13 +302,13 @@ static sword_t eval(int sp, int ep, bool *success) {
   return res;
 }
 
-sword_t expr(char *e, bool *success) {
+word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     *success = false;
     return 0;
   }
 
-  sword_t res = eval(0, nr_token - 1, success);
+  word_t res = eval(0, nr_token - 1, success);
 
   return res;
 }
