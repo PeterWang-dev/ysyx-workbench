@@ -164,7 +164,7 @@ static bool check_parentheses(int sp, int ep) {
 static int find_op(int sp, int ep) {
   Assert(sp <= ep, "start pos %d should smaller or equal than %d", sp, ep);
 
-  bool is_valid = true; // marker to demostrate if in paretheses
+  int valid_cnt = 0; // marker to demostrate if in paretheses BUG! multiple paretheses
   int main_op = -1;     // lowest level (last) operator
   int op_index = -1;    // index of lowest level (last) operator
 
@@ -180,16 +180,16 @@ static int find_op(int sp, int ep) {
 
     /* Rule 2: operators in parentheses are not main_ops */
     if (tokens[i].type == TK_PARENTHESES_LEFT) {
-      is_valid = false;
+      valid_cnt++;
       continue;
     } else if (tokens[i].type == TK_PARENTHESES_RIGHT) {
-      is_valid = true;
+      valid_cnt--;
       continue; // Rule 1: parentheses should be skipped too
     }
 
     /* Rule 3: main_op is the last operation to be evaluate */
     /*         (obeys arithmatic rules and left associative rule) */
-    if (is_valid) {
+    if (valid_cnt == 0) {
       switch (main_op) {
       case -1:
       case '*':
