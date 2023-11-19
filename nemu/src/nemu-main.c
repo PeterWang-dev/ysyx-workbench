@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
   FILE *fp = fopen(argv[1], "r");
   int32_t answer;
   char e[65535];
-  while (fscanf(fp, "%d, %s", &answer, e)) {
+  while (fscanf(fp, "%d %s", &answer, e)) {
     bool status = false;
     sword_t result = expr(e, &status);
 
