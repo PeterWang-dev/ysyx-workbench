@@ -216,7 +216,7 @@ static int find_op(int sp, int ep) {
   return op_index;
 }
 
-static sword_t unwarp_num(char *str, bool *success) {
+static word_t unwarp_num(char *str, bool *success) {
   char *endptr = str;
   errno = 0;
 
@@ -229,17 +229,17 @@ static sword_t unwarp_num(char *str, bool *success) {
   }
 
   // check number range
-  if (errno == ERANGE || number > INT32_MAX || number < INT32_MIN) {
+  if (errno == ERANGE || number > UINT32_MAX || number < 0) {
     printf("number %ld out of range\n", number);
     *success = false;
     return 0;
   }
 
   *success = true;
-  return (sword_t)number;
+  return (word_t)number;
 }
 
-static sword_t eval(int sp, int ep, bool *success) {
+static word_t eval(int sp, int ep, bool *success) {
   if (sp > ep) { // such as no expr in parentheses or missing arguments
     printf("invalid expression\n");
     *success = false;
@@ -258,7 +258,7 @@ static sword_t eval(int sp, int ep, bool *success) {
   }
 
   /* normal evaluation */
-  sword_t result = 0;
+  word_t result = 0;
 
   // find main operator
   int mop_pos = find_op(sp, ep);
@@ -270,9 +270,9 @@ static sword_t eval(int sp, int ep, bool *success) {
 
   // recursive evaluate
   bool lstat = false;
-  sword_t lres = eval(sp, mop_pos - 1, &lstat);
+  word_t lres = eval(sp, mop_pos - 1, &lstat);
   bool rstat = false;
-  sword_t rres = eval(mop_pos + 1, ep, &rstat);
+  word_t rres = eval(mop_pos + 1, ep, &rstat);
   if (!(lstat && rstat)) {
     *success = false;
     return 0;
@@ -306,13 +306,13 @@ static sword_t eval(int sp, int ep, bool *success) {
   return result;
 }
 
-sword_t expr(char *e, bool *success) {
+word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     *success = false;
     return 0;
   }
 
-  sword_t result = eval(0, nr_token - 1, success);
+  word_t result = eval(0, nr_token - 1, success);
 
   return result;
 }

@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
   char e[65535];
   while (fscanf(fp, "%d %s", &answer, e)) {
     bool status = false;
-    sword_t result = expr(e, &status);
+    word_t result = expr(e, &status);
 
     if (answer != result) {
       panic(
