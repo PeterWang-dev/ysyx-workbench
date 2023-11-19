@@ -39,7 +39,7 @@ static struct rule {
     {" +", TK_NOTYPE},             // spaces
     {"\\(", TK_PARENTHESES_LEFT},  // left parenthese
     {"\\)", TK_PARENTHESES_RIGHT}, // right parenthese
-    {"-?[[:digit:]]+", TK_NUM},    // decimal number
+    {"[[:digit:]]+", TK_NUM},      // decimal number (positive)
     {"\\*", '*'},                  // multiply
     {"\\/", '/'},                  // divide
     {"\\+", '+'},                  // plus
@@ -164,9 +164,10 @@ static bool check_parentheses(int sp, int ep) {
 static int find_op(int sp, int ep) {
   Assert(sp <= ep, "start pos %d should smaller or equal than %d", sp, ep);
 
-  int valid_cnt = 0; // marker to demostrate if in paretheses BUG! multiple paretheses
-  int main_op = -1;     // lowest level (last) operator
-  int op_index = -1;    // index of lowest level (last) operator
+  int valid_cnt =
+      0; // marker to demostrate if in paretheses BUG! multiple paretheses
+  int main_op = -1;  // lowest level (last) operator
+  int op_index = -1; // index of lowest level (last) operator
 
   int i;
   for (i = sp; i <= ep; i++) {
