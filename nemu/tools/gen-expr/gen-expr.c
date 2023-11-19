@@ -27,26 +27,28 @@ static char buf[65536] = {};
 static char code_buf[65536 + 128] = {}; // a little larger than `buf`
 static char *code_format = "#include <stdio.h>\n"
                            "int main() { "
-                           "  unsigned result = %s; "
+                           "  int result = %s; "
                            "  printf(\"%%u\", result); "
                            "  return 0; "
                            "}";
 
-static int buf_pos = 0;
+static int buf_pos = 0;             // buffer endptr
+static int expr_depth = 0;          // depth of exprs
+static const int max_depth = 5;     // maximium depth pf exprs
+static const int operand_max = 127; // maximium value of operand
 
 /*
  * Generate a random number in range [0, n)
  */
 static uint32_t choose(uint32_t n) {
-  srand(time(NULL));
   int r = rand();
   return r % n;
 }
 
 static void gen(char ch) { buf[buf_pos++] = ch; }
 
-static void gen_num() {
-  uint32_t random = choose(UINT32_MAX);
+static void gen_rand_num() {
+  uint32_t random = choose(operand_max) + 1;
   char num_str[11] = ""; // max length of 32-bit decimal is 10 + 1 for '\0'
   sprintf(num_str, "%u", random);
 
@@ -61,12 +63,16 @@ static void gen_rand_op() {
   switch (op_sel) {
   case 0:
     gen('+');
+    break;
   case 1:
     gen('-');
+    break;
   case 2:
     gen('*');
+    break;
   case 3:
     gen('/');
+    break;
   default:
     fprintf(stderr, "should not reach here\n");
     assert(0);
@@ -74,39 +80,51 @@ static void gen_rand_op() {
 }
 
 static void reset_gen() {
+  expr_depth = 0;
   buf_pos = 0;
   buf[buf_pos] = '\0';
 }
 
 static void gen_rand_expr() {
-  switch (choose(3)) {
-  case 0: //
-    gen_num();
-    break;
-  case 1:
-    gen('(');
-    gen_rand_expr();
-    gen(')');
-    break;
-  case 2:
-    gen_rand_expr();
-    gen_rand_op();
-    gen_rand_expr();
-    break;
-  default:
-    fprintf(stderr, "should not reach here");
-    assert(0);
+  if (expr_depth > max_depth) {
+    gen_rand_num();
+  } else {
+    expr_depth++;
+
+    switch (choose(3)) {
+    case 0: //
+      gen_rand_num();
+      break;
+    case 1:
+      gen('(');
+      gen_rand_expr();
+      gen_rand_op();
+      gen_rand_expr();
+      gen(')');
+      break;
+    case 2:
+      gen_rand_expr();
+      gen_rand_op();
+      gen_rand_expr();
+      break;
+    default:
+      fprintf(stderr, "should not reach here");
+      assert(0);
+    }
   }
+
   buf[buf_pos] = '\0';
 }
 
 int main(int argc, char *argv[]) {
   time_t seed = time(0);
   srand(seed);
+
   int loop = 1;
   if (argc > 1) {
     sscanf(argv[1], "%d", &loop);
   }
+
   int i;
   for (i = 0; i < loop; i++) {
     reset_gen();
@@ -119,18 +137,26 @@ int main(int argc, char *argv[]) {
     fputs(code_buf, fp);
     fclose(fp);
 
-    int ret = system("gcc /tmp/.code.c -o /tmp/.expr");
-    if (ret != 0)
+    int ret = system("gcc -Wall /tmp/.code.c -o /tmp/.expr");
+    if (ret != 0) {
+      fprintf(stderr, "flitered!\n");
+      i--;
       continue;
+    }
 
     fp = popen("/tmp/.expr", "r");
     assert(fp != NULL);
 
     int result;
     ret = fscanf(fp, "%d", &result);
-    pclose(fp);
+    if (WEXITSTATUS(pclose(fp))) {
+      fprintf(stderr, "flitered!\n");
+      i--;
+      continue;
+    }
 
-    printf("%u %s\n", result, buf);
+    printf("%d %s\n", result, buf);
   }
+
   return 0;
 }

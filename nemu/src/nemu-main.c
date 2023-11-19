@@ -14,6 +14,7 @@
  ******************************************************************************/
 
 #include <common.h>
+#include "monitor/sdb/sdb.h"
 
 void init_monitor(int, char *[]);
 void am_init_monitor();
@@ -28,8 +29,27 @@ int main(int argc, char *argv[]) {
   init_monitor(argc, argv);
 #endif
 
-  /* Start engine. */
-  engine_start();
+  /* Test expr() */
+  if (argc < 2) {
+    panic("missing input file path");
+  }
 
-  return is_exit_status_bad();
+  FILE *fp = fopen(argv[1], "r");
+  int32_t answer;
+  char e[65535];
+  while (fscanf(fp, "%d, %s", &answer, e)) {
+    bool status = false;
+    sword_t result = expr(e, &status);
+
+    if (answer != result) {
+      panic("test failed: answer %d is not equal to result %d", answer, result);
+    }
+  }
+
+  printf("success!\n");
+  return 0;
+  /* Start engine. */
+  // engine_start();
+
+  // return is_exit_status_bad();
 }

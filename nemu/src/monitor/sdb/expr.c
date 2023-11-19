@@ -207,7 +207,7 @@ static int find_op(int sp, int ep) {
         }
         break;
       default:
-        Assert(0, "should not reach here");
+        panic("should not reach here");
         break;
       }
     }
@@ -216,7 +216,30 @@ static int find_op(int sp, int ep) {
   return op_index;
 }
 
-static word_t eval(int sp, int ep, bool *success) { // long or word_t?
+static sword_t unwarp_num(char *str, bool *success) {
+  char *endptr = str;
+  errno = 0;
+
+  long number = strtol(str, &endptr, 10);
+
+  /* handling result */
+  // invalid number, should not reach here by design using regex
+  if (*endptr != '\0') {
+    panic("str %s number conversion failed", str);
+  }
+
+  // check number range
+  if (errno == ERANGE || number > INT32_MAX || number < INT32_MIN) {
+    printf("number %ld out of range\n", number);
+    *success = false;
+    return 0;
+  }
+
+  *success = true;
+  return (sword_t)number;
+}
+
+static sword_t eval(int sp, int ep, bool *success) {
   if (sp > ep) { // such as no expr in parentheses or missing arguments
     printf("invalid expression\n");
     *success = false;
@@ -227,26 +250,7 @@ static word_t eval(int sp, int ep, bool *success) { // long or word_t?
     Assert(*tokens[sp].str != '\0',
            "contents in TK_NUM token should not be empty");
 
-    char *str = tokens[sp].str;
-    char *endptr = str;
-
-    errno = 0;
-    /* how to deal with negtive numbers? */
-    long number = strtol(str, &endptr, 10);
-    // convertion occurs here may cause error, handling result
-    if (*endptr != '\0') {
-      // invalid number, should not reach here by design using regex
-      Assert(0, "str %s number conversion failed", str);
-    }
-
-    if (errno == ERANGE || number > UINT32_MAX || number < 0) { // out of range
-      printf("number %ld out of range\n", number);
-      *success = false;
-      return 0;
-    }
-
-    *success = true;
-    return (word_t)number;
+    return unwarp_num(tokens[sp].str, success);
   }
 
   if (check_parentheses(sp, ep) == true) { // TK_PARENTHESES
@@ -254,7 +258,7 @@ static word_t eval(int sp, int ep, bool *success) { // long or word_t?
   }
 
   /* normal evaluation */
-  long res = 0;
+  sword_t result = 0;
 
   // find main operator
   int mop_pos = find_op(sp, ep);
@@ -266,9 +270,9 @@ static word_t eval(int sp, int ep, bool *success) { // long or word_t?
 
   // recursive evaluate
   bool lstat = false;
-  word_t lres = eval(sp, mop_pos - 1, &lstat);
+  sword_t lres = eval(sp, mop_pos - 1, &lstat);
   bool rstat = false;
-  word_t rres = eval(mop_pos + 1, ep, &rstat);
+  sword_t rres = eval(mop_pos + 1, ep, &rstat);
   if (!(lstat && rstat)) {
     *success = false;
     return 0;
@@ -277,13 +281,13 @@ static word_t eval(int sp, int ep, bool *success) { // long or word_t?
   // arithmatic evaluate
   switch (tokens[mop_pos].type) {
   case '+':
-    res = lres + rres;
+    result = lres + rres;
     break;
   case '-':
-    res = lres - rres;
+    result = lres - rres;
     break;
   case '*':
-    res = (word_t) (lres * rres); // overflow may occur in multiplication
+    result = (sword_t)(lres * rres); // overflow may occur in multiplication
     break;
   case '/':
     if (rres == 0) {
@@ -291,24 +295,24 @@ static word_t eval(int sp, int ep, bool *success) { // long or word_t?
       *success = false;
       return 0;
     }
-    res = lres / rres;
+    result = lres / rres;
     break;
   default:
-    Assert(0, "should not reach here");
+    panic("should not reach here");
     break;
   }
 
   *success = true;
-  return res;
+  return result;
 }
 
-word_t expr(char *e, bool *success) {
+sword_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     *success = false;
     return 0;
   }
 
-  word_t res = eval(0, nr_token - 1, success);
+  sword_t result = eval(0, nr_token - 1, success);
 
-  return res;
+  return result;
 }
