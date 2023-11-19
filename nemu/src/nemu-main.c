@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
 
     if (answer != result) {
       panic(
-          "test failed: answer %d is not equal to result %d when evaluating %s",
+          "test failed: answer %u is not equal to result %u when evaluating %s",
           answer, result, e);
     }
   }

@@ -147,7 +147,7 @@ int main(int argc, char *argv[]) {
     fp = popen("/tmp/.expr", "r");
     assert(fp != NULL);
 
-    unsigned result;
+    uint32_t result;
     ret = fscanf(fp, "%u", &result);
     if (WEXITSTATUS(pclose(fp))) {
       fprintf(stderr, "flitered!\n");
