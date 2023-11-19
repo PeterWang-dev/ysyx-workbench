@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
   }
 
   FILE *fp = fopen(argv[1], "r");
-  int32_t answer;
+  uint32_t answer;
   char e[65535];
   while (fscanf(fp, "%u %s", &answer, e)) {
     bool status = false;
