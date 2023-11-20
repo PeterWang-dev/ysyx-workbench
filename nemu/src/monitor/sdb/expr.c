@@ -146,7 +146,7 @@ static bool trim_tokenize(char *expr) {
 static bool is_negtive(int pos) {
   if (tokens[pos].type == '-') {
     /* look ahead method */
-    if (pos == nr_token - 1) { // last token is sign is a invalid expression
+     if (pos == nr_token - 1) { // last token is sign is a invalid expression
                                // not to be dealt with here but when evaluating
       return false;
     }
@@ -157,7 +157,7 @@ static bool is_negtive(int pos) {
       if (pos == 0 || tokens[pos - 1].type == TK_PARENTHESES_RIGHT ||
           tokens[pos - 1].type == TK_NUM) {
         // overflow not occured here as "or" is short-circuit evaluation
-        return true;
+        return false;
       }
     }
   }
