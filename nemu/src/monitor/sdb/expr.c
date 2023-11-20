@@ -146,19 +146,26 @@ static bool trim_tokenize(char *expr) {
 static bool is_negtive(int pos) {
   if (tokens[pos].type == '-') {
     /* look ahead method */
-     if (pos == nr_token - 1) { // last token is sign is a invalid expression
+    if (pos == nr_token - 1) { // last token is sign is a invalid expression
                                // not to be dealt with here but when evaluating
       return false;
     }
 
     if (tokens[pos + 1].type == TK_NUM) { // negtive sign always before number
-      /* If it is the first token or
-       * previous token is right parenthese or number, then it is negtive. */
-      if (pos == 0 || tokens[pos - 1].type == TK_PARENTHESES_RIGHT ||
+      /* it is the first token then it must be negtive number */
+      if (pos == 0)
+        return true;
+
+      /* if previous token is right parenthese or number,
+       * then it must not be negtive but a minus sign */
+      if (tokens[pos - 1].type == TK_PARENTHESES_RIGHT ||
           tokens[pos - 1].type == TK_NUM) {
         // overflow not occured here as "or" is short-circuit evaluation
         return false;
       }
+
+      /* otherwize it is negive number */
+      return true;
     }
   }
 
