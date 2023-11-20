@@ -27,8 +27,8 @@ static char buf[65536] = {};
 static char code_buf[65536 + 128] = {}; // a little larger than `buf`
 static char *code_format = "#include <stdio.h>\n"
                            "int main() { "
-                           "  unsigned result = %s; "
-                           "  printf(\"%%u\", result); "
+                           "  int result = %s; "
+                           "  printf(\"%%d\", result); "
                            "  return 0; "
                            "}";
 
@@ -85,7 +85,7 @@ static void reset_gen() {
   buf[buf_pos] = '\0';
 }
 
-static void gen_rand_expr() {
+static void gen_rand_expr() { // BUG: NOT FLITER NEGTIVE INTERMIDIEAT RESULT
   if (expr_depth > max_depth) {
     gen_rand_num();
   } else {
@@ -147,15 +147,15 @@ int main(int argc, char *argv[]) {
     fp = popen("/tmp/.expr", "r");
     assert(fp != NULL);
 
-    uint32_t result;
-    ret = fscanf(fp, "%u", &result);
+    int32_t result;
+    ret = fscanf(fp, "%d", &result);
     if (WEXITSTATUS(pclose(fp))) {
       fprintf(stderr, "flitered!\n");
       i--;
       continue;
     }
 
-    printf("%u %s\n", result, buf);
+    printf("%d %s\n", result, buf);
   }
 
   return 0;

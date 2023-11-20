@@ -24,11 +24,18 @@
 #include <regex.h>
 #include <stddef.h>
 
+/* TODO:
+ * 1. Implement negtive number.
+ *    Tip: minus <=> ([)]|[[:digit:]])-
+ * 2. Preprocess: trim spaces in exprs
+ */
+
 enum {
   TK_NOTYPE = 256,
   TK_PARENTHESES_LEFT,
   TK_PARENTHESES_RIGHT,
   TK_NUM,
+  TK_NEGTIVE,
   TK_EQ,
 };
 
@@ -39,7 +46,7 @@ static struct rule {
     {" +", TK_NOTYPE},             // spaces
     {"\\(", TK_PARENTHESES_LEFT},  // left parenthese
     {"\\)", TK_PARENTHESES_RIGHT}, // right parenthese
-    {"[[:digit:]]+", TK_NUM},      // decimal number (positive)
+    {"[[:digit:]]+", TK_NUM},      // unsigned decimal number
     {"\\*", '*'},                  // multiply
     {"\\/", '/'},                  // divide
     {"\\+", '+'},                  // plus
@@ -76,27 +83,26 @@ typedef struct token {
 static Token tokens[32] __attribute__((used)) = {};
 static int nr_token __attribute__((used)) = 0;
 
-static bool make_token(char *e) {
-  int position = 0;
+static bool trim_tokenize(char *expr) {
+  int pos = 0; // position of substring waiting for matching
   int i;
   regmatch_t pmatch;
-
   nr_token = 0;
 
-  while (e[position] != '\0') {
+  while (expr[pos] != '\0') {
     /* Try all rules one by one. */
     for (i = 0; i < NR_REGEX; i++) {
-      if (regexec(&re[i], e + position, 1, &pmatch, 0) == 0 &&
+      if (regexec(&re[i], expr + pos, 1, &pmatch, 0) == 0 &&
           pmatch.rm_so == 0) {
-        char *substr_start = e + position;
+        char *substr_start = expr + pos;
         int substr_len = pmatch.rm_eo;
 
         Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s", i,
-            rules[i].regex, position, substr_len, substr_len, substr_start);
+            rules[i].regex, pos, substr_len, substr_len, substr_start);
 
-        position += substr_len;
+        pos += substr_len; // move
 
-        int ptoken = nr_token;
+        int cur_pos = nr_token; // current token pos
 
         switch (rules[i].token_type) {
         case TK_NUM:
@@ -108,20 +114,20 @@ static bool make_token(char *e) {
           char *ch;
           int pch = 0;
           for (ch = substr_start; ch < substr_start + substr_len; ch++) {
-            tokens[ptoken].str[pch++] = *ch;
+            tokens[cur_pos].str[pch++] = *ch;
           }
-          tokens[ptoken].str[pch] = '\0'; // terminate raw string of a number
+          tokens[cur_pos].str[pch] = '\0'; // terminate raw string of a number
 
         default:
           break;
         }
 
         if (rules[i].token_type != TK_NOTYPE) {
-          tokens[ptoken].type = rules[i].token_type;
+          tokens[cur_pos].type = rules[i].token_type;
           nr_token++;
 
           Log("generated token %d: type: %d, contents: %s", nr_token,
-              tokens[ptoken].type, tokens[ptoken].str);
+              tokens[cur_pos].type, tokens[cur_pos].str);
         }
 
         break;
@@ -129,10 +135,54 @@ static bool make_token(char *e) {
     }
 
     if (i == NR_REGEX) {
-      printf("no match at position %d\n%s\n%*.s^\n", position, e, position, "");
+      printf("no match at position %d\n%s\n%*.s^\n", pos, expr, pos, "");
       return false;
     }
   }
+
+  return true;
+}
+
+static bool is_negtive(int pos) {
+  if (tokens[pos].type == '-') {
+    /* look ahead method */
+    if (pos == nr_token - 1) { // last token is sign is a invalid expression
+                               // not to be dealt with here but when evaluating
+      return false;
+    }
+
+    if (tokens[pos + 1].type == TK_NUM) { // negtive sign always before number
+      /* If it is the first token or
+       * previous token is right parenthese or number, then it is negtive. */
+      if (pos == 0 || tokens[pos - 1].type == TK_PARENTHESES_RIGHT ||
+          tokens[pos - 1].type == TK_NUM) {
+        // overflow not occured here as "or" is short-circuit evaluation
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+static void detect_negtive() {
+  int i;
+  for (i = 0; i < nr_token; i++) {
+    if (is_negtive(i)) {
+      tokens[i].type = TK_NEGTIVE;
+    }
+  }
+}
+
+static bool make_token(char *e) {
+  int i;
+
+  if (!trim_tokenize(e)) {
+    // error has been printed in trim_tokenize
+    return false;
+  }
+
+  detect_negtive();
 
   Log("tokens are successfully generated");
   Log("printing token info");
@@ -164,8 +214,7 @@ static bool check_parentheses(int sp, int ep) {
 static int find_op(int sp, int ep) {
   Assert(sp <= ep, "start pos %d should smaller or equal than %d", sp, ep);
 
-  int valid_cnt =
-      0; // marker to demostrate if in paretheses BUG! multiple paretheses
+  int valid_cnt = 0; // marker to demostrate if in paretheses
   int main_op = -1;  // lowest level (last) operator
   int op_index = -1; // index of lowest level (last) operator
 
@@ -217,8 +266,14 @@ static int find_op(int sp, int ep) {
   return op_index;
 }
 
-static word_t unwarp_num(char *str, bool *success) {
+/* Unwrap both positive and negtive number. */
+static sword_t unwarp_num(int sp, int ep, bool *success) {
+  Assert(tokens[ep].type == TK_NUM && *(tokens[ep].str) != '\0',
+         "str in TK_NUM should not be empty");
+
+  char *str = tokens[ep].str;
   char *endptr = str;
+  bool is_neg = (tokens[sp].type == TK_NEGTIVE);
   errno = 0;
 
   long number = strtol(str, &endptr, 10);
@@ -230,28 +285,28 @@ static word_t unwarp_num(char *str, bool *success) {
   }
 
   // check number range
-  if (errno == ERANGE || number > UINT32_MAX || number < 0) {
+  if (errno == ERANGE || number > INT32_MAX ||
+      (is_neg && -number < INT32_MIN)) {
     printf("number %ld out of range\n", number);
     *success = false;
     return 0;
   }
 
+  sword_t result = (sword_t)(is_neg ? -number : number);
+
   *success = true;
-  return (word_t)number;
+  return result;
 }
 
-static word_t eval(int sp, int ep, bool *success) {
-  if (sp > ep) { // such as no expr in parentheses or missing arguments
+static sword_t eval(int sp, int ep, bool *success) {
+  if (sp > ep) { // such as no expr in parentheses
     printf("invalid expression\n");
     *success = false;
     return 0;
   }
 
-  if (sp == ep) { // TK_NUM
-    Assert(*tokens[sp].str != '\0',
-           "contents in TK_NUM token should not be empty");
-
-    return unwarp_num(tokens[sp].str, success);
+  if (ep - sp < 2) { // TK_NEGTIVE or TK_NUM
+    return unwarp_num(sp, ep, success);
   }
 
   if (check_parentheses(sp, ep) == true) { // TK_PARENTHESES
@@ -259,7 +314,7 @@ static word_t eval(int sp, int ep, bool *success) {
   }
 
   /* normal evaluation */
-  word_t result = 0;
+  sword_t result = 0;
 
   // find main operator
   int mop_pos = find_op(sp, ep);
@@ -271,9 +326,9 @@ static word_t eval(int sp, int ep, bool *success) {
 
   // recursive evaluate
   bool lstat = false;
-  word_t lres = eval(sp, mop_pos - 1, &lstat);
+  sword_t lres = eval(sp, mop_pos - 1, &lstat);
   bool rstat = false;
-  word_t rres = eval(mop_pos + 1, ep, &rstat);
+  sword_t rres = eval(mop_pos + 1, ep, &rstat);
   if (!(lstat && rstat)) {
     *success = false;
     return 0;
