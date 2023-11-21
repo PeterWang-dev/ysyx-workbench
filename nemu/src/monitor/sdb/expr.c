@@ -200,22 +200,26 @@ static bool make_token(char *e) {
   return true;
 }
 
-static bool check_parentheses(int sp, int ep) {
+static bool check_parentheses(int sp, int ep) { // BUG: (77/2)*(11*118) is wrong
   if (tokens[sp].type != TK_PARENTHESES_LEFT ||
       tokens[ep].type != TK_PARENTHESES_RIGHT)
     return false;
 
+  int pos = 0; // simulate stack
   int i;
-  int leftpar_remains = 0;
   for (i = sp + 1; i < ep; i++) {
     if (tokens[i].type == TK_PARENTHESES_LEFT) {
-      leftpar_remains++;
+      pos++;
     } else if (tokens[i].type == TK_PARENTHESES_RIGHT) {
-      leftpar_remains--;
+      if (pos == 0) {
+        return false; // right parenthese without left parenthese
+      } else {
+        pos--;
+      }
     }
   }
 
-  return leftpar_remains == 0; // left means internal parentheses are not closed
+  return (pos == 0); // if pos != 0, then left parenthese without right
 }
 
 static int find_op(int sp, int ep) {
