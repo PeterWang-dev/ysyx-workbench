@@ -15,6 +15,7 @@
 
 #include "monitor/sdb/sdb.h"
 #include <common.h>
+#define CONFIG_TEST_EXPR
 
 void init_monitor(int, char *[]);
 void am_init_monitor();
@@ -29,6 +30,7 @@ int main(int argc, char *argv[]) {
   init_monitor(argc, argv);
 #endif
 
+#ifdef CONFIG_TEST_EXPR
   /* Test expr() */
   if (argc < 2) {
     panic("missing input file path");
@@ -50,8 +52,11 @@ int main(int argc, char *argv[]) {
 
   printf("success!\n");
   return 0;
-  /* Start engine. */
-  // engine_start();
+#else
 
-  // return is_exit_status_bad();
+  /* Start engine. */
+  engine_start();
+
+  return is_exit_status_bad();
+#endif
 }
