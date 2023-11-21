@@ -187,7 +187,7 @@ static int cmd_p(char *args) {
   }
 
   bool stat = false;
-  sword_t result = expr(args, &stat);
+  word_t result = expr(args, &stat);
 
   if (stat == true) {
     printf("$%d = %d\n", ++print_counter, result);
