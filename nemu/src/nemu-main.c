@@ -55,7 +55,6 @@ int main(int argc, char *argv[]) {
   /* Test expr() */
   test_expr(argc, argv);
 #else
-
   /* Start engine. */
   engine_start();
 

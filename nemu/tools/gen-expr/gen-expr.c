@@ -27,8 +27,8 @@ static char buf[65536] = {};
 static char code_buf[65536 + 128] = {}; // a little larger than `buf`
 static char *code_format = "#include <stdio.h>\n"
                            "int main() { "
-                           "  int result = %s; "
-                           "  printf(\"%%d\", result); "
+                           "  unsigned result = %s; "
+                           "  printf(\"%%u\", result); "
                            "  return 0; "
                            "}";
 
@@ -40,7 +40,7 @@ static const int operand_max = 127; // maximium value of operand
 /*
  * Generate a random number in range [0, n)
  */
-static uint32_t choose(uint32_t n) {
+static unsigned choose(unsigned n) {
   int r = rand();
   return r % n;
 }
@@ -48,7 +48,7 @@ static uint32_t choose(uint32_t n) {
 static void gen(char ch) { buf[buf_pos++] = ch; }
 
 static void gen_rand_num() {
-  uint32_t random = choose(operand_max) + 1;
+  unsigned random = choose(operand_max) + 1;
   char num_str[11] = ""; // max length of 32-bit decimal is 10 + 1 for '\0'
   sprintf(num_str, "%u", random);
 
@@ -59,7 +59,7 @@ static void gen_rand_num() {
 }
 
 static void gen_rand_op() {
-  uint32_t op_sel = choose(4);
+  unsigned op_sel = choose(4);
   switch (op_sel) {
   case 0:
     gen('+');
@@ -147,15 +147,15 @@ int main(int argc, char *argv[]) {
     fp = popen("/tmp/.expr", "r");
     assert(fp != NULL);
 
-    int32_t result;
-    ret = fscanf(fp, "%d", &result);
+    unsigned result;
+    ret = fscanf(fp, "%u", &result);
     if (WEXITSTATUS(pclose(fp))) {
       fprintf(stderr, "flitered!\n");
       i--;
       continue;
     }
 
-    printf("%d %s\n", result, buf);
+    printf("%u %s\n", result, buf);
   }
 
   return 0;

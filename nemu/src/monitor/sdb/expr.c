@@ -229,7 +229,8 @@ static int find_op(int sp, int ep) {
            "spaces should not exists after making token");
 
     /* Rule 1: elems which is not an operator is definately not a main_op */
-    if (tokens[i].type == TK_NUM) { // TK_NUM is not operator
+    if (tokens[i].type == TK_NUM ||
+        tokens[i].type == TK_NEGTIVE) { // TK_NUM and TK_NEGTIVE is not operator
       continue;
     }
 
@@ -272,7 +273,7 @@ static int find_op(int sp, int ep) {
 }
 
 /* Unwrap both positive and negtive number. */
-static sword_t unwarp_num(int sp, int ep, bool *success) {
+static long unwarp_num(int sp, int ep, bool *success) {
   Assert(tokens[ep].type == TK_NUM && *(tokens[ep].str) != '\0',
          "str in TK_NUM should not be empty");
 
@@ -281,7 +282,7 @@ static sword_t unwarp_num(int sp, int ep, bool *success) {
   bool is_neg = (tokens[sp].type == TK_NEGTIVE);
   errno = 0;
 
-  long number = strtol(str, &endptr, 10);
+  long number = strtol(str, &endptr, 0);
 
   /* handling result */
   // invalid number, should not reach here by design using regex
@@ -290,20 +291,19 @@ static sword_t unwarp_num(int sp, int ep, bool *success) {
   }
 
   // check number range
-  if (errno == ERANGE || number > INT32_MAX ||
-      (is_neg && -number < INT32_MIN)) {
+  if (errno == ERANGE) {
     printf("number %ld out of range\n", number);
     *success = false;
     return 0;
   }
 
-  sword_t result = (sword_t)(is_neg ? -number : number);
+  long result = is_neg ? -number : number;
 
   *success = true;
   return result;
 }
 
-static sword_t eval(int sp, int ep, bool *success) {
+static long eval(int sp, int ep, bool *success) {
   if (sp > ep) { // such as no expr in parentheses
     printf("invalid expression\n");
     *success = false;
@@ -319,7 +319,7 @@ static sword_t eval(int sp, int ep, bool *success) {
   }
 
   /* normal evaluation */
-  sword_t result = 0;
+  long result = 0;
 
   // find main operator
   int mop_pos = find_op(sp, ep);
@@ -331,9 +331,9 @@ static sword_t eval(int sp, int ep, bool *success) {
 
   // recursive evaluate
   bool lstat = false;
-  sword_t lres = eval(sp, mop_pos - 1, &lstat);
+  long lres = eval(sp, mop_pos - 1, &lstat);
   bool rstat = false;
-  sword_t rres = eval(mop_pos + 1, ep, &rstat);
+  long rres = eval(mop_pos + 1, ep, &rstat);
   if (!(lstat && rstat)) {
     *success = false;
     return 0;
@@ -348,7 +348,7 @@ static sword_t eval(int sp, int ep, bool *success) {
     result = lres - rres;
     break;
   case '*':
-    result = (sword_t)(lres * rres); // overflow may occur in multiplication
+    result = lres * rres; // overflow may occur in multiplication
     break;
   case '/':
     if (rres == 0) {
