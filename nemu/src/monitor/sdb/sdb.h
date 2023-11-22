@@ -18,6 +18,6 @@
 
 #include <common.h>
 
-sword_t expr(char *e, bool *success);
+word_t expr(char *e, bool *success);
 
 #endif
