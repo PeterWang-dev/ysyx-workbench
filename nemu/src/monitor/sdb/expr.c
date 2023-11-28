@@ -110,6 +110,7 @@ static bool basic_tokenize(char *expr) {
 
         int cur_pos = nr_token; // current token pos
 
+        /* copy raw string of a number or register name */
         if (rules[i].token_type == TK_NUM || rules[i].token_type == TK_REG) {
           if (rules[i].token_type == TK_NUM && substr_len >= 32) {
             printf("number %s is out of range\n", substr_start);
@@ -119,6 +120,8 @@ static bool basic_tokenize(char *expr) {
           char *ch;
           int pch = 0;
           for (ch = substr_start; ch < substr_start + substr_len; ch++) {
+            if (rules[i].token_type == TK_REG)
+              continue; // skip '$' in register name
             tokens[cur_pos].str[pch++] = *ch;
           }
           tokens[cur_pos].str[pch] = '\0'; // terminate raw string of a number
