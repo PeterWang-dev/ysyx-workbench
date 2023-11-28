@@ -122,9 +122,7 @@ static int cmd_si(char *args) {
 
   if (args == NULL) {
     exec_num = 1;
-  }
-
-  if (sscanf(args, "%ld", &exec_num) < 1) {
+  } else if (sscanf(args, "%ld", &exec_num) < 1) {
     printf("Invalid argument '%s'\n", args);
     return 1;
   }
