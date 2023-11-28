@@ -326,6 +326,10 @@ static long eval(int sp, int ep, bool *success) {
     return 0;
   }
 
+  if (check_parentheses(sp, ep) == true) { // TK_PARENTHESES
+    return eval(sp + 1, ep - 1, success);
+  }
+
   if (tokens[sp].type == TK_DEREF) { // TK_DEREF
     word_t addr = eval(sp + 1, ep, success);
     if (!(*success)) {
@@ -335,19 +339,16 @@ static long eval(int sp, int ep, bool *success) {
     return paddr_read(addr, 4);
   }
 
-  if (ep - sp < 2) { // TK_NEGTIVE, TK_NUM or TK_REG
-    if (tokens[sp].type == TK_NEGTIVE || tokens[sp].type == TK_NUM) {
-      return unwarp_num(sp, ep, success);
-    } else if (tokens[sp].type == TK_REG) {
-      return unwrap_reg(sp, success);
-    } else { // should not reach here by design as
-             // ep - sp < 2 can only be TK_NEGTIVE, TK_NUM or TK_REG
-      panic("should not reach here");
-    }
+  if (tokens[sp].type == TK_NEGTIVE) { // TK_NEGTIVE
+    return -eval(sp + 1, ep, success);
   }
 
-  if (check_parentheses(sp, ep) == true) { // TK_PARENTHESES
-    return eval(sp + 1, ep - 1, success);
+  if (tokens[sp].type == TK_NUM) { // TK_NUM
+    return unwarp_num(sp, ep, success);
+  }
+
+  if (tokens[sp].type == TK_REG) { // TK_REG
+    return unwrap_reg(sp, success);
   }
 
   /* normal evaluation */
