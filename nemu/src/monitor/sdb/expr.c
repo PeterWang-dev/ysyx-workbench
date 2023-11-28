@@ -326,6 +326,16 @@ static long eval(int sp, int ep, bool *success) {
     return 0;
   }
 
+  if (sp == ep) {
+    if (tokens[sp].type == TK_NUM) { // TK_NUM
+      return unwarp_num(sp, ep, success);
+    }
+
+    if (tokens[sp].type == TK_REG) { // TK_REG
+      return unwrap_reg(sp, success);
+    }
+  }
+  
   if (check_parentheses(sp, ep) == true) { // TK_PARENTHESES
     return eval(sp + 1, ep - 1, success);
   }
@@ -341,14 +351,6 @@ static long eval(int sp, int ep, bool *success) {
 
   if (tokens[sp].type == TK_NEGTIVE) { // TK_NEGTIVE
     return -eval(sp + 1, ep, success);
-  }
-
-  if (tokens[sp].type == TK_NUM) { // TK_NUM
-    return unwarp_num(sp, ep, success);
-  }
-
-  if (tokens[sp].type == TK_REG) { // TK_REG
-    return unwrap_reg(sp, success);
   }
 
   /* normal evaluation */
