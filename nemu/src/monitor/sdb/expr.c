@@ -120,7 +120,7 @@ static bool basic_tokenize(char *expr) {
           char *ch;
           int pch = 0;
           for (ch = substr_start; ch < substr_start + substr_len; ch++) {
-            if (rules[i].token_type == TK_REG) {
+            if (*ch == '$') {
               continue; // skip '$' in register name
             }
             tokens[cur_pos].str[pch++] = *ch;
