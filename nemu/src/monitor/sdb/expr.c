@@ -46,18 +46,18 @@ static struct rule {
   const char *regex;
   int token_type;
 } rules[] = {
-    {" +", TK_NOTYPE},             // spaces
-    {"\\(", TK_PARENTHESES_LEFT},  // left parenthese
-    {"\\)", TK_PARENTHESES_RIGHT}, // right parenthese
-    {"\\$.*", TK_REG}, // register
-    {"(0[xX])?[0-9A-Ea-e]+", TK_NUM},                         // unsigned number
-    {"\\*", TK_MUL},                                          // multiply
-    {"\\/", TK_DIV},                                          // divide
-    {"\\+", TK_ADD},                                          // plus
-    {"-", TK_SUB},                                            // minus
-    {"==", TK_EQ},                                            // equal
-    {"!=", TK_NEQ},                                           // not equal
-    {"&&", TK_AND}                                            // and
+    {" +", TK_NOTYPE},                // spaces
+    {"\\(", TK_PARENTHESES_LEFT},     // left parenthese
+    {"\\)", TK_PARENTHESES_RIGHT},    // right parenthese
+    {"\\$.*", TK_REG},                // register
+    {"(0[xX])?[0-9A-Ea-e]+", TK_NUM}, // unsigned number
+    {"\\*", TK_MUL},                  // multiply
+    {"\\/", TK_DIV},                  // divide
+    {"\\+", TK_ADD},                  // plus
+    {"-", TK_SUB},                    // minus
+    {"==", TK_EQ},                    // equal
+    {"!=", TK_NEQ},                   // not equal
+    {"&&", TK_AND}                    // and
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -111,7 +111,7 @@ static bool basic_tokenize(char *expr) {
         int cur_pos = nr_token; // current token pos
 
         if (rules[i].token_type == TK_NUM || rules[i].token_type == TK_REG) {
-          if ( rules[i].token_type == TK_NUM && substr_len >= 32) {
+          if (rules[i].token_type == TK_NUM && substr_len >= 32) {
             printf("number %s is out of range\n", substr_start);
             return false;
           }
