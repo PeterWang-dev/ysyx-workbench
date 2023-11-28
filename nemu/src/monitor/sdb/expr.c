@@ -146,7 +146,7 @@ static bool basic_tokenize(char *expr) {
 }
 
 static bool is_unary(int pos) {
-  if (tokens[pos].type == TK_SUB || tokens[pos].type == TK_DEREF) {
+  if (tokens[pos].type == TK_SUB || tokens[pos].type == TK_MUL) {
     /* look ahead method */
     if (pos == nr_token - 1) { // last token is sign is a invalid expression
                                // not to be dealt with here but when evaluating
