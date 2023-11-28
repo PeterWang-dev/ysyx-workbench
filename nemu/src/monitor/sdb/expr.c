@@ -49,7 +49,7 @@ static struct rule {
     {" +", TK_NOTYPE},             // spaces
     {"\\(", TK_PARENTHESES_LEFT},  // left parenthese
     {"\\)", TK_PARENTHESES_RIGHT}, // right parenthese
-    {"\\$(0|ra|sp|gp|tp|t[0-6]|s[0-9]{1,2}|a[0-7])", TK_REG}, // register
+    {"\\$.*", TK_REG}, // register
     {"(0[xX])?[0-9A-Ea-e]+", TK_NUM},                         // unsigned number
     {"\\*", TK_MUL},                                          // multiply
     {"\\/", TK_DIV},                                          // divide
