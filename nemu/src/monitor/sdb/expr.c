@@ -164,10 +164,10 @@ static bool is_unary(int pos) {
       if (pos == 0)
         return true;
 
-      /* if previous token is right parenthese or number,
+      /* if previous token is right parenthese, number or register,
        * then it must not be negtive but a minus sign */
       if (tokens[pos - 1].type == TK_PARENTHESES_RIGHT ||
-          tokens[pos - 1].type == TK_NUM) {
+          tokens[pos - 1].type == TK_NUM || tokens[pos - 1].type == TK_REG) {
         // overflow not occured here as "or" is short-circuit evaluation
         return false;
       }
@@ -335,7 +335,7 @@ static long eval(int sp, int ep, bool *success) {
       return unwrap_reg(sp, success);
     }
   }
-  
+
   if (check_parentheses(sp, ep) == true) { // TK_PARENTHESES
     return eval(sp + 1, ep - 1, success);
   }
