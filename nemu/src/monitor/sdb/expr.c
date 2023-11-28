@@ -15,6 +15,7 @@
  *******************************************************************************/
 
 #include "debug.h"
+#include "memory/paddr.h"
 #include <errno.h>
 #include <isa.h>
 
@@ -25,27 +26,38 @@
 #include <stddef.h>
 
 enum {
-  TK_NOTYPE = 256,
+  TK_NOTYPE,
   TK_PARENTHESES_LEFT,
   TK_PARENTHESES_RIGHT,
+  TK_REG,
   TK_NUM,
   TK_NEGTIVE,
+  TK_DEREF,
+  TK_MUL,
+  TK_DIV,
+  TK_ADD,
+  TK_SUB,
   TK_EQ,
+  TK_NEQ,
+  TK_AND,
 };
 
 static struct rule {
   const char *regex;
   int token_type;
 } rules[] = {
-    {" +", TK_NOTYPE},             // spaces
-    {"\\(", TK_PARENTHESES_LEFT},  // left parenthese
-    {"\\)", TK_PARENTHESES_RIGHT}, // right parenthese
-    {"[[:digit:]]+", TK_NUM},      // unsigned decimal number
-    {"\\*", '*'},                  // multiply
-    {"\\/", '/'},                  // divide
-    {"\\+", '+'},                  // plus
-    {"-", '-'},                    // minus
-    {"==", TK_EQ},                 // equal
+    {" +", TK_NOTYPE},                // spaces
+    {"\\(", TK_PARENTHESES_LEFT},     // left parenthese
+    {"\\)", TK_PARENTHESES_RIGHT},    // right parenthese
+    {"\\$.*", TK_REG},                // register
+    {"(0[xX])?[0-9A-Ea-e]+", TK_NUM}, // unsigned number
+    {"\\*", TK_MUL},                  // multiply
+    {"\\/", TK_DIV},                  // divide
+    {"\\+", TK_ADD},                  // plus
+    {"-", TK_SUB},                    // minus
+    {"==", TK_EQ},                    // equal
+    {"!=", TK_NEQ},                   // not equal
+    {"&&", TK_AND}                    // and
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -77,7 +89,7 @@ typedef struct token {
 static Token tokens[32] __attribute__((used)) = {};
 static int nr_token __attribute__((used)) = 0;
 
-static bool trim_tokenize(char *expr) {
+static bool basic_tokenize(char *expr) {
   int pos = 0; // position of substring waiting for matching
   int i;
   regmatch_t pmatch;
@@ -98,9 +110,8 @@ static bool trim_tokenize(char *expr) {
 
         int cur_pos = nr_token; // current token pos
 
-        switch (rules[i].token_type) {
-        case TK_NUM:
-          if (substr_len >= 32) {
+        if (rules[i].token_type == TK_NUM || rules[i].token_type == TK_REG) {
+          if (rules[i].token_type == TK_NUM && substr_len >= 32) {
             printf("number %s is out of range\n", substr_start);
             return false;
           }
@@ -111,9 +122,6 @@ static bool trim_tokenize(char *expr) {
             tokens[cur_pos].str[pch++] = *ch;
           }
           tokens[cur_pos].str[pch] = '\0'; // terminate raw string of a number
-
-        default:
-          break;
         }
 
         if (rules[i].token_type != TK_NOTYPE) {
@@ -137,16 +145,18 @@ static bool trim_tokenize(char *expr) {
   return true;
 }
 
-static bool is_negtive(int pos) {
-  if (tokens[pos].type == '-') {
+static bool is_unary(int pos) {
+  if (tokens[pos].type == TK_SUB || tokens[pos].type == TK_MUL) {
     /* look ahead method */
     if (pos == nr_token - 1) { // last token is sign is a invalid expression
                                // not to be dealt with here but when evaluating
       return false;
     }
 
-    if (tokens[pos + 1].type == TK_NUM) { // negtive sign always before number
-      /* it is the first token then it must be negtive number */
+    /* unary sign is always before number, register or left parenthesis */
+    if (tokens[pos + 1].type == TK_NUM || tokens[pos + 1].type == TK_REG ||
+        tokens[pos + 1].type == TK_PARENTHESES_LEFT) {
+      /* it is the first token then it must be unary operator */
       if (pos == 0)
         return true;
 
@@ -166,11 +176,15 @@ static bool is_negtive(int pos) {
   return false;
 }
 
-static void detect_negtive() {
+static void post_tokenize() {
   int i;
   for (i = 0; i < nr_token; i++) {
-    if (is_negtive(i)) {
-      tokens[i].type = TK_NEGTIVE;
+    if (is_unary(i)) {
+      if (tokens[i].type == TK_SUB) {
+        tokens[i].type = TK_NEGTIVE;
+      } else if (tokens[i].type == TK_MUL) {
+        tokens[i].type = TK_DEREF;
+      }
     }
   }
 }
@@ -178,12 +192,12 @@ static void detect_negtive() {
 static bool make_token(char *e) {
   int i;
 
-  if (!trim_tokenize(e)) {
+  if (!basic_tokenize(e)) {
     // error has been printed in trim_tokenize
     return false;
   }
 
-  detect_negtive();
+  post_tokenize();
 
   Log("tokens are successfully generated");
   Log("printing token info");
@@ -229,8 +243,8 @@ static int find_op(int sp, int ep) {
            "spaces should not exists after making token");
 
     /* Rule 1: elems which is not an operator is definately not a main_op */
-    if (tokens[i].type == TK_NUM ||
-        tokens[i].type == TK_NEGTIVE) { // TK_NUM and TK_NEGTIVE is not operator
+    if (tokens[i].type == TK_NUM || tokens[i].type == TK_NEGTIVE) {
+      // TK_NUM and TK_NEGTIVE are not operators
       continue;
     }
 
@@ -240,32 +254,14 @@ static int find_op(int sp, int ep) {
       continue;
     } else if (tokens[i].type == TK_PARENTHESES_RIGHT) {
       valid_cnt--;
-      continue; // Rule 1: parentheses should be skipped too
+      continue; // parentheses should be skipped too
     }
 
-    /* Rule 3: main_op is the last operation to be evaluate */
-    /*         (obeys arithmatic rules and left associative rule) */
-    if (valid_cnt == 0) {
-      switch (main_op) {
-      case -1:
-      case '*':
-      case '/':
-        // left associative and highest order make main_op always be updated
-        op_index = i;
-        main_op = tokens[i].type;
-        break;
-      case '+':
-      case '-':
-        // only update in same level when current main_op is lowest order
-        if (tokens[i].type == '+' || tokens[i].type == '-') {
-          op_index = i;
-          main_op = tokens[i].type;
-        }
-        break;
-      default:
-        panic("should not reach here");
-        break;
-      }
+    /* Rule 3: main_op is the last operation to be evaluate
+     *         obeys C operator precedence and associativity */
+    if (valid_cnt == 0 && main_op < tokens[i].type) {
+      op_index = i;
+      main_op = tokens[i].type;
     }
   }
 
@@ -275,7 +271,7 @@ static int find_op(int sp, int ep) {
 /* Unwrap both positive and negtive number. */
 static long unwarp_num(int sp, int ep, bool *success) {
   Assert(tokens[ep].type == TK_NUM && *(tokens[ep].str) != '\0',
-         "str in TK_NUM should not be empty");
+         "token type should be TK_NUM and str in TK_NUM should not be empty");
 
   char *str = tokens[ep].str;
   char *endptr = str;
@@ -292,7 +288,7 @@ static long unwarp_num(int sp, int ep, bool *success) {
 
   // check number range
   if (errno == ERANGE) {
-    printf("number %ld out of range\n", number);
+    printf("conversion error: number %ld out of range\n", number);
     *success = false;
     return 0;
   }
@@ -303,15 +299,47 @@ static long unwarp_num(int sp, int ep, bool *success) {
   return result;
 }
 
+static word_t unwrap_reg(int pos, bool *success) {
+  Assert(tokens[pos].type == TK_REG && *(tokens[pos].str) != '\0',
+         "token type should be TK_REG and str in TK_REG should not be empty");
+
+  char *name = tokens[pos].str;
+  word_t val = isa_reg_str2val(name, success);
+
+  if (!(*success)) {
+    printf("conversion error: register %s not found\n", name);
+    return 0;
+  }
+
+  return val;
+}
+
 static long eval(int sp, int ep, bool *success) {
+  // note: pay attention to the order of the following if statements
   if (sp > ep) { // such as no expr in parentheses
-    printf("invalid expression\n");
+    printf("invalid expression: missing operands\n");
     *success = false;
     return 0;
   }
 
-  if (ep - sp < 2) { // TK_NEGTIVE or TK_NUM
-    return unwarp_num(sp, ep, success);
+  if (tokens[sp].type == TK_DEREF) { // TK_DEREF
+    word_t addr = eval(sp + 1, ep, success);
+    if (!(*success)) {
+      printf("arithmatic error: invalid derefence address\n");
+      return 0;
+    }
+    return paddr_read(addr, 4);
+  }
+
+  if (ep - sp < 2) { // TK_NEGTIVE, TK_NUM or TK_REG
+    if (tokens[sp].type == TK_NEGTIVE || tokens[sp].type == TK_NUM) {
+      return unwarp_num(sp, ep, success);
+    } else if (tokens[sp].type == TK_REG) {
+      return unwrap_reg(sp, success);
+    } else { // should not reach here by design as
+             // ep - sp < 2 can only be TK_NEGTIVE, TK_NUM or TK_REG
+      panic("should not reach here");
+    }
   }
 
   if (check_parentheses(sp, ep) == true) { // TK_PARENTHESES
@@ -324,7 +352,7 @@ static long eval(int sp, int ep, bool *success) {
   // find main operator
   int mop_pos = find_op(sp, ep);
   if (mop_pos < 0) {
-    printf("invalid expression\n");
+    printf("invalid expression: can not find main operator\n");
     *success = false;
     return 0;
   }
@@ -341,22 +369,31 @@ static long eval(int sp, int ep, bool *success) {
 
   // arithmatic evaluate
   switch (tokens[mop_pos].type) {
-  case '+':
+  case TK_ADD:
     result = lres + rres;
     break;
-  case '-':
+  case TK_SUB:
     result = lres - rres;
     break;
-  case '*':
+  case TK_MUL:
     result = lres * rres; // overflow may occur in multiplication
     break;
-  case '/':
+  case TK_DIV:
     if (rres == 0) {
       printf("arithmatic error: divided by 0\n");
       *success = false;
       return 0;
     }
     result = lres / rres;
+    break;
+  case TK_EQ:
+    result = lres == rres;
+    break;
+  case TK_NEQ:
+    result = lres != rres;
+    break;
+  case TK_AND:
+    result = lres && rres;
     break;
   default:
     panic("should not reach here");
