@@ -153,8 +153,10 @@ static bool is_unary(int pos) {
       return false;
     }
 
-    if (tokens[pos + 1].type == TK_NUM) { // negtive sign always before number
-      /* it is the first token then it must be negtive number */
+    /* unary sign is always before number, register or left parenthesis */
+    if (tokens[pos + 1].type == TK_NUM || tokens[pos + 1].type == TK_REG ||
+        tokens[pos + 1].type == TK_PARENTHESES_LEFT) {
+      /* it is the first token then it must be unary operator */
       if (pos == 0)
         return true;
 
