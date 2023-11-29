@@ -31,4 +31,21 @@ void isa_reg_display() {
   }
 }
 
-word_t isa_reg_str2val(const char *s, bool *success) { return 0; }
+word_t isa_reg_str2val(const char *s, bool *success) {
+  // zero register ('$' is omitted when tokenizing)
+  if (strcmp(s, "0") == 0) {
+    *success = true;
+    return cpu.gpr[0];
+  }
+
+  int i;
+  for (i = 1; i < 32; i++) { // general purpose registers
+    if (strcmp(s, regs[i]) == 0) {
+      *success = true;
+      return cpu.gpr[i];
+    }
+  }
+
+  *success = false; // if register not found
+  return 0;
+}
