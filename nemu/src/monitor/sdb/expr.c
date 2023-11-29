@@ -46,18 +46,18 @@ static struct rule {
   const char *regex;
   int token_type;
 } rules[] = {
-    {" +", TK_NOTYPE},                // spaces
-    {"\\(", TK_PARENTHESES_LEFT},     // left parenthese
-    {"\\)", TK_PARENTHESES_RIGHT},    // right parenthese
-    {"\\$.*", TK_REG},                // register
-    {"(0[xX])?[0-9A-Ea-e]+", TK_NUM}, // unsigned number
-    {"\\*", TK_MUL},                  // multiply
-    {"\\/", TK_DIV},                  // divide
-    {"\\+", TK_ADD},                  // plus
-    {"-", TK_SUB},                    // minus
-    {"==", TK_EQ},                    // equal
-    {"!=", TK_NEQ},                   // not equal
-    {"&&", TK_AND}                    // and
+    {" +", TK_NOTYPE},                          // spaces
+    {"\\(", TK_PARENTHESES_LEFT},               // left parenthese
+    {"\\)", TK_PARENTHESES_RIGHT},              // right parenthese
+    {"\\$(0|ra|sp|gp|tp|t|s|a)[0-9]?", TK_REG}, // register
+    {"(0[xX])?[0-9A-Ea-e]+", TK_NUM},           // unsigned number
+    {"\\*", TK_MUL},                            // multiply
+    {"\\/", TK_DIV},                            // divide
+    {"\\+", TK_ADD},                            // plus
+    {"-", TK_SUB},                              // minus
+    {"==", TK_EQ},                              // equal
+    {"!=", TK_NEQ},                             // not equal
+    {"&&", TK_AND}                              // and
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -110,6 +110,7 @@ static bool basic_tokenize(char *expr) {
 
         int cur_pos = nr_token; // current token pos
 
+        /* copy raw string of a number or register name */
         if (rules[i].token_type == TK_NUM || rules[i].token_type == TK_REG) {
           if (rules[i].token_type == TK_NUM && substr_len >= 32) {
             printf("number %s is out of range\n", substr_start);
@@ -119,6 +120,9 @@ static bool basic_tokenize(char *expr) {
           char *ch;
           int pch = 0;
           for (ch = substr_start; ch < substr_start + substr_len; ch++) {
+            if (*ch == '$') {
+              continue; // skip '$' in register name
+            }
             tokens[cur_pos].str[pch++] = *ch;
           }
           tokens[cur_pos].str[pch] = '\0'; // terminate raw string of a number
@@ -160,10 +164,10 @@ static bool is_unary(int pos) {
       if (pos == 0)
         return true;
 
-      /* if previous token is right parenthese or number,
+      /* if previous token is right parenthese, number or register,
        * then it must not be negtive but a minus sign */
       if (tokens[pos - 1].type == TK_PARENTHESES_RIGHT ||
-          tokens[pos - 1].type == TK_NUM) {
+          tokens[pos - 1].type == TK_NUM || tokens[pos - 1].type == TK_REG) {
         // overflow not occured here as "or" is short-circuit evaluation
         return false;
       }
@@ -322,6 +326,20 @@ static long eval(int sp, int ep, bool *success) {
     return 0;
   }
 
+  if (sp == ep) {
+    if (tokens[sp].type == TK_NUM) { // TK_NUM
+      return unwarp_num(sp, ep, success);
+    }
+
+    if (tokens[sp].type == TK_REG) { // TK_REG
+      return unwrap_reg(sp, success);
+    }
+  }
+
+  if (check_parentheses(sp, ep) == true) { // TK_PARENTHESES
+    return eval(sp + 1, ep - 1, success);
+  }
+
   if (tokens[sp].type == TK_DEREF) { // TK_DEREF
     word_t addr = eval(sp + 1, ep, success);
     if (!(*success)) {
@@ -331,19 +349,8 @@ static long eval(int sp, int ep, bool *success) {
     return paddr_read(addr, 4);
   }
 
-  if (ep - sp < 2) { // TK_NEGTIVE, TK_NUM or TK_REG
-    if (tokens[sp].type == TK_NEGTIVE || tokens[sp].type == TK_NUM) {
-      return unwarp_num(sp, ep, success);
-    } else if (tokens[sp].type == TK_REG) {
-      return unwrap_reg(sp, success);
-    } else { // should not reach here by design as
-             // ep - sp < 2 can only be TK_NEGTIVE, TK_NUM or TK_REG
-      panic("should not reach here");
-    }
-  }
-
-  if (check_parentheses(sp, ep) == true) { // TK_PARENTHESES
-    return eval(sp + 1, ep - 1, success);
+  if (tokens[sp].type == TK_NEGTIVE) { // TK_NEGTIVE
+    return -eval(sp + 1, ep, success);
   }
 
   /* normal evaluation */
