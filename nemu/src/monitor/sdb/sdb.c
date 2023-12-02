@@ -128,6 +128,7 @@ static int cmd_si(char *args) {
 }
 
 extern void print_wp_pool();
+
 static int cmd_info(char *args) {
   if (args == NULL) {
     printf("Expect argument\n");
@@ -194,6 +195,7 @@ static int cmd_p(char *args) {
 }
 
 extern void set_wp(char *e, bool *success);
+
 static int cmd_w(char *args) {
   if (args == NULL) {
     printf("Expect argument\n");
@@ -213,6 +215,7 @@ static int cmd_w(char *args) {
 }
 
 extern void del_wp(int NO, bool *success);
+
 static int cmd_d(char *args) {
   if (args == NULL) {
     printf("Expect argument\n");

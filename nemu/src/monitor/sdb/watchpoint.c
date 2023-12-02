@@ -124,7 +124,7 @@ void print_wp_pool() {
   }
 }
 
-void eval_wp_pool() {
+void check_wp_pool() {
   WP *wp = head;
 
   while (wp != NULL) {
