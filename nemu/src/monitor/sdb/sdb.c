@@ -26,8 +26,8 @@
 
 static int is_batch_mode = false;
 
-void init_regex();
-void init_wp_pool();
+extern void init_regex();
+extern void init_wp_pool();
 
 /* We use the `readline' library to provide more flexibility to read from stdin.
  */
@@ -49,18 +49,14 @@ static char *rl_gets() {
 }
 
 static int cmd_c(char *args);
-
 static int cmd_q(char *args);
-
 static int cmd_help(char *args);
-
 static int cmd_si(char *args);
-
 static int cmd_info(char *args);
-
 static int cmd_x(char *args);
-
 static int cmd_p(char *args);
+static int cmd_w(char *args);
+static int cmd_d(char *args);
 
 static struct {
   const char *name;
@@ -79,9 +75,9 @@ static struct {
      "Evaluate EXPR, use the result as the starting memory address, "
      "and output N consecutive 4 bytes in hexadecimal form",
      cmd_x},
-    {"p", "Find the value of the expression EXPR", cmd_p}
-    /* TODO: Add more commands */
-};
+    {"p", "Find the value of the expression EXPR", cmd_p},
+    {"w", "Set a watchpoint for an expression EXPR", cmd_w},
+    {"d", "Delete the watchpoint of the given index NO", cmd_d}};
 
 #define NR_CMD ARRLEN(cmd_table)
 
@@ -131,14 +127,14 @@ static int cmd_si(char *args) {
   return 0;
 }
 
+void print_wp_pool();
 static int cmd_info(char *args) {
-  char sub_command = ' ';
-
   if (args == NULL) {
     printf("Expect argument\n");
     return 1;
   }
 
+  char sub_command;
   if (sscanf(args, "%c", &sub_command) < 1) {
     printf("Invalid argument '%s'\n", args);
     return 1;
@@ -147,7 +143,7 @@ static int cmd_info(char *args) {
   if (sub_command == 'r') {
     isa_reg_display();
   } else if (sub_command == 'w') {
-    Assert(0, "not implemented yet");
+    print_wp_pool();
   } else {
     printf("Unknown subcommand '%c'\n", sub_command);
     return 1;
@@ -194,6 +190,50 @@ static int cmd_p(char *args) {
     return 1;
   }
 
+  return 0;
+}
+
+void set_wp(char *e, bool *success);
+static int cmd_w(char *args) {
+  if (args == NULL) {
+    printf("Expect argument\n");
+    return 1;
+  }
+
+  bool stat = false;
+  set_wp(args, &stat);
+
+  if (stat == false) {
+    printf("Failed to set watchpoint\n");
+    return 1;
+  }
+
+  printf("Watchpoint set successfully\n");
+  return 0;
+}
+
+void del_wp(int NO, bool *success);
+static int cmd_d(char *args) {
+  if (args == NULL) {
+    printf("Expect argument\n");
+    return 1;
+  }
+
+  int wp_index = 0;
+  if (sscanf(args, "%d", &wp_index) < 1) {
+    printf("Invalid argument '%s'\n", args);
+    return 1;
+  }
+
+  bool stat = false;
+  del_wp(wp_index, &stat);
+
+  if (stat == false) {
+    printf("Failed to delete watchpoint %d\n", wp_index);
+    return 1;
+  }
+
+  printf("Watchpoint %d deleted successfully\n", wp_index);
   return 0;
 }
 
