@@ -123,3 +123,19 @@ void print_wp_pool() {
     wp = wp->next;
   }
 }
+
+void eval_wp_pool() {
+  WP *wp = head;
+
+  while (wp != NULL) {
+    word_t expr_val = expr(wp->expr, NULL);
+    if (expr_val != wp->val) {
+      printf("Watchpoint %d: %s\n", wp->NO, wp->expr);
+      printf("Old value = %u\n", wp->val);
+      printf("New value = %u\n", expr_val);
+      wp->val = expr_val;
+    }
+
+    wp = wp->next;
+  }
+}
