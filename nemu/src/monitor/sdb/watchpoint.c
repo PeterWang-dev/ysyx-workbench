@@ -130,6 +130,11 @@ void check_wp_pool() {
   while (wp != NULL) {
     bool stat = false;
     word_t expr_val = expr(wp->expr, &stat);
+    if (!stat) {
+      printf("Evaluation error\n");
+      return;
+    }
+    
     if (expr_val != wp->val) {
       printf("Watchpoint %d: %s\n", wp->NO, wp->expr);
       printf("Old value = %u\n", wp->val);
