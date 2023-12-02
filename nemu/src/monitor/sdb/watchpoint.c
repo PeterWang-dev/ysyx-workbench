@@ -128,7 +128,8 @@ void check_wp_pool() {
   WP *wp = head;
 
   while (wp != NULL) {
-    word_t expr_val = expr(wp->expr, NULL);
+    bool stat = false;
+    word_t expr_val = expr(wp->expr, &stat);
     if (expr_val != wp->val) {
       printf("Watchpoint %d: %s\n", wp->NO, wp->expr);
       printf("Old value = %u\n", wp->val);
