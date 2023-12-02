@@ -134,6 +134,8 @@ void eval_wp_pool() {
       printf("Old value = %u\n", wp->val);
       printf("New value = %u\n", expr_val);
       wp->val = expr_val;
+
+      nemu_state.state = NEMU_STOP;
     }
 
     wp = wp->next;
