@@ -1,20 +1,24 @@
-/***************************************************************************************
+/*******************************************************************************
  * Copyright (c) 2014-2022 Zihao Yu, Nanjing University
+ *               2023-2024 PeterWang-dev (https://github.com/PeterWang-dev)
  *
  * NEMU is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan
- *PSL v2. You may obtain a copy of Mulan PSL v2 at:
+ * PSL v2. You may obtain a copy of Mulan PSL v2 at:
  *          http://license.coscl.org.cn/MulanPSL2
  *
  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
- *KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
- *NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  *
  * See the Mulan PSL v2 for more details.
- ***************************************************************************************/
+ *******************************************************************************/
 
 #include "sdb.h"
-#include <assert.h>
+#include "common.h"
+#include "debug.h"
+#include "memory/paddr.h"
+#include "utils.h"
 #include <cpu/cpu.h>
 #include <isa.h>
 #include <readline/history.h>
@@ -22,8 +26,8 @@
 
 static int is_batch_mode = false;
 
-void init_regex();
-void init_wp_pool();
+extern void init_regex();
+extern void init_wp_pool();
 
 /* We use the `readline' library to provide more flexibility to read from stdin.
  */
@@ -44,20 +48,15 @@ static char *rl_gets() {
   return line_read;
 }
 
-static int cmd_c(char *args) {
-  cpu_exec(-1);
-  return 0;
-}
-
-static int cmd_q(char *args) { return -1; }
-
+static int cmd_c(char *args);
+static int cmd_q(char *args);
 static int cmd_help(char *args);
-
 static int cmd_si(char *args);
-
 static int cmd_info(char *args);
-
 static int cmd_x(char *args);
+static int cmd_p(char *args);
+static int cmd_w(char *args);
+static int cmd_d(char *args);
 
 static struct {
   const char *name;
@@ -67,19 +66,18 @@ static struct {
     {"help", "Display information about all supported commands", cmd_help},
     {"c", "Continue the execution of the program", cmd_c},
     {"q", "Exit NEMU", cmd_q},
-    {"si [N]",
-     "Let the program execute N instructions in a single step and "
-     "then pause execution. When N is not given, the default is 1 ",
+    {"si",
+     "Let the program execute N instructions in a single step "
+     "and then pause execution. When N is not given, the default is 1 ",
      cmd_si},
-    {"info [SUBCMD]", "Print register status or watchpoint information",
-     cmd_info},
-    {"x [N] [EXPR]",
+    {"info", "Print register status or watchpoint information", cmd_info},
+    {"x",
      "Evaluate EXPR, use the result as the starting memory address, "
      "and output N consecutive 4 bytes in hexadecimal form",
-     cmd_x}
-    /* TODO: Add more commands */
-
-};
+     cmd_x},
+    {"p", "Find the value of the expression EXPR", cmd_p},
+    {"w", "Set a watchpoint for an expression EXPR", cmd_w},
+    {"d", "Delete the watchpoint of the given index NO", cmd_d}};
 
 #define NR_CMD ARRLEN(cmd_table)
 
@@ -102,6 +100,143 @@ static int cmd_help(char *args) {
     }
     printf("Unknown command '%s'\n", arg);
   }
+  return 0;
+}
+
+static int cmd_c(char *args) {
+  cpu_exec(-1);
+  return 0;
+}
+
+static int cmd_q(char *args) {
+  nemu_state.state = NEMU_QUIT;
+  return -1;
+}
+
+static int cmd_si(char *args) {
+  uint64_t exec_num = 0;
+
+  if (args == NULL) {
+    exec_num = 1;
+  } else if (sscanf(args, "%ld", &exec_num) < 1) {
+    printf("Invalid argument '%s'\n", args);
+    return 1;
+  }
+
+  cpu_exec(exec_num);
+  return 0;
+}
+
+extern void print_wp_pool();
+
+static int cmd_info(char *args) {
+  if (args == NULL) {
+    printf("Expect argument\n");
+    return 1;
+  }
+
+  char sub_command;
+  if (sscanf(args, "%c", &sub_command) < 1) {
+    printf("Invalid argument '%s'\n", args);
+    return 1;
+  }
+
+  if (sub_command == 'r') {
+    isa_reg_display();
+  } else if (sub_command == 'w') {
+    print_wp_pool();
+  } else {
+    printf("Unknown subcommand '%c'\n", sub_command);
+    return 1;
+  }
+
+  return 0;
+}
+
+static int cmd_x(char *args) {
+  paddr_t base_addr = 0;
+  uint32_t max_offset = 0;
+
+  if (args == NULL) {
+    printf("Expect argument\n");
+    return 1;
+  }
+
+  if (sscanf(args, "%u %x", &max_offset, &base_addr) < 2) {
+    printf("Invalid argument '%s'\n", args);
+    return 1;
+  }
+
+  for (int i = 0; i < max_offset; i++) {
+    printf("0x%x\n", paddr_read(base_addr + 4 * i, 4));
+  }
+
+  return 0;
+}
+
+static int print_counter = 0;
+static int cmd_p(char *args) {
+  if (args == NULL) {
+    printf("Expect argument\n");
+    return 1;
+  }
+
+  bool stat = false;
+  word_t result = expr(args, &stat);
+
+  if (stat == true) {
+    printf("$%d = %u\n", ++print_counter, result);
+  } else {
+    printf("Evaluation error\n");
+    return 1;
+  }
+
+  return 0;
+}
+
+extern void set_wp(char *e, bool *success);
+
+static int cmd_w(char *args) {
+  if (args == NULL) {
+    printf("Expect argument\n");
+    return 1;
+  }
+
+  bool stat = false;
+  set_wp(args, &stat);
+
+  if (stat == false) {
+    printf("Failed to set watchpoint\n");
+    return 1;
+  }
+
+  printf("Watchpoint set successfully\n");
+  return 0;
+}
+
+extern void del_wp(int NO, bool *success);
+
+static int cmd_d(char *args) {
+  if (args == NULL) {
+    printf("Expect argument\n");
+    return 1;
+  }
+
+  int wp_index = 0;
+  if (sscanf(args, "%d", &wp_index) < 1) {
+    printf("Invalid argument '%s'\n", args);
+    return 1;
+  }
+
+  bool stat = false;
+  del_wp(wp_index, &stat);
+
+  if (stat == false) {
+    printf("Failed to delete watchpoint %d\n", wp_index);
+    return 1;
+  }
+
+  printf("Watchpoint %d deleted successfully\n", wp_index);
   return 0;
 }
 

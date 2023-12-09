@@ -10,7 +10,7 @@ YSYX_HOME = $(NEMU_HOME)/..
 WORK_BRANCH = $(shell git rev-parse --abbrev-ref HEAD)
 # WORK_INDEX = $(YSYX_HOME)/.git/index.$(WORK_BRANCH)
 GIT_DIR = $(shell cat $(YSYX_HOME)/.git | cut -c 9- )
-WORK_INDEX = $(YSYX_HOME)/$(GIT_DIR)/index.$(WORK_BRANCH) # point to submodule .git dir
+WORK_INDEX = $(YSYX_HOME)/$(GIT_DIR)/index.$(shell echo $(WORK_BRANCH) | tr '/' '-') # point to submodule .git dir
 TRACER_BRANCH = $(TRACER)
 
 # LOCK_DIR = $(YSYX_HOME)/.git/
