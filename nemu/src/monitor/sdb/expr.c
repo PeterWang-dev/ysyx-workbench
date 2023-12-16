@@ -263,7 +263,7 @@ static int find_op(int sp, int ep) {
 
     /* Rule 3: main_op is the last operation to be evaluate
      *         obeys C operator precedence and associativity */
-    if (valid_cnt == 0 && main_op < tokens[i].type) {
+    if (valid_cnt == 0 && main_op <= tokens[i].type) {
       op_index = i;
       main_op = tokens[i].type;
     }
