@@ -15,7 +15,6 @@
 
 #include "monitor/sdb/sdb.h"
 #include <common.h>
-#define CONFIG_TEST_EXPR
 
 void init_monitor(int, char *[]);
 void am_init_monitor();
