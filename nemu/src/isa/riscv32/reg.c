@@ -23,7 +23,7 @@ const char *regs[] = {"$0", "ra", "sp",  "gp",  "tp", "t0", "t1", "t2",
 
 void isa_reg_display() {
   for (int i = 0; i < 32; i++) {
-    if (i > 0 && i < 5) {
+    if (i > 0 && i < 5) { // pointer registers using hex to display
       printf("%s\t0x%x\t0x%x\n", regs[i], cpu.gpr[i], cpu.gpr[i]);
     } else {
       printf("%s\t0x%x\t%u\n", regs[i], cpu.gpr[i], cpu.gpr[i]);
