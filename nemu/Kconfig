@@ -151,6 +151,9 @@ config ITRACE_COND
   string "Only trace instructions when the condition is true"
   default "true"
 
+config TEST_EXPR
+  bool "Enable expression evaluation test instead of running nemu"
+
 config WATCHPOINT
   bool "Enable watchpoint"
   default y
