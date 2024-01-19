@@ -43,7 +43,6 @@ run-batch: run-env
 
 gdb: run-env
 	$(call git_commit, "gdb NEMU")
-	export LSAN_OPTIONS=verbosity=1:log_threads=1
 	gdb -s $(BINARY) --args $(NEMU_EXEC)
 
 clean-tools = $(dir $(shell find ./tools -maxdepth 2 -mindepth 2 -name "Makefile"))
