@@ -25,7 +25,7 @@ $(BINARY):: compile_git
 # Some convenient rules
 
 override ARGS ?= --log=$(BUILD_DIR)/nemu-log.txt
-override ARGS += $(ARGS_DIFF) --batch
+override ARGS += $(ARGS_DIFF)
 
 # Command to execute NEMU
 IMG ?=
@@ -39,7 +39,7 @@ run: run-env
 
 run-batch: run-env
 	$(call git_commit, "run NEMU")
-	$(NEMU_EXEC)
+	$(NEMU_EXEC) --batch
 
 gdb: run-env
 	$(call git_commit, "gdb NEMU")
