@@ -50,7 +50,7 @@ enum {
 
 #define immS()                                                                 \
   do {                                                                         \
-    *imm = SEXT((BITS(i, 31, 25) << 5) | BITS(i, 11, 7), 12);                   \
+    *imm = SEXT(((BITS(i, 31, 25) << 5) | BITS(i, 11, 7)), 12);                \
   } while (0)
 
 #define immB()                                                                 \
@@ -67,8 +67,8 @@ enum {
 
 #define immJ()                                                                 \
   do {                                                                         \
-    *imm = SEXT(BITS(i, 31, 31) << 20 | (BITS(i, 19, 12) << 12) |              \
-                    (BITS(i, 20, 20) << 11) | (BITS(i, 30, 21) << 1),          \
+    *imm = SEXT((BITS(i, 31, 31) << 20 | (BITS(i, 19, 12) << 12) |             \
+                 (BITS(i, 20, 20) << 11) | (BITS(i, 30, 21) << 1)),            \
                 20);                                                           \
   } while (0)
 
