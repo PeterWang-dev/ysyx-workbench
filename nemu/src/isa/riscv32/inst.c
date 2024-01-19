@@ -62,12 +62,12 @@ enum {
 
 #define immU()                                                                 \
   do {                                                                         \
-    *imm = SEXT(BITS(i, 31, 12), 20) << 12;                                    \
+    *imm = SEXT((BITS(i, 31, 12) << 12), 20);                                  \
   } while (0)
 
 #define immJ()                                                                 \
   do {                                                                         \
-    *imm = SEXT(BITS(i, 31, 31) << 20 | (BITS(i, 19, 12) << 12) |              \
+    *imm = SEXT((BITS(i, 31, 31) << 20) | (BITS(i, 19, 12) << 12) |            \
                     (BITS(i, 20, 20) << 11) | (BITS(i, 30, 21) << 1),          \
                 20);                                                           \
   } while (0)
