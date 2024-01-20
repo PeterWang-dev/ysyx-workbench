@@ -247,7 +247,7 @@ static int find_op(int sp, int ep) {
            "spaces should not exists after making token");
 
     /* Rule 1: elems which is not an operator is definately not a main_op */
-    if (tokens[i].type == TK_NUM || tokens[i].type == TK_NEGTIVE) {
+    if (tokens[i].type == TK_REG || tokens[i].type == TK_NUM || tokens[i].type == TK_NEGTIVE) {
       // TK_NUM and TK_NEGTIVE are not operators
       continue;
     }
