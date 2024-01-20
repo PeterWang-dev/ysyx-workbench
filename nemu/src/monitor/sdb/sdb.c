@@ -154,7 +154,7 @@ static int cmd_info(char *args) {
 }
 
 static int cmd_x(char *args) {
-  char *e = "";
+  char e[sizeof(args)] = "";
   paddr_t base_addr = 0;
   uint32_t max_offset = 0;
 
