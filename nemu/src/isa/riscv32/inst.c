@@ -50,7 +50,7 @@ enum {
 
 #define immS()                                                                 \
   do {                                                                         \
-    *imm = SEXT((BITS(i, 31, 25) << 5) | BITS(i, 11, 7), 7);                   \
+    *imm = SEXT((BITS(i, 31, 25) << 5) | BITS(i, 11, 7), 12);                  \
   } while (0)
 
 #define immB()                                                                 \
@@ -62,12 +62,12 @@ enum {
 
 #define immU()                                                                 \
   do {                                                                         \
-    *imm = SEXT(BITS(i, 31, 12), 20) << 12;                                    \
+    *imm = SEXT((BITS(i, 31, 12) << 12), 20);                                  \
   } while (0)
 
 #define immJ()                                                                 \
   do {                                                                         \
-    *imm = SEXT(BITS(i, 31, 31) << 20 | (BITS(i, 19, 12) << 12) |              \
+    *imm = SEXT((BITS(i, 31, 31) << 20) | (BITS(i, 19, 12) << 12) |            \
                     (BITS(i, 20, 20) << 11) | (BITS(i, 30, 21) << 1),          \
                 20);                                                           \
   } while (0)
@@ -145,19 +145,19 @@ static int decode_exec(Decode *s) {
       "??????? ????? ????? 111 ????? 11000 11", bgeu, B,
       if (src1 >= src2) { s->dnpc = s->pc + imm; });
   INSTPAT("??????? ????? ????? 000 ????? 00000 11", lb, I,
-          R(rd) = SEXT(Mr(src1 + imm, 1), 32));
+          R(rd) = SEXT(BITS(Mr(src1 + imm, 1), 7, 0), 8));
   INSTPAT("??????? ????? ????? 001 ????? 00000 11", lh, I,
-          R(rd) = SEXT(Mr(src1 + imm, 2), 32));
+          R(rd) = SEXT(BITS(Mr(src1 + imm, 2), 15, 0), 16));
   INSTPAT("??????? ????? ????? 010 ????? 00000 11", lw, I,
           R(rd) = Mr(src1 + imm, 4));
   INSTPAT("??????? ????? ????? 100 ????? 00000 11", lbu, I,
-          R(rd) = Mr(src1 + imm, 1));
+          R(rd) = BITS(Mr(src1 + imm, 1), 7, 0));
   INSTPAT("??????? ????? ????? 101 ????? 00000 11", lhu, I,
-          R(rd) = Mr(src1 + imm, 2));
+          R(rd) = BITS(Mr(src1 + imm, 2), 15, 0));
   INSTPAT("??????? ????? ????? 000 ????? 01000 11", sb, S,
-          Mw(src1 + imm, 1, src2));
+          Mw(src1 + imm, 1, BITS(src2, 7, 0)));
   INSTPAT("??????? ????? ????? 001 ????? 01000 11", sh, S,
-          Mw(src1 + imm, 2, src2));
+          Mw(src1 + imm, 2, BITS(src2, 15, 0)));
   INSTPAT("??????? ????? ????? 010 ????? 01000 11", sw, S,
           Mw(src1 + imm, 4, src2));
   INSTPAT("??????? ????? ????? 000 ????? 00100 11", addi, I,
@@ -197,23 +197,23 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000000 ????? ????? 111 ????? 01100 11", and, R,
           R(rd) = src1 & src2);
   // RV32M XLEN = 32
-//   const int XLEN = 32; // actually it should be replace with macro
-//   INSTPAT("0000001 ????? ????? 000 ????? 01100 11", mul, R,
-//           R(rd) = (sword_t)src1 * (sword_t)src2);
-//   INSTPAT("0000001 ????? ????? 001 ????? 01100 11", mulh, R,
-//           R(rd) = ((sword_t)src1 * (sword_t)src2) >> (XLEN / 2));
-//   INSTPAT("0000001 ????? ????? 010 ????? 01100 11", mulhsu, R,
-//           R(rd) = ((sword_t)src1 * src2) >> (XLEN / 2));
-//   INSTPAT("0000001 ????? ????? 011 ????? 01100 11", mulhu, R,
-//           R(rd) = (src1 * src2) >> (XLEN / 2));
-//   INSTPAT("0000001 ????? ????? 100 ????? 01100 11", div, R,
-//           R(rd) = (sword_t)src1 / (sword_t)src2);
-//   INSTPAT("0000001 ????? ????? 101 ????? 01100 11", divu, R,
-//           R(rd) = src1 / src2);
-//   INSTPAT("0000001 ????? ????? 110 ????? 01100 11", rem, R,
-//           R(rd) = (sword_t)src1 % (sword_t)src2);
-//   INSTPAT("0000001 ????? ????? 111 ????? 01100 11", remu, R,
-//           R(rd) = src1 % src2);
+  const int XLEN = 32; // actually it should be replace with macro
+  INSTPAT("0000001 ????? ????? 000 ????? 01100 11", mul, R,
+          R(rd) = (__uint128_t)(sword_t)src1 * (sword_t)src2);
+  INSTPAT("0000001 ????? ????? 001 ????? 01100 11", mulh, R,
+          R(rd) = ((__int128_t)(sword_t)src1 * (sword_t)src2) >> XLEN);
+  INSTPAT("0000001 ????? ????? 010 ????? 01100 11", mulhsu, R,
+          R(rd) = ((__int128_t)(sword_t)src1 * (word_t)src2) >> XLEN);
+  INSTPAT("0000001 ????? ????? 011 ????? 01100 11", mulhu, R,
+          R(rd) = (__uint128_t)(src1 * src2) >> (XLEN));
+  INSTPAT("0000001 ????? ????? 100 ????? 01100 11", div, R,
+          R(rd) = (sword_t)src1 / (sword_t)src2);
+  INSTPAT("0000001 ????? ????? 101 ????? 01100 11", divu, R,
+          R(rd) = src1 / src2);
+  INSTPAT("0000001 ????? ????? 110 ????? 01100 11", rem, R,
+          R(rd) = (sword_t)src1 % (sword_t)src2);
+  INSTPAT("0000001 ????? ????? 111 ????? 01100 11", remu, R,
+          R(rd) = src1 % src2);
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak, N,
           NEMUTRAP(s->pc, R(10))); // R(10) is $a0
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv, N, INV(s->pc));
