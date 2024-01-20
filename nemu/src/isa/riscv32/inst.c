@@ -148,9 +148,8 @@ static int decode_exec(Decode *s) {
           R(rd) = SEXT(BITS(Mr(src1 + imm, 1), 7, 0), 32));
   INSTPAT("??????? ????? ????? 001 ????? 00000 11", lh, I,
           printf("sign-extended value:");
-          printf(FMT_WORD, (word_t)BITS(Mr(src1 + imm, 2), 15, 0));
-          printf("\n");
-          R(rd) = SEXT(BITS(Mr(src1 + imm, 2), 15, 0), 32));
+          printf("0x%08lx", SEXT(BITS(Mr(src1 + imm, 2), 15, 0), 32));
+          printf("\n"); R(rd) = SEXT(BITS(Mr(src1 + imm, 2), 15, 0), 32));
   INSTPAT("??????? ????? ????? 010 ????? 00000 11", lw, I,
           R(rd) = Mr(src1 + imm, 4));
   INSTPAT("??????? ????? ????? 100 ????? 00000 11", lbu, I,
