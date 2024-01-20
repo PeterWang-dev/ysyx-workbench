@@ -269,13 +269,37 @@ static int find_op(int sp, int ep) {
         main_op = tokens[i].type;
         op_index = i;
         break;
-      case TK_ADD:
-      case TK_SUB:
-        if (tokens[i].type == TK_ADD || tokens[i].type == TK_SUB) {
+      // Lowest level operator, only be updated when precedence is equal
+      // according to associativity
+      case TK_AND:
+        if (tokens[i].type == TK_AND) {
           main_op = tokens[i].type;
           op_index = i;
         }
         break;
+      // A bit lower than add and sub,
+      // only be updated when precedence is lower or equal
+      case TK_EQ:
+      case TK_NEQ:
+        if (tokens[i].type == TK_EQ || tokens[i].type == TK_NEQ ||
+            tokens[i].type == TK_AND) {
+          main_op = tokens[i].type;
+          op_index = i;
+        }
+        break;
+      // Lower than mul and div,
+      // only be updated when precedence is lower or equal
+      case TK_ADD:
+      case TK_SUB:
+        if (tokens[i].type == TK_ADD || tokens[i].type == TK_SUB ||
+            tokens[i].type == TK_EQ || tokens[i].type == TK_NEQ ||
+            tokens[i].type == TK_AND) {
+          main_op = tokens[i].type;
+          op_index = i;
+        }
+        break;
+      // Highest level operators, main_op always be updated
+      // referring to both precedence and associativity
       case TK_MUL:
       case TK_DIV:
         main_op = tokens[i].type;
