@@ -103,8 +103,8 @@ static bool basic_tokenize(char *expr) {
         char *substr_start = expr + pos;
         int substr_len = pmatch.rm_eo;
 
-        // Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s", i,
-        //     rules[i].regex, pos, substr_len, substr_len, substr_start);
+        Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s", i,
+            rules[i].regex, pos, substr_len, substr_len, substr_start);
 
         pos += substr_len; // move
 
@@ -194,7 +194,7 @@ static void post_tokenize() {
 }
 
 static bool make_token(char *e) {
-  // int i;
+  int i;
 
   if (!basic_tokenize(e)) {
     // error has been printed in trim_tokenize
@@ -203,11 +203,11 @@ static bool make_token(char *e) {
 
   post_tokenize();
 
-  // Log("tokens are successfully generated");
-  // Log("printing token info");
-  // for (i = 0; i < nr_token; i++) {
-  //   Log("token[%d]: type: %d, content:%s", i, tokens[i].type, tokens[i].str);
-  // }
+  Log("tokens are successfully generated");
+  Log("printing token info");
+  for (i = 0; i < nr_token; i++) {
+    Log("token[%d]: type: %d, content:%s", i, tokens[i].type, tokens[i].str);
+  }
 
   return true;
 }
