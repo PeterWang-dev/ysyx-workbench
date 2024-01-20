@@ -154,24 +154,26 @@ static int cmd_info(char *args) {
 }
 
 static int cmd_x(char *args) {
-  char e[sizeof(args)] = "";
-  paddr_t base_addr = 0;
-  uint32_t max_offset = 0;
-
   if (args == NULL) {
     printf("Expect argument\n");
     return 1;
   }
 
+  uint32_t max_offset = 0;
+  char *e = malloc(strlen(args) + 1);
+
   if (sscanf(args, "%u %s", &max_offset, e) < 2) {
     printf("Invalid argument '%s'\n", args);
+    free(e);
     return 1;
   }
 
   bool success = false;
-  base_addr = expr(e, &success);
+
+  paddr_t base_addr = expr(e, &success);
   if (success == false) {
     printf("Invalid expression '%s'\n", e);
+    free(e);
     return 1;
   }
 
@@ -179,6 +181,7 @@ static int cmd_x(char *args) {
     printf("0x%x\n", paddr_read(base_addr + 4 * i, 4));
   }
 
+  free(e);
   return 0;
 }
 
