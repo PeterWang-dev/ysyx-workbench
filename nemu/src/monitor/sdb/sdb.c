@@ -154,6 +154,7 @@ static int cmd_info(char *args) {
 }
 
 static int cmd_x(char *args) {
+  char *e = "";
   paddr_t base_addr = 0;
   uint32_t max_offset = 0;
 
@@ -162,8 +163,15 @@ static int cmd_x(char *args) {
     return 1;
   }
 
-  if (sscanf(args, "%u %x", &max_offset, &base_addr) < 2) {
+  if (sscanf(args, "%u %s", &max_offset, e) < 2) {
     printf("Invalid argument '%s'\n", args);
+    return 1;
+  }
+
+  bool success = false;
+  base_addr = expr(e, &success);
+  if (success == false) {
+    printf("Invalid expression '%s'\n", e);
     return 1;
   }
 
