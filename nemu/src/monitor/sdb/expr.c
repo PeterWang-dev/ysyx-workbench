@@ -103,8 +103,8 @@ static bool basic_tokenize(char *expr) {
         char *substr_start = expr + pos;
         int substr_len = pmatch.rm_eo;
 
-        Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s", i,
-            rules[i].regex, pos, substr_len, substr_len, substr_start);
+        // Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s", i,
+        //     rules[i].regex, pos, substr_len, substr_len, substr_start);
 
         pos += substr_len; // move
 
@@ -132,8 +132,8 @@ static bool basic_tokenize(char *expr) {
           tokens[cur_pos].type = rules[i].token_type;
           nr_token++;
 
-          Log("generated token %d: type: %d, contents: %s", nr_token,
-              tokens[cur_pos].type, tokens[cur_pos].str);
+          // Log("generated token %d: type: %d, contents: %s", nr_token,
+          //     tokens[cur_pos].type, tokens[cur_pos].str);
         }
 
         break;
@@ -194,7 +194,7 @@ static void post_tokenize() {
 }
 
 static bool make_token(char *e) {
-  int i;
+  // int i;
 
   if (!basic_tokenize(e)) {
     // error has been printed in trim_tokenize
@@ -203,11 +203,11 @@ static bool make_token(char *e) {
 
   post_tokenize();
 
-  Log("tokens are successfully generated");
-  Log("printing token info");
-  for (i = 0; i < nr_token; i++) {
-    Log("token[%d]: type: %d, content:%s", i, tokens[i].type, tokens[i].str);
-  }
+  // Log("tokens are successfully generated");
+  // Log("printing token info");
+  // for (i = 0; i < nr_token; i++) {
+  //   Log("token[%d]: type: %d, content:%s", i, tokens[i].type, tokens[i].str);
+  // }
 
   return true;
 }
@@ -247,7 +247,7 @@ static int find_op(int sp, int ep) {
            "spaces should not exists after making token");
 
     /* Rule 1: elems which is not an operator is definately not a main_op */
-    if (tokens[i].type == TK_NUM || tokens[i].type == TK_NEGTIVE) {
+    if (tokens[i].type == TK_REG || tokens[i].type == TK_NUM || tokens[i].type == TK_NEGTIVE) {
       // TK_NUM and TK_NEGTIVE are not operators
       continue;
     }
@@ -269,13 +269,37 @@ static int find_op(int sp, int ep) {
         main_op = tokens[i].type;
         op_index = i;
         break;
-      case TK_ADD:
-      case TK_SUB:
-        if (tokens[i].type == TK_ADD || tokens[i].type == TK_SUB) {
+      // Lowest level operator, only be updated when precedence is equal
+      // according to associativity
+      case TK_AND:
+        if (tokens[i].type == TK_AND) {
           main_op = tokens[i].type;
           op_index = i;
         }
         break;
+      // A bit lower than add and sub,
+      // only be updated when precedence is lower or equal
+      case TK_EQ:
+      case TK_NEQ:
+        if (tokens[i].type == TK_EQ || tokens[i].type == TK_NEQ ||
+            tokens[i].type == TK_AND) {
+          main_op = tokens[i].type;
+          op_index = i;
+        }
+        break;
+      // Lower than mul and div,
+      // only be updated when precedence is lower or equal
+      case TK_ADD:
+      case TK_SUB:
+        if (tokens[i].type == TK_ADD || tokens[i].type == TK_SUB ||
+            tokens[i].type == TK_EQ || tokens[i].type == TK_NEQ ||
+            tokens[i].type == TK_AND) {
+          main_op = tokens[i].type;
+          op_index = i;
+        }
+        break;
+      // Highest level operators, main_op always be updated
+      // referring to both precedence and associativity
       case TK_MUL:
       case TK_DIV:
         main_op = tokens[i].type;
