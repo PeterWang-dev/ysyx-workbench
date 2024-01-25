@@ -6,7 +6,7 @@ import mill.scalalib.TestModule.Utest
 // support BSP
 import mill.bsp._
 
-object FutureCore extends ScalaModule with ScalafmtModule { m =>
+object playground extends ScalaModule with ScalafmtModule { m =>
   val useChisel5 = true
   override def scalaVersion = "2.13.10"
   override def scalacOptions = Seq(
@@ -30,11 +30,8 @@ object FutureCore extends ScalaModule with ScalafmtModule { m =>
       ivy"edu.berkeley.cs::chiseltest:0.6.0",
     )
   }
-  def repositoriesTask = {
-    val newValue = { Seq(
+  def repositoriesTask = T.task { Seq(
     coursier.MavenRepository("https://maven.aliyun.com/repository/central"),
     coursier.MavenRepository("https://repo.scala-sbt.org/scalasbt/maven-releases"),
   ) ++ super.repositoriesTask() }
-    T.task (newValue)
-  }
 }
