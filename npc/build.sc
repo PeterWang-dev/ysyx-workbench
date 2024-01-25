@@ -30,8 +30,11 @@ object playground extends ScalaModule with ScalafmtModule { m =>
       ivy"edu.berkeley.cs::chiseltest:0.6.0",
     )
   }
-  def repositoriesTask = T.task { Seq(
+  def repositoriesTask = {
+    val newValue = { Seq(
     coursier.MavenRepository("https://maven.aliyun.com/repository/central"),
     coursier.MavenRepository("https://repo.scala-sbt.org/scalasbt/maven-releases"),
   ) ++ super.repositoriesTask() }
+    T.task (newValue)
+  }
 }
