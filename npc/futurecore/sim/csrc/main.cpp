@@ -21,14 +21,14 @@ int main(int argc, char **argv) {
       new VFutureCore{contextp.get(), "FutureCore"}};
 
   // Set initial signals
-  top->clk = 0;
+  top->clock = 0;
 
   // Simulate until $finish
   while (!contextp->gotFinish()) {
     contextp->timeInc(1); // 1 timeprecision period passes...
 
     // Toggle a fast (time/2 period) clock
-    top->clk = !top->clk;
+    top->clock = !top->clock;
 
     // Evaluate model
     top->eval();
