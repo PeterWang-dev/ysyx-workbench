@@ -20,7 +20,6 @@
 package futurecore
 
 import chisel3._
-import circt.stage._
 
 import backend.Alu
 import frontend.ProgramCounter
@@ -37,10 +36,4 @@ class FutureCore(width: Int) extends Module {
   val pc = Module(new ProgramCounter)
 
   io.debug_pcInstAddrOutput := pc.io.instAddr
-}
-
-object Elaborate extends App {
-  def top       = new FutureCore(width = 32)
-  val generator = Seq(chisel3.stage.ChiselGeneratorAnnotation(() => top))
-  (new ChiselStage).execute(args, generator :+ CIRCTTargetAnnotation(CIRCTTarget.Verilog))
 }
