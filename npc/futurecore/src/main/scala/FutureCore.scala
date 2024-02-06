@@ -34,7 +34,7 @@ class FutureCore(width: Int) extends Module {
 
   val datapathWidth = width.W
 
-  val pc = new ProgramCounter
+  val pc = Module(new ProgramCounter)
 
   io.debug_pcInstAddrOutput := pc.io.instAddr
 }
