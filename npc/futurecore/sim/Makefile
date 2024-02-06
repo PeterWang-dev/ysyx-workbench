@@ -48,7 +48,7 @@ run:
 
 	@echo
 	@echo "-- VERILATE ----------------"
-	$(VERILATOR) $(VERILATOR_FLAGS) $(VERILATOR_INPUT)
+	$(VERILATOR) --top-module $(TOPNAME) $(VERILATOR_FLAGS) $(VERILATOR_INPUT)
 
 	@echo
 	@echo "-- BUILD -------------------"
