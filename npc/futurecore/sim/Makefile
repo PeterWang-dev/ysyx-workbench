@@ -37,7 +37,7 @@ VERILATOR_FLAGS += --coverage
 #VERILATOR_FLAGS += --gdbbt
 
 # Input files for Verilator
-VERILATOR_INPUT =  --top-module $(TOPNAME) -f input.vc $(VSRC) $(CSRCS)
+VERILATOR_INPUT = --top-module $(TOPNAME) -f input.vc $(VSRC) $(CSRCS)
 
 ######################################################################
 default: run
