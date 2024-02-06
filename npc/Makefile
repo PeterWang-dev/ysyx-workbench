@@ -1,4 +1,4 @@
-BUILD_DIR = ./build
+BUILD_DIR = ./futurecore/sim/vsrc
 
 export PATH := $(PATH):$(abspath ./utils)
 
