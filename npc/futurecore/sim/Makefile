@@ -13,17 +13,9 @@ VSRC = $(abspath ./vsrc)/$(TOPNAME).sv
 CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp")
 
 
-# If $VERILATOR_ROOT isn't in the environment, we assume it is part of a
-# package install, and verilator is in your path. Otherwise find the
-# binary relative to $VERILATOR_ROOT (such as when inside the git sources).
-ifeq ($(VERILATOR_ROOT),)
+# Set up Verilator
 VERILATOR = verilator
 VERILATOR_COVERAGE = verilator_coverage
-else
-export VERILATOR_ROOT
-VERILATOR = $(VERILATOR_ROOT)/bin/verilator
-VERILATOR_COVERAGE = $(VERILATOR_ROOT)/bin/verilator_coverage
-endif
 
 # Generate C++ in executable form
 VERILATOR_FLAGS += -cc --exe
