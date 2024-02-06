@@ -22,9 +22,11 @@ int main(int argc, char **argv) {
 
   // Set initial signals
   top->clock = 0;
+  int runing_cycles = 10;
 
   // Simulate until $finish
-  while (!contextp->gotFinish()) {
+  while (runing_cycles--) {
+    //   while (!contextp->gotFinish()) {
     contextp->timeInc(1); // 1 timeprecision period passes...
 
     // Toggle a fast (time/2 period) clock
@@ -34,7 +36,8 @@ int main(int argc, char **argv) {
     top->eval();
 
     // Read outputs
-    // VL_PRINTF("[%" PRId64 "] clk=%x rstl=%x iquad=%" PRIx64 " -> oquad=%" PRIx64
+    // VL_PRINTF("[%" PRId64 "] clk=%x rstl=%x iquad=%" PRIx64 " -> oquad=%"
+    // PRIx64
     //           " owide=%x_%08x_%08x\n",
     //           contextp->time(), top->clk, top->reset_l, top->in_quad,
     //           top->out_quad, top->out_wide[2], top->out_wide[1],
@@ -44,7 +47,7 @@ int main(int argc, char **argv) {
   // Final model cleanup
   top->final();
 
-  // Coverage analysis (calling write only after the test is known to pass)
+// Coverage analysis (calling write only after the test is known to pass)
 #if VM_COVERAGE
   Verilated::mkdir("logs");
   contextp->coveragep()->write("logs/coverage.dat");
