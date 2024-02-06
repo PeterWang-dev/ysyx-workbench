@@ -1,4 +1,5 @@
-BUILD_DIR = ./futurecore/sim/vsrc
+SIM_DIR = $(abspath ./futurecore/sim)
+VSRC_DIR = $(SIM_DIR)/vsrc
 
 export PATH := $(PATH):$(abspath ./utils)
 
@@ -7,8 +8,8 @@ test:
 
 verilog:
 	$(call git_commit, "generate verilog")
-	mkdir -p $(BUILD_DIR)
-	mill -i __.runMain Elaborate -td $(BUILD_DIR)
+	mkdir -p $(VSRC_DIR)
+	mill -i __.runMain Elaborate -td $(VSRC_DIR)
 
 help:
 	mill -i __.runMain Elaborate --help
@@ -26,12 +27,13 @@ checkformat:
 	mill -i __.checkFormat
 
 clean:
-	-rm -rf $(BUILD_DIR)
-
-.PHONY: test verilog help compile bsp reformat checkformat clean
+	-rm -rf $(VSRC_DIR)
+	make -C $(SIM_DIR) clean
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-	@echo "Write this Makefile by yourself."
+	make -C $(SIM_DIR) run
+
+.PHONY: test verilog help compile bsp reformat checkformat clean sim
 
 -include ../Makefile

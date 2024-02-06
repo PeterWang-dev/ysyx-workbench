@@ -5,6 +5,13 @@ ifneq ($(words $(CURDIR)),1)
 endif
 
 # Set up variables
+TOPNAME = FutureCore
+INC_PATH =
+
+## Source file path
+VSRC = $(abspath ./vsrc)/$(TOPNAME).sv
+CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp")
+
 
 # If $VERILATOR_ROOT isn't in the environment, we assume it is part of a
 # package install, and verilator is in your path. Otherwise find the
@@ -38,7 +45,7 @@ VERILATOR_FLAGS += --coverage
 #VERILATOR_FLAGS += --gdbbt
 
 # Input files for Verilator
-VERILATOR_INPUT = -f input.vc top.v sim_main.cpp
+VERILATOR_INPUT = -f input.vc $(VSRC) $(CSRCS)
 
 ######################################################################
 default: run
@@ -53,11 +60,6 @@ run:
 
 	@echo
 	@echo "-- BUILD -------------------"
-# To compile, we can either
-# 1. Pass --build to Verilator by editing VERILATOR_FLAGS above.
-# 2. Or, run the make rules Verilator does:
-#	$(MAKE) -j -C obj_dir -f Vtop.mk
-# 3. Or, call a submakefile where we can override the rules ourselves:
 	$(MAKE) -j -C obj_dir -f ../Makefile_obj
 
 	@echo
