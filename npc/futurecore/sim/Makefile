@@ -58,7 +58,7 @@ run:
 	@echo "-- RUN ---------------------"
 	@rm -rf logs
 	@mkdir -p logs
-	obj_dir/Vtop +trace
+	obj_dir/V$(TOPNAME) +trace
 
 	@echo
 	@echo "-- COVERAGE ----------------"
