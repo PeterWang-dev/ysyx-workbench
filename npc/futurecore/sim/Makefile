@@ -9,7 +9,7 @@ TOPNAME = FutureCore
 INC_PATH =
 
 ## Source file path
-VSRC = $(abspath ./vsrc)/$(TOPNAME).sv
+VSRC = $(abspath ./vsrc)/$(TOPNAME).v
 CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp")
 
 
