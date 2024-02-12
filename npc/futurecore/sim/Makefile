@@ -52,7 +52,7 @@ run:
 
 	@echo
 	@echo "-- BUILD -------------------"
-	$(MAKE) -j -C obj_dir -f ../Makefile_obj
+	$(MAKE) -j -C obj_dir
 
 	@echo
 	@echo "-- RUN ---------------------"
