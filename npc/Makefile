@@ -1,15 +1,16 @@
-SIM_DIR = $(abspath ./futurecore/sim)
-VSRC_DIR = $(SIM_DIR)/vsrc
-
 export PATH := $(PATH):$(abspath ./utils)
+
+PRJ_NAME = futurecore
+SRC_DIR = $(PRJ_NAME)/src
+SIM_DIR = $(PRJ_NAME)/sim
 
 test:
 	mill -i __.test
 
 verilog:
 	$(call git_commit, "generate verilog")
-	mkdir -p $(VSRC_DIR)
-	mill -i __.runMain Elaborate -td $(VSRC_DIR)
+	mkdir -p $(SIM_DIR)/vsrc
+	mill -i __.runMain Elaborate -td $(SIM_DIR)/vsrc
 
 help:
 	mill -i __.runMain Elaborate --help
@@ -27,7 +28,7 @@ checkformat:
 	mill -i __.checkFormat
 
 clean:
-	-rm -rf $(VSRC_DIR)
+	-rm -rf $(SIM_DIR)/vsrc
 	make -C $(SIM_DIR) clean
 
 sim:

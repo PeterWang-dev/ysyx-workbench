@@ -1,82 +1,78 @@
-# Check for sanity to avoid later confusion
-
-ifneq ($(words $(CURDIR)),1)
- $(error Unsupported: GNU Make cannot build in directories containing spaces, build elsewhere: '$(CURDIR)')
-endif
-
-# Set up variables
-TOPNAME = FutureCore
-INC_PATH =
+# Variables Definition
+TOPNAME ?= FutureCore
 
 ## Source file path
-VSRC = $(abspath ./vsrc)/$(TOPNAME).v
-CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp")
+VSRC_DIR = $(abspath vsrc)
+VSRC = $(VSRC_DIR)/$(TOPNAME).v
+INC_DIR ?=
+CSRC_DIR = $(abspath csrc)
+CSRCS = $(wildcard $(CSRC_DIR)/*.cpp)
+# SRC_AUTO_BIND = $(abspath ./auto_bind.cpp)
+# CSRCS += $(SRC_AUTO_BIND)
 
+## Output path
+OBJ_DIR = obj_dir
+BIN = $(OUTPUT_DIR)/$(TOPNAME)
 
-# Set up Verilator
+## Compiler flags
+CXXFLAGS += -I $(INCFLAGS)
+LDFLAGS +=
+
+## Verilator path and flags
 VERILATOR = verilator
 VERILATOR_COVERAGE = verilator_coverage
+VERILATOR_FLAGS := -cc --exe -MMD -MP \
+					-O3 --x-assign fast --x-initial fast --noassert --coverage \
+					$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 
-# Generate C++ in executable form
-VERILATOR_FLAGS += -cc --exe
-# Generate makefile dependencies (not shown as complicates the Makefile)
-#VERILATOR_FLAGS += -MMD
-# Optimize
-VERILATOR_FLAGS += -x-assign fast
-# Warn abount lint issues; may not want this on less solid designs
-# VERILATOR_FLAGS += -Wall
-# Make waveforms
-VERILATOR_FLAGS += --trace
-# Check SystemVerilog assertions
-VERILATOR_FLAGS += --assert
-# Generate coverage analysis
-VERILATOR_FLAGS += --coverage
-# Run Verilator in debug mode
-#VERILATOR_FLAGS += --debug
-# Add this trace to get a backtrace in gdb
-#VERILATOR_FLAGS += --gdbbt
-
-# Input files for Verilator
-VERILATOR_INPUT = --top-module $(TOPNAME) -f input.vc $(VSRC) $(CSRCS)
-
-######################################################################
+# Build Rules
 default: run
 
-run:
-	@echo
-	@echo "-- Verilator tracing example"
+build: $(SRC_AUTO_BIND) $(BIN)
 
+run: $(BIN)
 	@echo
-	@echo "-- VERILATE ----------------"
-	$(VERILATOR) $(VERILATOR_FLAGS) $(VERILATOR_INPUT)
+	@echo "-------- Verilator tracing --------"
+	@echo
 
+	@echo "------------ Running --------------"
 	@echo
-	@echo "-- BUILD -------------------"
-	$(MAKE) -j -C obj_dir -f V$(TOPNAME).mk
-
-	@echo
-	@echo "-- RUN ---------------------"
-	@rm -rf logs
+	@rm -r logs
 	@mkdir -p logs
-	obj_dir/V$(TOPNAME) +trace
-
+	@$^ +trace
 	@echo
-	@echo "-- COVERAGE ----------------"
+
+	@echo "----------- Coveraging ------------"
+	@echo
 	@rm -rf logs/annotated
-	$(VERILATOR_COVERAGE) --annotate logs/annotated logs/coverage.dat
-
+	@$(VERILATOR_COVERAGE) --annotate logs/annotated logs/coverage.dat
 	@echo
-	@echo "-- DONE --------------------"
+
+	@echo "-------------- Done ---------------"
 	@echo "To see waveforms, open vlt_dump.vcd in a waveform viewer"
 	@echo
 
+clean:
+	-rm $(BIN)
+	-rm -r $(OBJ_DIR)
 
-######################################################################
-# Other targets
+# $(BIN): $(VSRC) $(CSRCS) $(SRC_AUTO_BIND) $(NVBOARD_ARCHIVE)
+$(BIN): $(VSRC) $(CSRCS)
+	@echo
+	@echo "----- Verilating and Building -----"
+	$(VERILATOR) --build $(VERILATOR_FLAGS) \
+		--top-module $(TOPNAME) $^ \
+		--Mdir $(OBJ_DIR) -o $(abspath $(BIN))
+	@echo "------ Executable Generated -------"
+	@echo
 
-show-config:
-	$(VERILATOR) -V
+$(VSRC):
+	$(error $(VSRC) is not found! Use 'make verilog' to generate it)
 
-maintainer-copy::
-clean mostlyclean distclean maintainer-clean::
-	-rm -rf obj_dir logs *.log *.dmp *.vpd coverage.dat core
+# $(SRC_AUTO_BIND): $(NXDC_FILES)
+# 	python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py $^ $@
+
+# # Include NVBoard
+# include $(NVBOARD_HOME)/scripts/nvboard.mk
+
+.PHONY: default all test build run clean
