@@ -12,7 +12,7 @@ CSRCS = $(wildcard $(CSRC_DIR)/*.cpp)
 
 ## Output path
 OBJ_DIR = obj_dir
-BIN = $(OUTPUT_DIR)/$(TOPNAME)
+BIN = $(abspath ./$(TOPNAME))
 
 ## Compiler flags
 CXXFLAGS += -I $(INCFLAGS)
@@ -28,7 +28,7 @@ VERILATOR_FLAGS := -cc --exe -MMD -MP \
 # Build Rules
 default: run
 
-build: $(SRC_AUTO_BIND) $(BIN)
+build: $(BIN)
 
 run: $(BIN)
 	@echo
@@ -75,4 +75,4 @@ $(VSRC):
 # # Include NVBoard
 # include $(NVBOARD_HOME)/scripts/nvboard.mk
 
-.PHONY: default all test build run clean
+.PHONY: default all build run clean
