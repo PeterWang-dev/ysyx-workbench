@@ -22,9 +22,6 @@ project/metals.sbt
 
 # Simulation
 
-# Generated Verilog files
-*.v
-
 # Generated Verilated files
 obj_dir/
 

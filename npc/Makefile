@@ -1,8 +1,9 @@
 export PATH := $(PATH):$(abspath ./utils)
 
-PRJ_NAME = futurecore
-SRC_DIR = $(PRJ_NAME)/src
-SIM_DIR = $(PRJ_NAME)/sim
+TOP_NAME = FutureCore
+PRJ_DIR = $(shell echo $(TOP_NAME) | tr A-Z a-z)
+SRC_DIR = $(PRJ_DIR)/src
+SIM_DIR = $(PRJ_DIR)/sim
 
 test:
 	mill -i __.test
@@ -28,7 +29,7 @@ checkformat:
 	mill -i __.checkFormat
 
 clean:
-	-rm -rf $(SIM_DIR)/vsrc
+	-rm $(SIM_DIR)/vsrc/$(TOP_NAME).sv
 	make -C $(SIM_DIR) clean
 
 sim:

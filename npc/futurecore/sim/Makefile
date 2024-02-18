@@ -3,8 +3,8 @@ TOPNAME ?= FutureCore
 
 ## Source file path
 VSRC_DIR = $(abspath vsrc)
-VSRC = $(VSRC_DIR)/$(TOPNAME).v
-INC_DIR ?=
+VSRC = $(VSRC_DIR)/$(TOPNAME).sv
+# INC_PATH ?=
 CSRC_DIR = $(abspath csrc)
 CSRCS = $(wildcard $(CSRC_DIR)/*.cpp)
 # SRC_AUTO_BIND = $(abspath ./auto_bind.cpp)
@@ -15,15 +15,16 @@ OBJ_DIR = obj_dir
 BIN = $(abspath ./$(TOPNAME))
 
 ## Compiler flags
-CXXFLAGS += -I $(INCFLAGS)
-LDFLAGS +=
+# INCFLAGS += $(addprefix -I, $(INC_PATH))
+# CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\""
 
 ## Verilator path and flags
 VERILATOR = verilator
 VERILATOR_COVERAGE = verilator_coverage
 VERILATOR_FLAGS := -cc --exe -MMD -MP \
-					-O3 --x-assign fast --x-initial fast --noassert --coverage \
-					$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
+					-Wall -Wno-fatal -O3 \
+					--x-assign fast --x-initial fast --noassert --coverage
+#					$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS))
 
 # Build Rules
 default: run
@@ -33,21 +34,12 @@ build: $(BIN)
 run: $(BIN)
 	@echo
 	@echo "-------- Verilator tracing --------"
-	@echo
-
 	@echo "------------ Running --------------"
-	@echo
-	@rm -r logs
-	@mkdir -p logs
-	@$^ +trace
-	@echo
-
+	-rm -r logs
+	$^ +trace
 	@echo "----------- Coveraging ------------"
-	@echo
-	@rm -rf logs/annotated
-	@$(VERILATOR_COVERAGE) --annotate logs/annotated logs/coverage.dat
-	@echo
-
+	-rm -r logs/annotated
+	$(VERILATOR_COVERAGE) --annotate logs/annotated logs/coverage.dat
 	@echo "-------------- Done ---------------"
 	@echo "To see waveforms, open vlt_dump.vcd in a waveform viewer"
 	@echo
