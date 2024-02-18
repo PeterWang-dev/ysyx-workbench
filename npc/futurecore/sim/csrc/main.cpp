@@ -22,6 +22,7 @@ int main(int argc, char **argv) {
 
   VerilatedVcdC *tfp = new VerilatedVcdC;
   tfp->open("logs/vlt_dump.vcd");
+  tfp->dumpvars(1, "FutureCore");
 
   /* Main loop of simulation */
   while (contextp->time() < 100 && !contextp->gotFinish()) {
@@ -48,6 +49,7 @@ int main(int argc, char **argv) {
 
   // Final model cleanup
   top->final();
+  tfp->close();
 
 // Coverage analysis (calling write only after the test is known to pass)
 #if VM_COVERAGE
