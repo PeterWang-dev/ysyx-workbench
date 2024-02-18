@@ -21,7 +21,7 @@ BIN = $(abspath ./$(TOPNAME))
 ## Verilator path and flags
 VERILATOR = verilator
 VERILATOR_COVERAGE = verilator_coverage
-VERILATOR_FLAGS := -cc --exe -MMD -MP \
+VERILATOR_FLAGS := -cc --exe --trace -MMD -MP \
 					-Wall -Wno-fatal -O3 \
 					--x-assign fast --x-initial fast --noassert --coverage
 #					$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS))
