@@ -1,6 +1,7 @@
 #include "VFutureCore.h"
 #include <memory>
 #include <verilated.h>
+#include <verilated_vcd_c.h>
 
 double sc_time_stamp() { return 0; }
 
@@ -15,9 +16,12 @@ int main(int argc, char **argv) {
   contextp->traceEverOn(true);       // compute traced signals
   contextp->commandArgs(argc, argv); // pass arguments to Verilated code
 
-  /* Construct the Verilated model */
+  /* Preparing the Verilated model and the trace file pointer */
   const std::unique_ptr<VFutureCore> top{
       new VFutureCore{contextp.get(), "FutureCore"}};
+
+  VerilatedVcdC *tfp = new VerilatedVcdC;
+  tfp->open("logs/vlt_dump.vcd");
 
   /* Main loop of simulation */
   while (contextp->time() < 100 && !contextp->gotFinish()) {
@@ -34,6 +38,7 @@ int main(int argc, char **argv) {
       }
 
       top->eval();
+      tfp->dump(contextp->time());
     }
 
     VL_PRINTF("[%" PRId64 "] clock=%x reset=%x io_debug_pcInstAddrOutput=%x\n",
