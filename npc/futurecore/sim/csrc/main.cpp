@@ -42,12 +42,11 @@ int main(int argc, char **argv) {
       } else {
         top->reset = 0;
       }
-      
-      top->eval();
     }
 
-
+    top->eval();
     tfp->dump(contextp->time());
+    
     VL_PRINTF("[%" PRId64 "] clock=%x reset=%x io_debug_pcInstAddrOutput=%x\n",
               contextp->time(), top->clock, top->reset,
               top->io_debug_pcInstAddrOutput);

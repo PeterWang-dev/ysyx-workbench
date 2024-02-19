@@ -58,3 +58,6 @@ obj_dir/
 *.exe
 *.out
 *.app
+
+# vscode-clangd
+.cache

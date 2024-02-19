@@ -11,5 +11,4 @@ class AluIO extends Bundle {
 
 class Alu extends Module {
   val io = IO(new AluIO)
-  
 }

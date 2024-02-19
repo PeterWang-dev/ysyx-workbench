@@ -17,12 +17,11 @@
   external case of the White Rabbit switch or other product you make using
   this documentation.
  */
-package futurecore
 
 import chisel3._
 
-import backend.Alu
-import frontend.ProgramCounter
+import futurecore.backend.Alu
+import futurecore.frontend.ProgramCounter
 
 class FutureCoreIO extends Bundle {
   val debug_pcInstAddrOutput = Output(UInt(32.W))
