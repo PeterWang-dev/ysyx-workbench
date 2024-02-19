@@ -21,8 +21,8 @@ int main(int argc, char **argv) {
       new VFutureCore{contextp.get(), "FutureCore"}};
 
   VerilatedVcdC *tfp = new VerilatedVcdC;
-  tfp->open("logs/vlt_dump.vcd");
   top->trace(tfp, 99);
+  tfp->open("logs/vlt_dump.vcd");
   // tfp->dumpvars(1, "FutureCore");
 
   /* Main loop of simulation */
