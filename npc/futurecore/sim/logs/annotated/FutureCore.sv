@@ -52,17 +52,17 @@
         `endif // not def SYNTHESIS
         
         module ProgramCounter(	// futurecore/src/main/scala/frontend/ProgramCounter.scala:9:7
-%000001   input         clock,	// <stdin>:15:11
+ 000100   input         clock,	// <stdin>:15:11
 %000002                 reset,	// <stdin>:16:11
 %000000   output [31:0] io_instAddr	// futurecore/src/main/scala/frontend/ProgramCounter.scala:10:21
         );
         
 %000000   reg [31:0] pc;	// futurecore/src/main/scala/frontend/ProgramCounter.scala:13:26
-%000000   always @(posedge clock) begin	// <stdin>:15:11
-%000000     if (reset)	// <stdin>:15:11
-%000000       pc <= 32'h0;	// futurecore/src/main/scala/frontend/ProgramCounter.scala:13:26
+ 000049   always @(posedge clock) begin	// <stdin>:15:11
+%000004     if (reset)	// <stdin>:15:11
+%000004       pc <= 32'h0;	// futurecore/src/main/scala/frontend/ProgramCounter.scala:13:26
             else	// <stdin>:15:11
-%000000       pc <= pc + 32'h4;	// futurecore/src/main/scala/frontend/ProgramCounter.scala:13:26, :14:12
+ 000045       pc <= pc + 32'h4;	// futurecore/src/main/scala/frontend/ProgramCounter.scala:13:26, :14:12
           end // always @(posedge)
           `ifdef ENABLE_INITIAL_REG_	// futurecore/src/main/scala/frontend/ProgramCounter.scala:9:7
             `ifdef FIRRTL_BEFORE_INITIAL	// futurecore/src/main/scala/frontend/ProgramCounter.scala:9:7
@@ -86,7 +86,7 @@
         endmodule
         
         module FutureCore(	// futurecore/src/main/scala/FutureCore.scala:31:7
-%000001   input         clock,	// <stdin>:26:11
+ 000100   input         clock,	// <stdin>:26:11
 %000002                 reset,	// <stdin>:27:11
 %000000   output [31:0] io_debug_pcInstAddrOutput	// futurecore/src/main/scala/FutureCore.scala:32:14
         );
