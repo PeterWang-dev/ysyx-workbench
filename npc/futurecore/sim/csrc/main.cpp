@@ -22,7 +22,8 @@ int main(int argc, char **argv) {
 
   VerilatedVcdC *tfp = new VerilatedVcdC;
   tfp->open("logs/vlt_dump.vcd");
-  tfp->dumpvars(1, "FutureCore");
+  top->trace(tfp, 99);
+  // tfp->dumpvars(1, "FutureCore");
 
   /* Main loop of simulation */
   while (contextp->time() < 100 && !contextp->gotFinish()) {
