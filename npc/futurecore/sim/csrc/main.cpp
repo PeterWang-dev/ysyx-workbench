@@ -25,6 +25,10 @@ int main(int argc, char **argv) {
   tfp->open("logs/vlt_dump.vcd");
   // tfp->dumpvars(1, "FutureCore");
 
+  /* Setting initial signals */
+  top->clock = 0;
+  top->reset = 0;
+
   /* Main loop of simulation */
   while (contextp->time() < 100 && !contextp->gotFinish()) {
     contextp->timeInc(1);
@@ -38,11 +42,10 @@ int main(int argc, char **argv) {
       } else {
         top->reset = 0;
       }
-
-      top->eval();
-      tfp->dump(contextp->time());
     }
 
+    top->eval();
+    tfp->dump(contextp->time());
     VL_PRINTF("[%" PRId64 "] clock=%x reset=%x io_debug_pcInstAddrOutput=%x\n",
               contextp->time(), top->clock, top->reset,
               top->io_debug_pcInstAddrOutput);
