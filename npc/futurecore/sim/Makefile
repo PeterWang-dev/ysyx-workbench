@@ -12,7 +12,7 @@ CSRCS = $(wildcard $(CSRC_DIR)/*.cpp)
 
 ## Output path
 OBJ_DIR = obj_dir
-BIN = $(abspath ./$(TOPNAME))
+BIN = $(abspath ./$(TOPNAME)).out
 
 ## Compiler flags
 # INCFLAGS += $(addprefix -I, $(INC_PATH))
