@@ -1,3 +1,30 @@
+# Hardware
+
+# Scala
+*.class
+*.log
+
+## virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+## mill
+out/
+.bsp/
+.idea/
+.idea_modules/
+test_run_dir/
+
+## Generated Metals (Scala Language Server) files
+## Reference: https://scalameta.org/metals/
+.metals/
+.bloop/
+project/metals.sbt
+
+# Simulation
+
+# Generated Verilated files
+obj_dir/
+
 # C/C++
 ## Prerequisites
 *.d
@@ -32,22 +59,6 @@
 *.out
 *.app
 
-# Scala
-*.class
-*.log
-
-## virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-
-## mill
-out/
-.bsp/
-.idea/
-.idea_modules/
-test_run_dir/
-
-## Generated Metals (Scala Language Server) files
-## Reference: https://scalameta.org/metals/
-.metals/
-.bloop/
-project/metals.sbt
+# vscode-clangd
+.cache
+compile_commands.json
