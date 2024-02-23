@@ -180,56 +180,58 @@ endmodule
 module FutureCore(	// @[<stdin>:58:10]
   input         clock,	// @[<stdin>:59:11]
                 reset,	// @[<stdin>:60:11]
-  input  [31:0] io_instIn,	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:39:19]
-  output [31:0] io_instAddrOut,	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:39:19]
-                io_debug_pcInstAddr,	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:39:19]
-  output [4:0]  io_debug_instDecRs1,	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:39:19]
-                io_debug_instDecRs2,	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:39:19]
-                io_debug_instDecRd,	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:39:19]
-  output [31:0] io_debug_regFileRs1Data,	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:39:19]
-                io_debug_regFileRs2Data,	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:39:19]
-                io_debug_adderResult	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:39:19]
+  input  [31:0] io_instIn,	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:40:19]
+  output [31:0] io_instAddrOut,	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:40:19]
+                io_debug_pcInstAddr,	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:40:19]
+  output [4:0]  io_debug_instDecRs1,	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:40:19]
+                io_debug_instDecRs2,	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:40:19]
+  output        io_debug_instDecwriteEnable,	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:40:19]
+  output [4:0]  io_debug_instDecRd,	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:40:19]
+  output [31:0] io_debug_regFileRs1Data,	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:40:19]
+                io_debug_regFileRs2Data,	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:40:19]
+                io_debug_adderResult	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:40:19]
 );
 
-  wire [31:0] _adder_io_result;	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:43:23]
-  wire [31:0] _regFile_io_rs1Data;	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:42:23]
-  wire [31:0] _regFile_io_rs2Data;	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:42:23]
-  wire [4:0]  _instDec_io_rs1;	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:41:23]
-  wire [4:0]  _instDec_io_rs2;	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:41:23]
-  wire [4:0]  _instDec_io_rd;	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:41:23]
-  wire [31:0] _pc_io_instAddr;	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:40:23]
-  ProgramCounter pc (	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:40:23]
+  wire [31:0] _adder_io_result;	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:44:23]
+  wire [31:0] _regFile_io_rs1Data;	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:43:23]
+  wire [31:0] _regFile_io_rs2Data;	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:43:23]
+  wire [4:0]  _instDec_io_rs1;	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:42:23]
+  wire [4:0]  _instDec_io_rs2;	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:42:23]
+  wire [4:0]  _instDec_io_rd;	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:42:23]
+  wire [31:0] _pc_io_instAddr;	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:41:23]
+  ProgramCounter pc (	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:41:23]
     .clock       (clock),
     .reset       (reset),
     .io_instAddr (_pc_io_instAddr)
   );
-  InstDecoder instDec (	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:41:23]
+  InstDecoder instDec (	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:42:23]
     .io_inst (io_instIn),
     .io_rs1  (_instDec_io_rs1),
     .io_rs2  (_instDec_io_rs2),
     .io_rd   (_instDec_io_rd)
   );
-  RegFile regFile (	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:42:23]
+  RegFile regFile (	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:43:23]
     .clock      (clock),
-    .io_rs1Addr (_instDec_io_rs1),	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:41:23]
-    .io_rs2Addr (_instDec_io_rs2),	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:41:23]
-    .io_rdAddr  (_instDec_io_rd),	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:41:23]
-    .io_rdData  (_adder_io_result),	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:43:23]
+    .io_rs1Addr (_instDec_io_rs1),	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:42:23]
+    .io_rs2Addr (_instDec_io_rs2),	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:42:23]
+    .io_rdAddr  (_instDec_io_rd),	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:42:23]
+    .io_rdData  (_adder_io_result),	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:44:23]
     .io_rs1Data (_regFile_io_rs1Data),
     .io_rs2Data (_regFile_io_rs2Data)
   );
-  Adder adder (	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:43:23]
-    .io_operand1 (_regFile_io_rs1Data),	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:42:23]
-    .io_operand2 (_regFile_io_rs2Data),	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:42:23]
+  Adder adder (	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:44:23]
+    .io_operand1 (_regFile_io_rs1Data),	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:43:23]
+    .io_operand2 (_regFile_io_rs2Data),	// @[futurecore/src/main/scala/futurecore/FutureCore.scala:43:23]
     .io_result   (_adder_io_result)
   );
-  assign io_instAddrOut = _pc_io_instAddr;	// @[<stdin>:58:10, futurecore/src/main/scala/futurecore/FutureCore.scala:40:23]
-  assign io_debug_pcInstAddr = _pc_io_instAddr;	// @[<stdin>:58:10, futurecore/src/main/scala/futurecore/FutureCore.scala:40:23]
-  assign io_debug_instDecRs1 = _instDec_io_rs1;	// @[<stdin>:58:10, futurecore/src/main/scala/futurecore/FutureCore.scala:41:23]
-  assign io_debug_instDecRs2 = _instDec_io_rs2;	// @[<stdin>:58:10, futurecore/src/main/scala/futurecore/FutureCore.scala:41:23]
-  assign io_debug_instDecRd = _instDec_io_rd;	// @[<stdin>:58:10, futurecore/src/main/scala/futurecore/FutureCore.scala:41:23]
-  assign io_debug_regFileRs1Data = _regFile_io_rs1Data;	// @[<stdin>:58:10, futurecore/src/main/scala/futurecore/FutureCore.scala:42:23]
-  assign io_debug_regFileRs2Data = _regFile_io_rs2Data;	// @[<stdin>:58:10, futurecore/src/main/scala/futurecore/FutureCore.scala:42:23]
-  assign io_debug_adderResult = _adder_io_result;	// @[<stdin>:58:10, futurecore/src/main/scala/futurecore/FutureCore.scala:43:23]
+  assign io_instAddrOut = _pc_io_instAddr;	// @[<stdin>:58:10, futurecore/src/main/scala/futurecore/FutureCore.scala:41:23]
+  assign io_debug_pcInstAddr = _pc_io_instAddr;	// @[<stdin>:58:10, futurecore/src/main/scala/futurecore/FutureCore.scala:41:23]
+  assign io_debug_instDecRs1 = _instDec_io_rs1;	// @[<stdin>:58:10, futurecore/src/main/scala/futurecore/FutureCore.scala:42:23]
+  assign io_debug_instDecRs2 = _instDec_io_rs2;	// @[<stdin>:58:10, futurecore/src/main/scala/futurecore/FutureCore.scala:42:23]
+  assign io_debug_instDecwriteEnable = 1'h1;	// @[<stdin>:58:10, futurecore/src/main/scala/futurecore/FutureCore.scala:42:23, :43:23]
+  assign io_debug_instDecRd = _instDec_io_rd;	// @[<stdin>:58:10, futurecore/src/main/scala/futurecore/FutureCore.scala:42:23]
+  assign io_debug_regFileRs1Data = _regFile_io_rs1Data;	// @[<stdin>:58:10, futurecore/src/main/scala/futurecore/FutureCore.scala:43:23]
+  assign io_debug_regFileRs2Data = _regFile_io_rs2Data;	// @[<stdin>:58:10, futurecore/src/main/scala/futurecore/FutureCore.scala:43:23]
+  assign io_debug_adderResult = _adder_io_result;	// @[<stdin>:58:10, futurecore/src/main/scala/futurecore/FutureCore.scala:44:23]
 endmodule
 

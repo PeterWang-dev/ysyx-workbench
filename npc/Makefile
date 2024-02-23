@@ -11,7 +11,7 @@ test:
 verilog:
 	$(call git_commit, "generate verilog")
 	mkdir -p $(SIM_DIR)/vsrc
-	mill -i __.runMain Elaborate -td $(SIM_DIR)/vsrc
+	mill -i __.runMain Elaborate -td $(SIM_DIR)/vsrc -O=debug
 
 help:
 	mill -i __.runMain Elaborate --help
