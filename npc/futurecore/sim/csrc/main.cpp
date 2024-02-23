@@ -3,6 +3,14 @@
 #include <verilated.h>
 #include <verilated_vcd_c.h>
 
+uint32_t mem[100];
+
+const uint32_t offset = 0x80000000;
+
+uint32_t pmem_read(uint32_t paddr) {
+  return mem[(paddr - offset) / sizeof(uint32_t)];
+}
+
 double sc_time_stamp() { return 0; }
 
 int main(int argc, char **argv) {
@@ -46,7 +54,7 @@ int main(int argc, char **argv) {
 
     top->eval();
     tfp->dump(contextp->time());
-    
+
     VL_PRINTF("[%" PRId64 "] clock=%x reset=%x io_debug_pcInstAddrOutput=%x\n",
               contextp->time(), top->clock, top->reset,
               top->io_debug_pcInstAddrOutput);

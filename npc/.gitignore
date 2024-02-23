@@ -61,3 +61,4 @@ obj_dir/
 
 # vscode-clangd
 .cache
+compile_commands.json

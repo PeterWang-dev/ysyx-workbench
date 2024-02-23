@@ -47,6 +47,7 @@ run: $(BIN)
 clean:
 	-rm $(BIN)
 	-rm -r $(OBJ_DIR)
+	-rm -r logs
 
 # $(BIN): $(VSRC) $(CSRCS) $(SRC_AUTO_BIND) $(NVBOARD_ARCHIVE)
 $(BIN): $(VSRC) $(CSRCS)
