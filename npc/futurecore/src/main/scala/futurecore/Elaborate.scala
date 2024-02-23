@@ -22,5 +22,11 @@ import circt.stage._
 object Elaborate extends App {
   def top       = new FutureCore
   val generator = Seq(chisel3.stage.ChiselGeneratorAnnotation(() => top))
-  (new ChiselStage).execute(args, generator :+ CIRCTTargetAnnotation(CIRCTTarget.SystemVerilog) :+ FirtoolOption("-O=debug"))
+  (new ChiselStage)
+    .execute(
+      args,
+      generator :+
+        CIRCTTargetAnnotation(CIRCTTarget.SystemVerilog) :+
+        FirtoolOption("-O=debug")
+    )
 }
