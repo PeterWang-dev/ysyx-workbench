@@ -173,21 +173,7 @@ module ImmGenerator(	// @[<stdin>:50:10]
   output [31:0] io_immidiate	// @[FutureCore/src/main/scala/futurecore/backend/ImmGenerator.scala:31:16]
 );
 
-  wire [31:0] immI = {{20{io_inst[31]}}, io_inst[31:20]};	// @[FutureCore/src/main/scala/futurecore/backend/ImmGenerator.scala:33:18, :39:{14,19,28,39}]
-  wire [26:0] immS_hi = {{20{io_inst[31]}}, io_inst[31:25]};	// @[FutureCore/src/main/scala/futurecore/backend/ImmGenerator.scala:39:28, :40:{14,19,39}]
-  wire [31:0] immS = {immS_hi, io_inst[11:7]};	// @[FutureCore/src/main/scala/futurecore/backend/ImmGenerator.scala:34:18, :40:{14,53}]
-  wire [9:0]  immB_lo_hi = {io_inst[30:25], io_inst[11:8]};	// @[FutureCore/src/main/scala/futurecore/backend/ImmGenerator.scala:41:{14,58,72}]
-  wire [10:0] immB_lo = {immB_lo_hi, 1'h0};	// @[FutureCore/src/main/scala/futurecore/backend/ImmGenerator.scala:41:14]
-  wire [19:0] immB_hi_hi = {20{io_inst[31]}};	// @[FutureCore/src/main/scala/futurecore/backend/ImmGenerator.scala:39:28, :41:14]
-  wire [20:0] immB_hi = {immB_hi_hi, io_inst[7]};	// @[FutureCore/src/main/scala/futurecore/backend/ImmGenerator.scala:41:{14,49}]
-  wire [31:0] immB = {immB_hi, immB_lo};	// @[FutureCore/src/main/scala/futurecore/backend/ImmGenerator.scala:35:18, :41:14]
-  wire [31:0] immU = {io_inst[31:12], 12'h0};	// @[FutureCore/src/main/scala/futurecore/backend/ImmGenerator.scala:36:18, :42:{14,19,33}]
-  wire [10:0] immJ_lo_hi = {io_inst[20], io_inst[30:21]};	// @[FutureCore/src/main/scala/futurecore/backend/ImmGenerator.scala:43:{14,63,73}]
-  wire [11:0] immJ_lo = {immJ_lo_hi, 1'h0};	// @[FutureCore/src/main/scala/futurecore/backend/ImmGenerator.scala:41:14, :43:14]
-  wire [11:0] immJ_hi_hi = {12{io_inst[31]}};	// @[FutureCore/src/main/scala/futurecore/backend/ImmGenerator.scala:39:28, :43:14]
-  wire [19:0] immJ_hi = {immJ_hi_hi, io_inst[19:12]};	// @[FutureCore/src/main/scala/futurecore/backend/ImmGenerator.scala:43:{14,49}]
-  wire [31:0] immJ = {immJ_hi, immJ_lo};	// @[FutureCore/src/main/scala/futurecore/backend/ImmGenerator.scala:37:18, :43:14]
-  assign io_immidiate = immI;	// @[<stdin>:50:10, FutureCore/src/main/scala/futurecore/backend/ImmGenerator.scala:33:18]
+  assign io_immidiate = {{20{io_inst[31]}}, io_inst[31:20]};	// @[<stdin>:50:10, FutureCore/src/main/scala/futurecore/backend/ImmGenerator.scala:39:{14,19,28,39}]
 endmodule
 
 module Adder(	// @[<stdin>:106:10]
