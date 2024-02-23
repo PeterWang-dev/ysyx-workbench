@@ -1,9 +1,8 @@
 export PATH := $(PATH):$(abspath ./utils)
 
-TOP_NAME = FutureCore
-PRJ_DIR = $(shell echo $(TOP_NAME) | tr A-Z a-z)
-SRC_DIR = $(PRJ_DIR)/src
-SIM_DIR = $(PRJ_DIR)/sim
+PRJ_NAME = FutureCore
+SRC_DIR = $(PRJ_NAME)/src
+SIM_DIR = $(PRJ_NAME)/sim
 
 test:
 	mill -i __.test

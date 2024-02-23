@@ -1,6 +1,0 @@
-[
-  {
-    "class":"firrtl.transforms.DontTouchAnnotation",
-    "target":"~FutureCore|FutureCore>io.debug.pcInstAddr"
-  }
-]
