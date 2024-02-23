@@ -19,12 +19,20 @@
  */
 import chisel3._
 
-import futurecore.backend.{Adder, RegFile}
-import futurecore.frontend.{InstDecoder, ProgramCounter}
+import futurecore.backend.{Adder, AdderIO, RegFile, RegFileIO}
+import futurecore.frontend.{InstDecoder, InstDecoderIO, ProgramCounter, ProgramCounterIO}
+
+class DebugSignals {
+  val pcIO      = new ProgramCounterIO
+  val instDecIO = new InstDecoderIO
+  val regFileIO = new RegFileIO
+  val adderIO   = new AdderIO
+}
 
 class FutureCoreIO extends Bundle {
   val instAddrOut = Output(UInt(32.W))
   val instIn      = Input(UInt(32.W))
+  val debug       = new DebugSignals
 }
 
 class FutureCore extends Module {
@@ -37,13 +45,19 @@ class FutureCore extends Module {
   io.instAddrOut  := pc.io.instAddr
   instDec.io.inst := io.instIn
 
-  regFile.io.rs1Addr     := instDec.io.regAddrRead1
-  regFile.io.rs2Addr     := instDec.io.regAddrRead2
-  regFile.io.writeEnable := instDec.io.regWriteEnable
-  regFile.io.rdAddr      := instDec.io.regAddrWrite
+  regFile.io.rs1Addr     := instDec.io.rs1
+  regFile.io.rs2Addr     := instDec.io.rs2
+  regFile.io.writeEnable := instDec.io.writeEnable
+  regFile.io.rdAddr      := instDec.io.rd
 
   adder.io.operand1 := regFile.io.rs1Data
   adder.io.operand2 := regFile.io.rs2Data
 
   regFile.io.rdData := adder.io.result
+
+  // Debug signals
+  io.debug.pcIO      <> pc.io
+  io.debug.instDecIO <> instDec.io
+  io.debug.regFileIO <> regFile.io
+  io.debug.adderIO   <> adder.io
 }
