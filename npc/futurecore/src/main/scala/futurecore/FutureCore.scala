@@ -25,6 +25,19 @@ import futurecore.frontend.{InstDecoder, ProgramCounter}
 class FutureCoreIO extends Bundle {
   val instAddrOut = Output(UInt(32.W))
   val instIn      = Input(UInt(32.W))
+  // debug signals
+  val debug_pcInstAddr       = Output(UInt(32.W))
+  val debug_instDecInst      = Output(UInt(32.W))
+  val debug_regFileAddrRead1 = Output(UInt(32.W))
+  val debug_regFileAddrRead2 = Output(UInt(32.W))
+  val debug_regFileDataRead1 = Output(UInt(32.W))
+  val debug_regFileDataRead2 = Output(UInt(32.W))
+  val debug_regFileWriteEn   = Output(Bool())
+  val debug_regFileAddrWrite = Output(UInt(32.W))
+  val debug_regFileDataWrite = Output(UInt(32.W))
+  val debug_adderOperand1    = Output(UInt(32.W))
+  val debug_adderOperand2    = Output(UInt(32.W))
+  val debug_adderResult      = Output(UInt(32.W))
 }
 
 class FutureCore extends Module {
