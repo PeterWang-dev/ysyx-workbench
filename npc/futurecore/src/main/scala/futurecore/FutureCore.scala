@@ -23,10 +23,10 @@ import futurecore.backend.{Adder, AdderIO, RegFile, RegFileIO}
 import futurecore.frontend.{InstDecoder, InstDecoderIO, ProgramCounter, ProgramCounterIO}
 
 class DebugSignals {
-  val pcIO      = new ProgramCounterIO
-  val instDecIO = new InstDecoderIO
-  val regFileIO = new RegFileIO
-  val adderIO   = new AdderIO
+  val pcIO      = IO(new ProgramCounterIO)
+  val instDecIO = IO(new InstDecoderIO)
+  val regFileIO = IO(new RegFileIO)
+  val adderIO   = IO(new AdderIO)
 }
 
 class FutureCoreIO extends Bundle {
