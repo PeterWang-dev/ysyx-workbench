@@ -62,8 +62,11 @@ class FutureCore extends Module {
   regFile.io.writeEnable := instDec.io.writeEnable
   regFile.io.rdAddr      := instDec.io.rd
 
+  immGen.io.inst := io.instIn
+  val isImm = instDec.io.isImmidiate
+
   adder.io.operand1 := regFile.io.rs1Data
-  adder.io.operand2 := Mux(instDec.io.isImmidiate, immGen.io.immidiate, regFile.io.rs2Data)
+  adder.io.operand2 := Mux(isImm, immGen.io.immidiate, regFile.io.rs2Data)
 
   regFile.io.rdData := adder.io.result
 
