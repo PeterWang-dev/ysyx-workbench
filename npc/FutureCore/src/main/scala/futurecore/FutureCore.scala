@@ -44,7 +44,6 @@ class FutureCoreIO extends Bundle {
   val instIn      = Input(UInt(32.W))
   // debug signals
   val debug = new DebugSignals
-  dontTouch(debug)
 }
 
 class FutureCore extends Module {
@@ -72,6 +71,7 @@ class FutureCore extends Module {
   regFile.io.rdData := adder.io.result
 
   // Debug signals
+  dontTouch(io.debug)
   io.debug.pcInstAddr := pc.io.instAddr
 
   io.debug.instDecRs1         := instDec.io.rs1
