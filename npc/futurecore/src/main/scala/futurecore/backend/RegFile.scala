@@ -35,7 +35,7 @@ class RegFileIO extends Bundle {
 
 class RegFile extends Module {
   val io   = IO(new RegFileIO)
-  val regs = Reg(VecInit(0.U))
+  val regs = Reg(Vec(32, UInt(32.W)))
 
   io.dataRead1 := regs(io.addrRead1)
   io.dataRead2 := regs(io.addrRead2)
