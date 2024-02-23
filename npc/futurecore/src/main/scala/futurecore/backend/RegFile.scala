@@ -35,7 +35,7 @@ class RegFileIO extends Bundle {
 
 class RegFile extends Module {
   val io   = IO(new RegFileIO)
-  val regs = VecInit(Seq.fill(32)(RegInit(0.U(32.W))))
+  val regs = Vec(32, RegInit(0.U(32.W)))
 
   io.dataRead1 := regs(io.addrRead1)
   io.dataRead2 := regs(io.addrRead2)
