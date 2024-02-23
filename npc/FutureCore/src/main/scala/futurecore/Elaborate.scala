@@ -25,8 +25,8 @@ object Elaborate extends App {
   (new ChiselStage)
     .execute(
       args,
-      generator :+
-        CIRCTTargetAnnotation(CIRCTTarget.SystemVerilog) :+
-        FirtoolOption("-O=debug")
+      generator
+        :+ CIRCTTargetAnnotation(CIRCTTarget.SystemVerilog)
+        // :+ FirtoolOption("-O=debug")
     )
 }

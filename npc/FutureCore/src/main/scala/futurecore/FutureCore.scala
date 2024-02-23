@@ -44,6 +44,7 @@ class FutureCoreIO extends Bundle {
   val instIn      = Input(UInt(32.W))
   // debug signals
   val debug = new DebugSignals
+  dontTouch(debug)
 }
 
 class FutureCore extends Module {
