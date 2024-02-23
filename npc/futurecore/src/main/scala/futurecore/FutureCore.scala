@@ -23,10 +23,10 @@ import futurecore.backend.{Adder, AdderIO, RegFile, RegFileIO}
 import futurecore.frontend.{InstDecoder, InstDecoderIO, ProgramCounter, ProgramCounterIO}
 
 class DebugSignals {
-  val pcIO      = IO(new ProgramCounterIO)
-  val instDecIO = IO(new InstDecoderIO)
-  val regFileIO = IO(new RegFileIO)
-  val adderIO   = IO(new AdderIO)
+  val debug_pcIO      = IO(new ProgramCounterIO)
+  val debug_instDecIO = IO(new InstDecoderIO)
+  val debug_regFileIO = IO(new RegFileIO)
+  val debug_adderIO   = IO(new AdderIO)
 }
 
 class FutureCoreIO extends Bundle {
@@ -56,8 +56,8 @@ class FutureCore extends Module {
   regFile.io.rdData := adder.io.result
 
   // Debug signals
-  io.debug.pcIO      <> pc.io
-  io.debug.instDecIO <> instDec.io
-  io.debug.regFileIO <> regFile.io
-  io.debug.adderIO   <> adder.io
+  io.debug.debug_pcIO <> pc.io
+  io.debug.debug_instDecIO <> instDec.io
+  io.debug.debug_regFileIO <> regFile.io
+  io.debug.debug_adderIO <> adder.io
 }
