@@ -59,4 +59,18 @@ class FutureCore extends Module {
   adder.io.operand2 := regFile.io.dataRead2
 
   regFile.io.dataWrite := adder.io.result
+
+  // debug signals
+  io.debug_pcInstAddr       := pc.io.instAddr
+  io.debug_instDecInst      := instDec.io.inst
+  io.debug_regFileAddrRead1 := regFile.io.addrRead1
+  io.debug_regFileAddrRead2 := regFile.io.addrRead2
+  io.debug_regFileDataRead1 := regFile.io.dataRead1
+  io.debug_regFileDataRead2 := regFile.io.dataRead2
+  io.debug_regFileWriteEn   := regFile.io.writeEnable
+  io.debug_regFileAddrWrite := regFile.io.addrWrite
+  io.debug_regFileDataWrite := regFile.io.dataWrite
+  io.debug_adderOperand1    := adder.io.operand1
+  io.debug_adderOperand2    := adder.io.operand2
+  io.debug_adderResult      := adder.io.result
 }
