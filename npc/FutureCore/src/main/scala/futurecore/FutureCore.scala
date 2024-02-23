@@ -46,7 +46,7 @@ class FutureCoreIO extends Bundle {
 
 class FutureCore extends Module {
   val io      = IO(new FutureCoreIO)
-  val debug = IO(new DebugSignals)
+  val debug   = IO(new DebugSignals)
   val pc      = Module(new ProgramCounter)
   val instDec = Module(new InstDecoder)
   val regFile = Module(new RegFile)
@@ -70,7 +70,6 @@ class FutureCore extends Module {
   regFile.io.rdData := adder.io.result
 
   // Debug signals
-  dontTouch(debug)
   debug.pcInstAddr := pc.io.instAddr
 
   debug.instDecRs1         := instDec.io.rs1
@@ -85,4 +84,5 @@ class FutureCore extends Module {
   debug.immGenImmidiate := immGen.io.immidiate
 
   debug.adderResult := adder.io.result
+  dontTouch(debug.pcInstAddr)
 }

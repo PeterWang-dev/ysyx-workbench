@@ -1,6 +1,6 @@
 [
   {
     "class":"firrtl.transforms.DontTouchAnnotation",
-    "target":"~FutureCore|FutureCore>io"
+    "target":"~FutureCore|FutureCore>debug"
   }
 ]
