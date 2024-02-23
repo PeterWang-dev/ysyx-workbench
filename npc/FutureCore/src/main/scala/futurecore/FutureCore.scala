@@ -42,7 +42,7 @@ class DebugSignals extends Bundle {
 class FutureCoreIO extends Bundle {
   val instAddrOut = Output(UInt(32.W))
   val instIn      = Input(UInt(32.W))
-  // val debug       = new DebugSignals
+  val debug       = new DebugSignals
 }
 
 class FutureCore extends Module {
@@ -70,19 +70,19 @@ class FutureCore extends Module {
   regFile.io.rdData := adder.io.result
 
   // Debug signals
-  // io.debug.pcInstAddr := pc.io.instAddr
+  dontTouch(io.debug)
+  io.debug.pcInstAddr := pc.io.instAddr
 
-  // io.debug.instDecRs1         := instDec.io.rs1
-  // io.debug.instDecRs2         := instDec.io.rs2
-  // io.debug.instDecRd          := instDec.io.rd
-  // io.debug.instDecWriteEnable := instDec.io.writeEnable
-  // io.debug.instDecIsImmidiate := instDec.io.isImmidiate
+  io.debug.instDecRs1         := instDec.io.rs1
+  io.debug.instDecRs2         := instDec.io.rs2
+  io.debug.instDecRd          := instDec.io.rd
+  io.debug.instDecWriteEnable := instDec.io.writeEnable
+  io.debug.instDecIsImmidiate := instDec.io.isImmidiate
 
-  // io.debug.regFileRs1Data := regFile.io.rs1Data
-  // io.debug.regFileRs2Data := regFile.io.rs2Data
+  io.debug.regFileRs1Data := regFile.io.rs1Data
+  io.debug.regFileRs2Data := regFile.io.rs2Data
 
-  // io.debug.immGenImmidiate := immGen.io.immidiate
+  io.debug.immGenImmidiate := immGen.io.immidiate
 
-  // io.debug.adderResult := adder.io.result
-  // dontTouch(io.debug.pcInstAddr)
+  io.debug.adderResult := adder.io.result
 }
