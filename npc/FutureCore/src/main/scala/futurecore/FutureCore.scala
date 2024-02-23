@@ -23,27 +23,27 @@ import futurecore.frontend._
 import futurecore.backend._
 
 class DebugSignals extends Bundle {
-  val debug_pcInstAddr = Output(UInt(32.W))
+  val pcInstAddr = Output(UInt(32.W))
 
-  val debug_instDecRs1         = Output(UInt(5.W))
-  val debug_instDecRs2         = Output(UInt(5.W))
-  val debug_instDecRd          = Output(UInt(5.W))
-  val debug_instDecWriteEnable = Output(Bool())
-  val debug_instDecIsImmidiate = Output(Bool())
+  val instDecRs1         = Output(UInt(5.W))
+  val instDecRs2         = Output(UInt(5.W))
+  val instDecRd          = Output(UInt(5.W))
+  val instDecWriteEnable = Output(Bool())
+  val instDecIsImmidiate = Output(Bool())
 
-  val debug_regFileRs1Data = Output(UInt(32.W))
-  val debug_regFileRs2Data = Output(UInt(32.W))
+  val regFileRs1Data = Output(UInt(32.W))
+  val regFileRs2Data = Output(UInt(32.W))
 
-  val debug_immGenImmidiate = Output(UInt(32.W))
+  val immGenImmidiate = Output(UInt(32.W))
 
-  val debug_adderResult = Output(UInt(32.W))
+  val adderResult = Output(UInt(32.W))
 }
 
 class FutureCoreIO extends Bundle {
   val instAddrOut = Output(UInt(32.W))
   val instIn      = Input(UInt(32.W))
   // debug signals
-  val debugs = new DebugSignals
+  val debug = new DebugSignals
 }
 
 class FutureCore extends Module {
@@ -71,17 +71,18 @@ class FutureCore extends Module {
   regFile.io.rdData := adder.io.result
 
   // Debug signals
-  io.debugs.debug_pcInstAddr := pc.io.instAddr
+  io.debug.pcInstAddr := pc.io.instAddr
 
-  io.debugs.debug_instDecRs1         := instDec.io.rs1
-  io.debugs.debug_instDecRs2         := instDec.io.rs2
-  io.debugs.debug_instDecRd          := instDec.io.rd
-  io.debugs.debug_instDecWriteEnable := instDec.io.writeEnable
+  io.debug.instDecRs1         := instDec.io.rs1
+  io.debug.instDecRs2         := instDec.io.rs2
+  io.debug.instDecRd          := instDec.io.rd
+  io.debug.instDecWriteEnable := instDec.io.writeEnable
+  io.debug.instDecIsImmidiate := instDec.io.isImmidiate
 
-  io.debugs.debug_regFileRs1Data := regFile.io.rs1Data
-  io.debugs.debug_regFileRs2Data := regFile.io.rs2Data
+  io.debug.regFileRs1Data := regFile.io.rs1Data
+  io.debug.regFileRs2Data := regFile.io.rs2Data
 
-  io.debugs.debug_immGenImmidiate := immGen.io.immidiate
+  io.debug.immGenImmidiate := immGen.io.immidiate
 
-  io.debugs.debug_adderResult := adder.io.result
+  io.debug.adderResult := adder.io.result
 }
