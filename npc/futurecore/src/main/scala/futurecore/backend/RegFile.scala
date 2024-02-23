@@ -23,24 +23,24 @@ import chisel3._
 
 class RegFileIO extends Bundle {
   // asynchronus read
-  val addrRead1 = Input(UInt(5.W))
-  val addrRead2 = Input(UInt(5.W))
-  val dataRead1 = Output(UInt(32.W))
-  val dataRead2 = Output(UInt(32.W))
+  val rs1Addr = Input(UInt(5.W))
+  val rs2Addr = Input(UInt(5.W))
+  val rs1Data = Output(UInt(32.W))
+  val rs2Data = Output(UInt(32.W))
   // synchronous write
   val writeEnable = Input(Bool())
-  val addrWrite   = Input(UInt(5.W))
-  val dataWrite   = Input(UInt(32.W))
+  val rdAddr      = Input(UInt(5.W))
+  val rdData      = Input(UInt(32.W))
 }
 
 class RegFile extends Module {
-  val io   = IO(new RegFileIO)
-  val regs = RegInit(VecInit(Seq.fill(32)(0.U(32.W))))
+  val io      = IO(new RegFileIO)
+  val regBank = Mem(32, UInt(32.W))
 
-  io.dataRead1 := regs(io.addrRead1)
-  io.dataRead2 := regs(io.addrRead2)
+  io.rs1Data := Mux(io.rs1Addr =/= 0.U, regBank.read(io.rs1Addr), 0.U)
+  io.rs2Data := Mux(io.rs2Addr =/= 0.U, regBank.read(io.rs2Addr), 0.U)
 
   when(io.writeEnable) {
-    regs(io.addrWrite) := Mux(io.addrWrite === 0.U, 0.U, io.dataWrite)
+    regBank.write(io.rdAddr, Mux(io.rdAddr =/= 0.U, io.rdData, 0.U))
   }
 }

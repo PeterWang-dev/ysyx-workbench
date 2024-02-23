@@ -25,19 +25,6 @@ import futurecore.frontend.{InstDecoder, ProgramCounter}
 class FutureCoreIO extends Bundle {
   val instAddrOut = Output(UInt(32.W))
   val instIn      = Input(UInt(32.W))
-  // debug signals
-  val debug_pcInstAddr       = Output(UInt(32.W))
-  val debug_instDecInst      = Output(UInt(32.W))
-  val debug_regFileAddrRead1 = Output(UInt(32.W))
-  val debug_regFileAddrRead2 = Output(UInt(32.W))
-  val debug_regFileDataRead1 = Output(UInt(32.W))
-  val debug_regFileDataRead2 = Output(UInt(32.W))
-  val debug_regFileWriteEn   = Output(Bool())
-  val debug_regFileAddrWrite = Output(UInt(32.W))
-  val debug_regFileDataWrite = Output(UInt(32.W))
-  val debug_adderOperand1    = Output(UInt(32.W))
-  val debug_adderOperand2    = Output(UInt(32.W))
-  val debug_adderResult      = Output(UInt(32.W))
 }
 
 class FutureCore extends Module {
@@ -50,27 +37,13 @@ class FutureCore extends Module {
   io.instAddrOut  := pc.io.instAddr
   instDec.io.inst := io.instIn
 
-  regFile.io.addrRead1   := instDec.io.regAddrRead1
-  regFile.io.addrRead2   := instDec.io.regAddrRead2
+  regFile.io.rs1Addr     := instDec.io.regAddrRead1
+  regFile.io.rs2Addr     := instDec.io.regAddrRead2
   regFile.io.writeEnable := instDec.io.regWriteEnable
-  regFile.io.addrWrite   := instDec.io.regAddrWrite
+  regFile.io.rdAddr      := instDec.io.regAddrWrite
 
-  adder.io.operand1 := regFile.io.dataRead1
-  adder.io.operand2 := regFile.io.dataRead2
+  adder.io.operand1 := regFile.io.rs1Data
+  adder.io.operand2 := regFile.io.rs2Data
 
-  regFile.io.dataWrite := adder.io.result
-
-  // debug signals
-  io.debug_pcInstAddr       := pc.io.instAddr
-  io.debug_instDecInst      := instDec.io.inst
-  io.debug_regFileAddrRead1 := regFile.io.addrRead1
-  io.debug_regFileAddrRead2 := regFile.io.addrRead2
-  io.debug_regFileDataRead1 := regFile.io.dataRead1
-  io.debug_regFileDataRead2 := regFile.io.dataRead2
-  io.debug_regFileWriteEn   := regFile.io.writeEnable
-  io.debug_regFileAddrWrite := regFile.io.addrWrite
-  io.debug_regFileDataWrite := regFile.io.dataWrite
-  io.debug_adderOperand1    := adder.io.operand1
-  io.debug_adderOperand2    := adder.io.operand2
-  io.debug_adderResult      := adder.io.result
+  regFile.io.rdData := adder.io.result
 }
