@@ -19,21 +19,31 @@
  */
 import chisel3._
 
-import futurecore.backend.{Adder, RegFile}
-import futurecore.frontend.{InstDecoder, ProgramCounter}
+import futurecore.frontend._
+import futurecore.backend._
+
+class DebugSignals extends Bundle {
+  val debug_pcInstAddr = Output(UInt(32.W))
+
+  val debug_instDecRs1         = Output(UInt(5.W))
+  val debug_instDecRs2         = Output(UInt(5.W))
+  val debug_instDecRd          = Output(UInt(5.W))
+  val debug_instDecWriteEnable = Output(Bool())
+  val debug_instDecIsImmidiate = Output(Bool())
+
+  val debug_regFileRs1Data = Output(UInt(32.W))
+  val debug_regFileRs2Data = Output(UInt(32.W))
+
+  val debug_immGenImmidiate = Output(UInt(32.W))
+
+  val debug_adderResult = Output(UInt(32.W))
+}
 
 class FutureCoreIO extends Bundle {
   val instAddrOut = Output(UInt(32.W))
   val instIn      = Input(UInt(32.W))
   // debug signals
-  // val debug_pcInstAddr         = Output(UInt(32.W))
-  // val debug_instDecRs1         = Output(UInt(5.W))
-  // val debug_instDecRs2         = Output(UInt(5.W))
-  // val debug_instDecwriteEnable = Output(Bool())
-  // val debug_instDecRd          = Output(UInt(5.W))
-  // val debug_regFileRs1Data     = Output(UInt(32.W))
-  // val debug_regFileRs2Data     = Output(UInt(32.W))
-  // val debug_adderResult        = Output(UInt(32.W))
+  val debugs = new DebugSignals
 }
 
 class FutureCore extends Module {
@@ -41,6 +51,7 @@ class FutureCore extends Module {
   val pc      = Module(new ProgramCounter)
   val instDec = Module(new InstDecoder)
   val regFile = Module(new RegFile)
+  val immGen  = Module(new ImmGenerator)
   val adder   = Module(new Adder)
 
   io.instAddrOut  := pc.io.instAddr
@@ -52,17 +63,22 @@ class FutureCore extends Module {
   regFile.io.rdAddr      := instDec.io.rd
 
   adder.io.operand1 := regFile.io.rs1Data
-  adder.io.operand2 := regFile.io.rs2Data
+  adder.io.operand2 := Mux(instDec.io.isImmidiate, immGen.io.immidiate, regFile.io.rs2Data)
 
   regFile.io.rdData := adder.io.result
 
   // Debug signals
-  // io.debug_pcInstAddr         := pc.io.instAddr
-  // io.debug_instDecRs1         := instDec.io.rs1
-  // io.debug_instDecRs2         := instDec.io.rs2
-  // io.debug_instDecwriteEnable := instDec.io.writeEnable
-  // io.debug_instDecRd          := instDec.io.rd
-  // io.debug_regFileRs1Data     := regFile.io.rs1Data
-  // io.debug_regFileRs2Data     := regFile.io.rs2Data
-  // io.debug_adderResult        := adder.io.result
+  io.debugs.debug_pcInstAddr := pc.io.instAddr
+
+  io.debugs.debug_instDecRs1         := instDec.io.rs1
+  io.debugs.debug_instDecRs2         := instDec.io.rs2
+  io.debugs.debug_instDecRd          := instDec.io.rd
+  io.debugs.debug_instDecWriteEnable := instDec.io.writeEnable
+
+  io.debugs.debug_regFileRs1Data := regFile.io.rs1Data
+  io.debugs.debug_regFileRs2Data := regFile.io.rs2Data
+
+  io.debugs.debug_immGenImmidiate := immGen.io.immidiate
+
+  io.debugs.debug_adderResult := adder.io.result
 }

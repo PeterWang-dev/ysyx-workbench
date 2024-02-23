@@ -25,8 +25,9 @@ class InstDecoderIO extends Bundle {
   val inst        = Input(UInt(32.W))
   val rs1         = Output(UInt(5.W))
   val rs2         = Output(UInt(5.W))
-  val writeEnable = Output(Bool())
   val rd          = Output(UInt(5.W))
+  val writeEnable = Output(Bool())
+  val isImmidiate = Output(Bool())
 }
 
 class InstDecoder extends Module {
@@ -34,6 +35,8 @@ class InstDecoder extends Module {
 
   io.rs1         := io.inst(19, 15)
   io.rs2         := io.inst(24, 20)
-  io.writeEnable := true.B
   io.rd          := io.inst(11, 7)
+  // TODO: Add support for other instructions
+  io.writeEnable := true.B
+  io.isImmidiate := true.B
 }

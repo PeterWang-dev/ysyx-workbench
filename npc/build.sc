@@ -4,7 +4,7 @@ import mill.scalalib._
 // support BSP
 import mill.bsp._
 
-object futurecore extends SbtModule with scalafmt.ScalafmtModule { m =>
+object FutureCore extends SbtModule with scalafmt.ScalafmtModule { m =>
   def useChisel5            = true
   def chiselVersion         = if (useChisel5) "5.1.0" else "6.0.0"
   override def scalaVersion = "2.13.12"
