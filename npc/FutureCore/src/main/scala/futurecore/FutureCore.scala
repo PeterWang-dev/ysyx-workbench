@@ -81,6 +81,7 @@ class FutureCore extends Module {
   io.debug.instDecRd          := instDec.io.rd
   io.debug.instDecWriteEnable := instDec.io.writeEnable
   io.debug.instDecIsImmidiate := instDec.io.isImmidiate
+  io.debug.instDecIsEbreak    := instDec.io.isEbreak
 
   io.debug.regFileRs1Data := regFile.io.rs1Data
   io.debug.regFileRs2Data := regFile.io.rs2Data
