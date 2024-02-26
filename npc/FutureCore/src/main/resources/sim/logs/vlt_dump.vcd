@@ -38,8 +38,8 @@ $timescale 1ps $end
     $var wire 32 R io_result [31:0] $end
    $upscope $end
    $scope module ebreakDPI $end
-    $var wire 1 W clock $end
-    $var wire 1 X reset $end
+    $var wire 1 D clock $end
+    $var wire 1 E reset $end
     $var wire 1 N isEbreak $end
    $upscope $end
    $scope module immGen $end
@@ -72,10 +72,10 @@ $timescale 1ps $end
     $var wire 32 P io_rs2Data [31:0] $end
     $scope module regBank_ext $end
      $var wire 5 I R0_addr [4:0] $end
-     $var wire 1 Y R0_en $end
+     $var wire 1 W R0_en $end
      $var wire 1 D R0_clk $end
      $var wire 5 J R1_addr [4:0] $end
-     $var wire 1 Y R1_en $end
+     $var wire 1 W R1_en $end
      $var wire 1 D R1_clk $end
      $var wire 5 K W0_addr [4:0] $end
      $var wire 1 L W0_en $end
@@ -175,9 +175,7 @@ b00000000000000000000000000000000 S
 b00000000000000000000000000000000 T
 b00000000000000000000000000000000 U
 b00000000000000000000000000000000 V
-0W
-0X
-1Y
+1W
 #2
 0D
 #3
