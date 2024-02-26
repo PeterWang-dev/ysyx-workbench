@@ -60,22 +60,22 @@
         module regBank_combMem(	// @[FutureCore/src/main/scala/futurecore/backend/RegFile.scala:38:20]
 %000000   input  [4:0]  R0_addr,
 %000001   input         R0_en,
- 000100                 R0_clk,
-%000002   input  [4:0]  R1_addr,
+%000001                 R0_clk,
+%000000   input  [4:0]  R1_addr,
 %000001   input         R1_en,
- 000100                 R1_clk,
+%000001                 R1_clk,
 %000000   input  [4:0]  W0_addr,
-%000002   input         W0_en,
- 000100                 W0_clk,
-%000002   input  [31:0] W0_data,
-%000002   output [31:0] R0_data,
-%000002                 R1_data
+%000000   input         W0_en,
+%000001                 W0_clk,
+%000000   input  [31:0] W0_data,
+%000000   output [31:0] R0_data,
+%000000                 R1_data
         );
         
           reg [31:0] Memory[0:31];	// @[FutureCore/src/main/scala/futurecore/backend/RegFile.scala:38:20]
- 000049   always @(posedge W0_clk) begin	// @[FutureCore/src/main/scala/futurecore/backend/RegFile.scala:38:20]
-%000005     if (W0_en)	// @[FutureCore/src/main/scala/futurecore/backend/RegFile.scala:38:20]
-%000005       Memory[W0_addr] <= W0_data;	// @[FutureCore/src/main/scala/futurecore/backend/RegFile.scala:38:20]
+%000000   always @(posedge W0_clk) begin	// @[FutureCore/src/main/scala/futurecore/backend/RegFile.scala:38:20]
+%000000     if (W0_en)	// @[FutureCore/src/main/scala/futurecore/backend/RegFile.scala:38:20]
+%000000       Memory[W0_addr] <= W0_data;	// @[FutureCore/src/main/scala/futurecore/backend/RegFile.scala:38:20]
           end // always @(posedge)
           `ifdef ENABLE_INITIAL_MEM_	// @[FutureCore/src/main/scala/futurecore/backend/RegFile.scala:38:20]
             reg [31:0] _RANDOM_MEM;	// @[FutureCore/src/main/scala/futurecore/backend/RegFile.scala:38:20]
@@ -94,17 +94,17 @@
         endmodule
         
         module ProgramCounter(	// @[<stdin>:3:10]
- 000100   input         clock,	// @[<stdin>:4:11]
-%000002                 reset,	// @[<stdin>:5:11]
+%000001   input         clock,	// @[<stdin>:4:11]
+%000000                 reset,	// @[<stdin>:5:11]
 %000000   output [31:0] io_instAddr	// @[FutureCore/src/main/scala/futurecore/frontend/ProgramCounter.scala:29:21]
         );
         
 %000000   reg [31:0] pc;	// @[FutureCore/src/main/scala/futurecore/frontend/ProgramCounter.scala:32:19]
- 000049   always @(posedge clock) begin	// @[<stdin>:4:11]
-%000004     if (reset)	// @[<stdin>:4:11]
-%000004       pc <= 32'h80000000;	// @[FutureCore/src/main/scala/futurecore/frontend/ProgramCounter.scala:32:19]
+%000000   always @(posedge clock) begin	// @[<stdin>:4:11]
+%000000     if (reset)	// @[<stdin>:4:11]
+%000000       pc <= 32'h80000000;	// @[FutureCore/src/main/scala/futurecore/frontend/ProgramCounter.scala:32:19]
             else	// @[<stdin>:4:11]
- 000045       pc <= pc + 32'h4;	// @[FutureCore/src/main/scala/futurecore/frontend/ProgramCounter.scala:32:19, :33:12]
+%000000       pc <= pc + 32'h4;	// @[FutureCore/src/main/scala/futurecore/frontend/ProgramCounter.scala:32:19, :33:12]
           end // always @(posedge)
           `ifdef ENABLE_INITIAL_REG_	// @[<stdin>:3:10]
             `ifdef FIRRTL_BEFORE_INITIAL	// @[<stdin>:3:10]
@@ -128,13 +128,13 @@
         endmodule
         
         module InstDecoder(	// @[<stdin>:15:10]
-%000002   input  [31:0] io_inst,	// @[FutureCore/src/main/scala/futurecore/frontend/InstDecoder.scala:37:14]
+%000000   input  [31:0] io_inst,	// @[FutureCore/src/main/scala/futurecore/frontend/InstDecoder.scala:37:14]
 %000000   output [4:0]  io_rs1,	// @[FutureCore/src/main/scala/futurecore/frontend/InstDecoder.scala:37:14]
-%000002                 io_rs2,	// @[FutureCore/src/main/scala/futurecore/frontend/InstDecoder.scala:37:14]
+%000000                 io_rs2,	// @[FutureCore/src/main/scala/futurecore/frontend/InstDecoder.scala:37:14]
 %000000                 io_rd,	// @[FutureCore/src/main/scala/futurecore/frontend/InstDecoder.scala:37:14]
-%000002   output        io_writeEnable,	// @[FutureCore/src/main/scala/futurecore/frontend/InstDecoder.scala:37:14]
-%000002                 io_isImmidiate,	// @[FutureCore/src/main/scala/futurecore/frontend/InstDecoder.scala:37:14]
-%000002                 io_isEbreak	// @[FutureCore/src/main/scala/futurecore/frontend/InstDecoder.scala:37:14]
+%000000   output        io_writeEnable,	// @[FutureCore/src/main/scala/futurecore/frontend/InstDecoder.scala:37:14]
+%000000                 io_isImmidiate,	// @[FutureCore/src/main/scala/futurecore/frontend/InstDecoder.scala:37:14]
+%000000                 io_isEbreak	// @[FutureCore/src/main/scala/futurecore/frontend/InstDecoder.scala:37:14]
         );
         
           wire _GEN = io_inst[6:0] == 7'h13;	// @[FutureCore/src/main/scala/futurecore/frontend/InstDecoder.scala:49:{17,25}]
@@ -147,14 +147,14 @@
         endmodule
         
         module RegFile(	// @[<stdin>:42:10]
- 000100   input         clock,	// @[<stdin>:43:11]
+%000001   input         clock,	// @[<stdin>:43:11]
 %000000   input  [4:0]  io_rs1Addr,	// @[FutureCore/src/main/scala/futurecore/backend/RegFile.scala:37:19]
-%000002                 io_rs2Addr,	// @[FutureCore/src/main/scala/futurecore/backend/RegFile.scala:37:19]
-%000002   input         io_writeEnable,	// @[FutureCore/src/main/scala/futurecore/backend/RegFile.scala:37:19]
+%000000                 io_rs2Addr,	// @[FutureCore/src/main/scala/futurecore/backend/RegFile.scala:37:19]
+%000000   input         io_writeEnable,	// @[FutureCore/src/main/scala/futurecore/backend/RegFile.scala:37:19]
 %000000   input  [4:0]  io_rdAddr,	// @[FutureCore/src/main/scala/futurecore/backend/RegFile.scala:37:19]
-%000002   input  [31:0] io_rdData,	// @[FutureCore/src/main/scala/futurecore/backend/RegFile.scala:37:19]
-%000002   output [31:0] io_rs1Data,	// @[FutureCore/src/main/scala/futurecore/backend/RegFile.scala:37:19]
-%000002                 io_rs2Data	// @[FutureCore/src/main/scala/futurecore/backend/RegFile.scala:37:19]
+%000000   input  [31:0] io_rdData,	// @[FutureCore/src/main/scala/futurecore/backend/RegFile.scala:37:19]
+%000000   output [31:0] io_rs1Data,	// @[FutureCore/src/main/scala/futurecore/backend/RegFile.scala:37:19]
+%000000                 io_rs2Data	// @[FutureCore/src/main/scala/futurecore/backend/RegFile.scala:37:19]
         );
         
           wire [31:0] _regBank_ext_R0_data;	// @[FutureCore/src/main/scala/futurecore/backend/RegFile.scala:38:20]
@@ -178,8 +178,8 @@
         endmodule
         
         module ImmGenerator(	// @[<stdin>:63:10]
-%000002   input  [31:0] io_inst,	// @[FutureCore/src/main/scala/futurecore/backend/ImmGenerator.scala:31:16]
-%000002   output [31:0] io_immidiate	// @[FutureCore/src/main/scala/futurecore/backend/ImmGenerator.scala:31:16]
+%000000   input  [31:0] io_inst,	// @[FutureCore/src/main/scala/futurecore/backend/ImmGenerator.scala:31:16]
+%000000   output [31:0] io_immidiate	// @[FutureCore/src/main/scala/futurecore/backend/ImmGenerator.scala:31:16]
         );
         
           assign io_immidiate = {{20{io_inst[31]}}, io_inst[31:20]};	// @[<stdin>:63:10, FutureCore/src/main/scala/futurecore/backend/ImmGenerator.scala:39:{14,19,28,39}]
@@ -188,30 +188,30 @@
         // external module EbreakCall
         
         module Adder(	// @[<stdin>:125:10]
-%000002   input  [31:0] io_operand1,	// @[FutureCore/src/main/scala/futurecore/backend/Adder.scala:31:14]
-%000002                 io_operand2,	// @[FutureCore/src/main/scala/futurecore/backend/Adder.scala:31:14]
-%000002   output [31:0] io_result	// @[FutureCore/src/main/scala/futurecore/backend/Adder.scala:31:14]
+%000000   input  [31:0] io_operand1,	// @[FutureCore/src/main/scala/futurecore/backend/Adder.scala:31:14]
+%000000                 io_operand2,	// @[FutureCore/src/main/scala/futurecore/backend/Adder.scala:31:14]
+%000000   output [31:0] io_result	// @[FutureCore/src/main/scala/futurecore/backend/Adder.scala:31:14]
         );
         
           assign io_result = io_operand1 + io_operand2;	// @[<stdin>:125:10, FutureCore/src/main/scala/futurecore/backend/Adder.scala:33:28]
         endmodule
         
         module FutureCore(	// @[<stdin>:134:10]
- 000100   input         clock,	// @[<stdin>:135:11]
-%000002                 reset,	// @[<stdin>:136:11]
-%000002   input  [31:0] io_instIn,	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:50:21]
+%000001   input         clock,	// @[<stdin>:135:11]
+%000000                 reset,	// @[<stdin>:136:11]
+%000000   input  [31:0] io_instIn,	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:50:21]
 %000000   output [31:0] io_instAddrOut,	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:50:21]
 %000000                 io_debug_pcInstAddr,	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:50:21]
 %000000   output [4:0]  io_debug_instDecRs1,	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:50:21]
-%000002                 io_debug_instDecRs2,	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:50:21]
+%000000                 io_debug_instDecRs2,	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:50:21]
 %000000                 io_debug_instDecRd,	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:50:21]
-%000002   output        io_debug_instDecWriteEnable,	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:50:21]
-%000002                 io_debug_instDecIsImmidiate,	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:50:21]
-%000002                 io_debug_instDecIsEbreak,	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:50:21]
-%000002   output [31:0] io_debug_regFileRs1Data,	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:50:21]
-%000002                 io_debug_regFileRs2Data,	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:50:21]
-%000002                 io_debug_immGenImmidiate,	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:50:21]
-%000002                 io_debug_adderResult	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:50:21]
+%000000   output        io_debug_instDecWriteEnable,	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:50:21]
+%000000                 io_debug_instDecIsImmidiate,	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:50:21]
+%000000                 io_debug_instDecIsEbreak,	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:50:21]
+%000000   output [31:0] io_debug_regFileRs1Data,	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:50:21]
+%000000                 io_debug_regFileRs2Data,	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:50:21]
+%000000                 io_debug_immGenImmidiate,	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:50:21]
+%000000                 io_debug_adderResult	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:50:21]
         );
         
           wire [31:0] _adder_io_result;	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:56:25]
@@ -284,16 +284,16 @@
         import "DPI-C" function void ebreak_call();
         
         module EbreakCall(
- 000100     input clock,
-%000002     input reset,
-%000002     input isEbreak
+%000001     input clock,
+%000000     input reset,
+%000000     input isEbreak
         );
 %000001     initial begin
-%000000         if (isEbreak) begin
-%000000             $display("Before calling C Method");
-%000000             ebreak_call();
-%000000             $display("After calling C Method");
-                end
+                // if (isEbreak) begin
+%000001             $display("Before calling C Method");
+%000001             ebreak_call();
+%000001             $display("After calling C Method");
+                // end
             end
         endmodule
         
