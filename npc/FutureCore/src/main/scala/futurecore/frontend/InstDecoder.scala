@@ -20,7 +20,8 @@
 package futurecore.frontend
 
 import chisel3._
-import chisel3.util.HasBlackBoxResource
+import chisel3.util.{switch, HasBlackBoxResource}
+import chisel3.util.is
 
 class InstDecoderIO extends Bundle {
   val inst        = Input(UInt(32.W))
@@ -29,22 +30,28 @@ class InstDecoderIO extends Bundle {
   val rd          = Output(UInt(5.W))
   val writeEnable = Output(Bool())
   val isImmidiate = Output(Bool())
+  val isEbreak    = Output(Bool())
 }
 
 class InstDecoder extends Module {
   val io = IO(new InstDecoderIO)
 
-  io.rs1         := io.inst(19, 15)
-  io.rs2         := io.inst(24, 20)
-  io.rd          := io.inst(11, 7)
-  // TODO: Add support for other instructions
-  io.writeEnable := true.B
-  io.isImmidiate := true.B
-}
+  io.rs1 := io.inst(19, 15)
+  io.rs2 := io.inst(24, 20)
+  io.rd  := io.inst(11, 7)
 
-class EbreakCall extends BlackBox with HasBlackBoxResource {
-  val io = IO(new Bundle {
-    val isEbreak = Input(Bool())
-  })
-  addResource("/vsrc/EbreakCall.v")
+  // default value of control signals
+  io.writeEnable := false.B
+  io.isImmidiate := false.B
+
+  // optcode decoder
+  switch(io.inst(6, 0)) {
+    is("b001_0011".U) { // addi
+      io.writeEnable := true.B
+      io.isImmidiate := true.B
+    }
+    is("111_0011".U) { // ebreak
+      io.isEbreak := Mux(io.inst(20), true.B, false.B)
+    }
+  }
 }

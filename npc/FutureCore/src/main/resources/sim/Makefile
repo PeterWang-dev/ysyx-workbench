@@ -1,5 +1,6 @@
 # Variables Definition
 TOPNAME ?= FutureCore
+NPC_HOME ?=
 
 ## Source file path
 VSRC_DIR = $(abspath vsrc)
@@ -32,6 +33,15 @@ default: run
 
 build: $(BIN)
 
+dependencies: $(VSRC) $(CSRCS)
+	@echo
+	@echo "----------- Verilating ------------"
+	$(VERILATOR) $(VERILATOR_FLAGS) \
+		--top-module $(TOPNAME) $^ \
+		--Mdir $(OBJ_DIR) -o $(abspath $(BIN))
+	@echo "-------- obj_dir Generated --------"
+	@echo
+
 run: $(BIN)
 	@echo
 	@echo "-------- Verilator tracing --------"
@@ -44,6 +54,9 @@ run: $(BIN)
 	@echo "-------------- Done ---------------"
 	@echo "To see waveforms, open vlt_dump.vcd in a waveform viewer"
 	@echo
+
+verilog:
+	make -C $(NPC_HOME) verilog
 
 clean:
 	-rm $(BIN)
@@ -74,4 +87,4 @@ $(VSRC):
 # # Include NVBoard
 # include $(NVBOARD_HOME)/scripts/nvboard.mk
 
-.PHONY: default all build run clean clean-verilog clean-all
+.PHONY: default all build dependencies run verilog clean clean-verilog clean-all

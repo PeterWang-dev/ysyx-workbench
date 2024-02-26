@@ -46,12 +46,13 @@ class FutureCoreIO extends Bundle {
 }
 
 class FutureCore extends Module {
-  val io      = IO(new FutureCoreIO)
-  val pc      = Module(new ProgramCounter)
-  val instDec = Module(new InstDecoder)
-  val regFile = Module(new RegFile)
-  val immGen  = Module(new ImmGenerator)
-  val adder   = Module(new Adder)
+  val io        = IO(new FutureCoreIO)
+  val pc        = Module(new ProgramCounter)
+  val instDec   = Module(new InstDecoder)
+  val regFile   = Module(new RegFile)
+  val immGen    = Module(new ImmGenerator)
+  val ebreakDPI = Module(new EbreakCall)
+  val adder     = Module(new Adder)
 
   io.instAddrOut  := pc.io.instAddr
   instDec.io.inst := io.instIn
@@ -67,7 +68,9 @@ class FutureCore extends Module {
   adder.io.operand1 := regFile.io.rs1Data
   adder.io.operand2 := Mux(isImm, immGen.io.immidiate, regFile.io.rs2Data)
 
+  ebreakDPI.io.isEbreak := instDec.io.isEbreak
   regFile.io.rdData := adder.io.result
+
   // Debug signals
   dontTouch(io.debug)
   io.debug.pcInstAddr := pc.io.instAddr

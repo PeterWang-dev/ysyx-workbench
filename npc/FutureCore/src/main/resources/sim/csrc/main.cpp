@@ -22,12 +22,13 @@ uint32_t pmem_read(uint32_t paddr) {
 
 double sc_time_stamp() { return 0; }
 
+/* Global simualtion contexts */
+VerilatedContext *contextp = new VerilatedContext;
+
 int main(int argc, char **argv) {
   Verilated::mkdir("logs"); // directory of traces
 
   /* Setting up simulation context */
-  const std::unique_ptr<VerilatedContext> contextp{new VerilatedContext};
-
   contextp->debug(0);                // debug level
   contextp->randReset(2);            // reset policy
   contextp->traceEverOn(true);       // compute traced signals
@@ -35,11 +36,12 @@ int main(int argc, char **argv) {
 
   /* Preparing the Verilated model and the trace file pointer */
   const std::unique_ptr<VFutureCore> top{
-      new VFutureCore{contextp.get(), "FutureCore"}};
+      new VFutureCore{contextp, "FutureCore"}};
 
   VerilatedVcdC *tfp = new VerilatedVcdC;
-  top->trace(tfp, 99);
+  top->trace(tfp, 99); // use level to specify the trace depth
   tfp->open("logs/vlt_dump.vcd");
+  // use module name to specify the trace scope
   // tfp->dumpvars(1, "FutureCore");
 
   /* Setting initial signals */
