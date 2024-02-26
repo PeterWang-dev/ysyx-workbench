@@ -290,12 +290,12 @@
         );
 %000001     initial begin
 %000000         if (isEbreak) begin
+%000000             $display("Before calling C Method");
 %000000             ebreak_call();
+%000000             $display("After calling C Method");
                 end
             end
         endmodule
         
         // ----- 8< ----- FILE "firrtl_black_box_resource_files.f" ----- 8< -----
-        
-        // EbreakCall.sv
         
