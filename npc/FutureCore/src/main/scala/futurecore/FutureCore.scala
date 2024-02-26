@@ -69,7 +69,10 @@ class FutureCore extends Module {
   adder.io.operand1 := regFile.io.rs1Data
   adder.io.operand2 := Mux(isImm, immGen.io.immidiate, regFile.io.rs2Data)
 
+  ebreakDPI.io.clock := clock
+  ebreakDPI.io.reset := reset
   ebreakDPI.io.isEbreak := instDec.io.isEbreak
+
   regFile.io.rdData := adder.io.result
 
   // Debug signals
