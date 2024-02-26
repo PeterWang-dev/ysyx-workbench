@@ -287,12 +287,13 @@ module EbreakCall(
     input reset,
     input isEbreak
 );
-    // initial begin
-    //     if (isEbreak) begin
-
-    //     end
-    // end
-    ebreak_call();
+    initial begin
+        // if (isEbreak) begin
+            $display("Before calling C Method");
+            ebreak_call();
+            $display("After calling C Method");
+        // end
+    end
 endmodule
 
 // ----- 8< ----- FILE "firrtl_black_box_resource_files.f" ----- 8< -----
