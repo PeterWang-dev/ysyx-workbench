@@ -7,5 +7,5 @@ class EbreakCall extends BlackBox with HasBlackBoxResource {
   val io = IO(new Bundle {
     val isEbreak = Input(Bool())
   })
-  addResource("/vsrc/EbreakCall.v")
+  addResource("/sim/vsrc/EbreakCall.v")
 }
