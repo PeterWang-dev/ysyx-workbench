@@ -8,9 +8,10 @@ addi x1, x0, 1000  // x1 = 1000 0x3E8
 addi x2, x1, 2000  // x2 = 3000 0xBB8
 addi x3, x2, -1000 // x3 = 2000 0x7D0
 addi x4, x3, 2000  // x4 = 0    0x000
-addi x5, x4, 1000  // x5 = 1000 0x3E8 */
-uint32_t mem[100] = {0x3e800093, 0x7d008113, 0xc1810193, 0x83018213,
-                     0x3e820293};
+addi x5, x4, 1000  // x5 = 1000 0x3E8
+ebreak                                */
+uint32_t mem[100] = {0x3e800093, 0x7d008113, 0xc1810193,
+                     0x83018213, 0x3e820293, 0x00100073};
 
 const uint32_t offset = 0x80000000;
 
@@ -64,7 +65,6 @@ int main(int argc, char **argv) {
       }
 
       if (contextp->time() >= 10) {
-        printf("paddr: %x\n", top->io_debug_pcInstAddr);
         top->io_instIn = pmem_read(top->io_debug_pcInstAddr);
       }
     }
@@ -74,15 +74,16 @@ int main(int argc, char **argv) {
 
     VL_PRINTF("[%" PRId64 "] clock=%x reset=%x "
               "pcInstAddr=%x instDecRs1=%x instDecRs2=%x instDecRd=%x "
-              "instDecWriteEnable=%x instDecIsImmidiate=%x immGenImmidiate=%x "
+              "instDecWriteEnable=%x instDecIsImmidiate=%x "
+              "instDecIsEbreak=%x immGenImmidiate=%x "
               "regFileRs1Data=%x regFileRs2Data=%x adderResult=%x\n",
               contextp->time(), top->clock, top->reset,
               top->io_debug_pcInstAddr, top->io_debug_instDecRs1,
               top->io_debug_instDecRs2, top->io_debug_instDecRd,
               top->io_debug_instDecWriteEnable,
-              top->io_debug_instDecIsImmidiate, top->io_debug_immGenImmidiate,
-              top->io_debug_regFileRs1Data, top->io_debug_regFileRs2Data,
-              top->io_debug_adderResult);
+              top->io_debug_instDecIsImmidiate, top->io_debug_instDecIsEbreak,
+              top->io_debug_immGenImmidiate, top->io_debug_regFileRs1Data,
+              top->io_debug_regFileRs2Data, top->io_debug_adderResult);
   }
 
   // Final model cleanup

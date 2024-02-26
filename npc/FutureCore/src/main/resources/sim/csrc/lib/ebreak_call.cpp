@@ -1,6 +1,5 @@
 #include <verilated.h>
-
-extern void ebreak_call();
+#include "VFutureCore__Dpi.h"
 
 extern VerilatedContext *contextp; // should be compiled with main.cpp
 

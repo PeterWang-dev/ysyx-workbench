@@ -7,8 +7,9 @@ VSRC_DIR = $(abspath vsrc)
 VSRC = $(VSRC_DIR)/$(TOPNAME).sv
 VANNO = $(VSRC_DIR)/$(TOPNAME).anno.json
 # INC_PATH ?=
-CSRC_DIR = $(abspath csrc)
-CSRCS = $(wildcard $(CSRC_DIR)/*.cpp)
+CSRC_DIRS = $(abspath csrc)
+CSRC_DIRS += $(abspath csrc/lib)
+CSRCS = $(foreach dir, $(CSRC_DIRS), $(wildcard $(dir)/*.cpp))
 # SRC_AUTO_BIND = $(abspath ./auto_bind.cpp)
 # CSRCS += $(SRC_AUTO_BIND)
 
