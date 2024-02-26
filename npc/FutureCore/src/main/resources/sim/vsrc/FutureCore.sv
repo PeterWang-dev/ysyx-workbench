@@ -186,18 +186,18 @@ endmodule
 
 // external module EbreakCall
 
-module Adder(	// @[<stdin>:123:10]
+module Adder(	// @[<stdin>:125:10]
   input  [31:0] io_operand1,	// @[FutureCore/src/main/scala/futurecore/backend/Adder.scala:31:14]
                 io_operand2,	// @[FutureCore/src/main/scala/futurecore/backend/Adder.scala:31:14]
   output [31:0] io_result	// @[FutureCore/src/main/scala/futurecore/backend/Adder.scala:31:14]
 );
 
-  assign io_result = io_operand1 + io_operand2;	// @[<stdin>:123:10, FutureCore/src/main/scala/futurecore/backend/Adder.scala:33:28]
+  assign io_result = io_operand1 + io_operand2;	// @[<stdin>:125:10, FutureCore/src/main/scala/futurecore/backend/Adder.scala:33:28]
 endmodule
 
-module FutureCore(	// @[<stdin>:132:10]
-  input         clock,	// @[<stdin>:133:11]
-                reset,	// @[<stdin>:134:11]
+module FutureCore(	// @[<stdin>:134:10]
+  input         clock,	// @[<stdin>:135:11]
+                reset,	// @[<stdin>:136:11]
   input  [31:0] io_instIn,	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:50:21]
   output [31:0] io_instAddrOut,	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:50:21]
                 io_debug_pcInstAddr,	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:50:21]
@@ -253,6 +253,8 @@ module FutureCore(	// @[<stdin>:132:10]
     .io_immidiate (_immGen_io_immidiate)
   );
   EbreakCall ebreakDPI (	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:55:25]
+    .clock    (clock),
+    .reset    (reset),
     .isEbreak (_instDec_io_isEbreak)	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:52:25]
   );
   Adder adder (	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:56:25]
@@ -260,18 +262,18 @@ module FutureCore(	// @[<stdin>:132:10]
     .io_operand2 (_instDec_io_isImmidiate ? _immGen_io_immidiate : _regFile_io_rs2Data),	// @[FutureCore/src/main/scala/futurecore/FutureCore.scala:52:25, :53:25, :54:25, :70:27]
     .io_result   (_adder_io_result)
   );
-  assign io_instAddrOut = _pc_io_instAddr;	// @[<stdin>:132:10, FutureCore/src/main/scala/futurecore/FutureCore.scala:51:25]
-  assign io_debug_pcInstAddr = _pc_io_instAddr;	// @[<stdin>:132:10, FutureCore/src/main/scala/futurecore/FutureCore.scala:51:25]
-  assign io_debug_instDecRs1 = _instDec_io_rs1;	// @[<stdin>:132:10, FutureCore/src/main/scala/futurecore/FutureCore.scala:52:25]
-  assign io_debug_instDecRs2 = _instDec_io_rs2;	// @[<stdin>:132:10, FutureCore/src/main/scala/futurecore/FutureCore.scala:52:25]
-  assign io_debug_instDecRd = _instDec_io_rd;	// @[<stdin>:132:10, FutureCore/src/main/scala/futurecore/FutureCore.scala:52:25]
-  assign io_debug_instDecWriteEnable = _instDec_io_writeEnable;	// @[<stdin>:132:10, FutureCore/src/main/scala/futurecore/FutureCore.scala:52:25]
-  assign io_debug_instDecIsImmidiate = _instDec_io_isImmidiate;	// @[<stdin>:132:10, FutureCore/src/main/scala/futurecore/FutureCore.scala:52:25]
-  assign io_debug_instDecIsEbreak = _instDec_io_isEbreak;	// @[<stdin>:132:10, FutureCore/src/main/scala/futurecore/FutureCore.scala:52:25]
-  assign io_debug_regFileRs1Data = _regFile_io_rs1Data;	// @[<stdin>:132:10, FutureCore/src/main/scala/futurecore/FutureCore.scala:53:25]
-  assign io_debug_regFileRs2Data = _regFile_io_rs2Data;	// @[<stdin>:132:10, FutureCore/src/main/scala/futurecore/FutureCore.scala:53:25]
-  assign io_debug_immGenImmidiate = _immGen_io_immidiate;	// @[<stdin>:132:10, FutureCore/src/main/scala/futurecore/FutureCore.scala:54:25]
-  assign io_debug_adderResult = _adder_io_result;	// @[<stdin>:132:10, FutureCore/src/main/scala/futurecore/FutureCore.scala:56:25]
+  assign io_instAddrOut = _pc_io_instAddr;	// @[<stdin>:134:10, FutureCore/src/main/scala/futurecore/FutureCore.scala:51:25]
+  assign io_debug_pcInstAddr = _pc_io_instAddr;	// @[<stdin>:134:10, FutureCore/src/main/scala/futurecore/FutureCore.scala:51:25]
+  assign io_debug_instDecRs1 = _instDec_io_rs1;	// @[<stdin>:134:10, FutureCore/src/main/scala/futurecore/FutureCore.scala:52:25]
+  assign io_debug_instDecRs2 = _instDec_io_rs2;	// @[<stdin>:134:10, FutureCore/src/main/scala/futurecore/FutureCore.scala:52:25]
+  assign io_debug_instDecRd = _instDec_io_rd;	// @[<stdin>:134:10, FutureCore/src/main/scala/futurecore/FutureCore.scala:52:25]
+  assign io_debug_instDecWriteEnable = _instDec_io_writeEnable;	// @[<stdin>:134:10, FutureCore/src/main/scala/futurecore/FutureCore.scala:52:25]
+  assign io_debug_instDecIsImmidiate = _instDec_io_isImmidiate;	// @[<stdin>:134:10, FutureCore/src/main/scala/futurecore/FutureCore.scala:52:25]
+  assign io_debug_instDecIsEbreak = _instDec_io_isEbreak;	// @[<stdin>:134:10, FutureCore/src/main/scala/futurecore/FutureCore.scala:52:25]
+  assign io_debug_regFileRs1Data = _regFile_io_rs1Data;	// @[<stdin>:134:10, FutureCore/src/main/scala/futurecore/FutureCore.scala:53:25]
+  assign io_debug_regFileRs2Data = _regFile_io_rs2Data;	// @[<stdin>:134:10, FutureCore/src/main/scala/futurecore/FutureCore.scala:53:25]
+  assign io_debug_immGenImmidiate = _immGen_io_immidiate;	// @[<stdin>:134:10, FutureCore/src/main/scala/futurecore/FutureCore.scala:54:25]
+  assign io_debug_adderResult = _adder_io_result;	// @[<stdin>:134:10, FutureCore/src/main/scala/futurecore/FutureCore.scala:56:25]
 endmodule
 
 
@@ -287,10 +289,11 @@ module EbreakCall(
 );
     initial begin
         if (isEbreak) begin
-            $display("ebreak detected!");
             ebreak_call();
         end
     end
 endmodule
 
 // ----- 8< ----- FILE "firrtl_black_box_resource_files.f" ----- 8< -----
+
+EbreakCall.sv
