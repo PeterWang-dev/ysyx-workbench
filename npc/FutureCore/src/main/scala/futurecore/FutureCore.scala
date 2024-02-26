@@ -30,6 +30,7 @@ class DebugSignals extends Bundle {
   val instDecRd          = Output(UInt(5.W))
   val instDecWriteEnable = Output(Bool())
   val instDecIsImmidiate = Output(Bool())
+  val instDecIsEbreak    = Output(Bool())
 
   val regFileRs1Data = Output(UInt(32.W))
   val regFileRs2Data = Output(UInt(32.W))

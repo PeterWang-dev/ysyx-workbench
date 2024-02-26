@@ -43,6 +43,7 @@ class InstDecoder extends Module {
   // default value of control signals
   io.writeEnable := false.B
   io.isImmidiate := false.B
+  io.isEbreak    := false.B
 
   // optcode decoder
   switch(io.inst(6, 0)) {
@@ -50,7 +51,7 @@ class InstDecoder extends Module {
       io.writeEnable := true.B
       io.isImmidiate := true.B
     }
-    is("111_0011".U) { // ebreak
+    is("b111_0011".U) { // ebreak
       io.isEbreak := Mux(io.inst(20), true.B, false.B)
     }
   }
