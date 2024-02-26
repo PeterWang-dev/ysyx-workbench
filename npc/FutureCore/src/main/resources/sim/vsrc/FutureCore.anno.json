@@ -3,7 +3,7 @@
     "class":"firrtl.transforms.BlackBoxInlineAnno",
     "target":"FutureCore.EbreakCall",
     "name":"EbreakCall.sv",
-    "text":"import \"DPI-C\" function void ebreak_call();\n\nmodule EbreakCall(\n    input clock,\n    input reset,\n    input isEbreak,\n);\n    initial begin\n        if (isEbreak) begin\n            ebreak_call();\n        end\n    end\nendmodule"
+    "text":"import \"DPI-C\" function void ebreak_call();\n\nmodule EbreakCall(\n    input clock,\n    input reset,\n    input isEbreak\n);\n    initial begin\n        if (isEbreak) begin\n            ebreak_call();\n        end\n    end\nendmodule"
   },
   {
     "class":"firrtl.transforms.DontTouchAnnotation",
