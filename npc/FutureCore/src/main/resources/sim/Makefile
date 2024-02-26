@@ -4,6 +4,7 @@ TOPNAME ?= FutureCore
 ## Source file path
 VSRC_DIR = $(abspath vsrc)
 VSRC = $(VSRC_DIR)/$(TOPNAME).sv
+VANNO = $(VSRC_DIR)/$(TOPNAME).anno.json
 # INC_PATH ?=
 CSRC_DIR = $(abspath csrc)
 CSRCS = $(wildcard $(CSRC_DIR)/*.cpp)
@@ -49,6 +50,11 @@ clean:
 	-rm -r $(OBJ_DIR)
 	-rm -r logs
 
+clean-verilog:
+	-rm $(VSRC) $(VANNO)
+
+clean-all: clean clean-verilog
+
 # $(BIN): $(VSRC) $(CSRCS) $(SRC_AUTO_BIND) $(NVBOARD_ARCHIVE)
 $(BIN): $(VSRC) $(CSRCS)
 	@echo
@@ -68,4 +74,4 @@ $(VSRC):
 # # Include NVBoard
 # include $(NVBOARD_HOME)/scripts/nvboard.mk
 
-.PHONY: default all build run clean
+.PHONY: default all build run clean clean-verilog clean-all

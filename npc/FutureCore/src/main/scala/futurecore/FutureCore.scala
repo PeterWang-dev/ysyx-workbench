@@ -68,7 +68,6 @@ class FutureCore extends Module {
   adder.io.operand2 := Mux(isImm, immGen.io.immidiate, regFile.io.rs2Data)
 
   regFile.io.rdData := adder.io.result
-
   // Debug signals
   dontTouch(io.debug)
   io.debug.pcInstAddr := pc.io.instAddr

@@ -15,9 +15,13 @@ class ProgramCounterSpec extends AnyFlatSpec with ChiselScalatestTester {
     //   c.io.instAddr.expect(4.U)
     // }
     test(new ProgramCounter) { c =>
-      c.io.instAddr.expect(0.U)
+      c.io.instAddr.expect("h8000_0000".U)
       c.clock.step()
-      c.io.instAddr.expect(4.U)
+      c.io.instAddr.expect("h8000_0004".U)
+      c.clock.step()
+      c.io.instAddr.expect("h8000_0008".U)
+      c.clock.step()
+      c.io.instAddr.expect("h8000_000c".U)
     }
   }
 }

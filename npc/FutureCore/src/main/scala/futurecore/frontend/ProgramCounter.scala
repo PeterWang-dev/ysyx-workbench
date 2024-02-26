@@ -29,7 +29,7 @@ class ProgramCounter extends Module {
   val io        = IO(new ProgramCounterIO)
   val instWidth = 32.W
 
-  val pc = RegInit("h80000000".U(instWidth)) // PC reset to 0x80000000
+  val pc = RegInit("h8000_0000".U(instWidth)) // PC reset to 0x80000000
   pc := pc + 4.U
 
   io.instAddr := pc

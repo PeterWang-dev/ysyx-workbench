@@ -2,7 +2,7 @@ export PATH := $(PATH):$(abspath ./utils)
 
 PRJ_NAME = FutureCore
 SRC_DIR = $(PRJ_NAME)/src
-SIM_DIR = $(PRJ_NAME)/sim
+SIM_DIR = $(SRC_DIR)/main/resources/sim
 
 test:
 	mill -i __.test
