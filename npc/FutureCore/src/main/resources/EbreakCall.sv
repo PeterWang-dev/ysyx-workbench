@@ -6,10 +6,8 @@ module EbreakCall(
     input isEbreak
 );
     initial begin
-        if (isEbreak) begin
-            $display("Before calling C Method");
-            ebreak_call();
-            $display("After calling C Method");
-        end
+        $display("Before calling C Method");
+        ebreak_call();
+        $display("After calling C Method");
     end
 endmodule
