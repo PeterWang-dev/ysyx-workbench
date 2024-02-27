@@ -5,9 +5,9 @@ module EbreakCall(
     input reset,
     input isEbreak
 );
-    initial begin
-        $display("Before calling C Method");
-        ebreak_call();
-        $display("After calling C Method");
+    always_comb begin
+        if (isEbreak) begin
+            ebreak_call();
+        end
     end
 endmodule
