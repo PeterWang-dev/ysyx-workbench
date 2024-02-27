@@ -3,12 +3,11 @@ TOPNAME ?= FutureCore
 NPC_HOME ?=
 
 ## Source file path
-VSRC_DIR = $(abspath vsrc)
-VSRC = $(VSRC_DIR)/$(TOPNAME).sv
-VANNO = $(VSRC_DIR)/$(TOPNAME).anno.json
+VSRC = $(TOPNAME).sv
+VANNO = $(TOPNAME).anno.json
 # INC_PATH ?=
-CSRC_DIRS = $(abspath csrc)
-CSRC_DIRS += $(abspath csrc/lib)
+CSRC_DIRS = $(abspath .)
+CSRC_DIRS += $(abspath lib)
 CSRCS = $(foreach dir, $(CSRC_DIRS), $(wildcard $(dir)/*.cpp))
 # SRC_AUTO_BIND = $(abspath ./auto_bind.cpp)
 # CSRCS += $(SRC_AUTO_BIND)
