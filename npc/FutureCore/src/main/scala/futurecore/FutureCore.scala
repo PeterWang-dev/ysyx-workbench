@@ -64,14 +64,15 @@ class FutureCore extends Module {
   regFile.io.rdAddr      := instDec.io.rd
 
   immGen.io.inst := io.instIn
-  val isImm = instDec.io.isImmidiate
+  val isImm    = instDec.io.isImmidiate
+  val isEbreak = instDec.io.isEbreak
 
   adder.io.operand1 := regFile.io.rs1Data
   adder.io.operand2 := Mux(isImm, immGen.io.immidiate, regFile.io.rs2Data)
 
-  ebreakDPI.io.clock := clock
-  ebreakDPI.io.reset := reset
-  ebreakDPI.io.isEbreak := instDec.io.isEbreak
+  ebreakDPI.io.clock    := clock
+  ebreakDPI.io.reset    := reset
+  ebreakDPI.io.isEbreak := Mux(isEbreak, true.B, false.B)
 
   regFile.io.rdData := adder.io.result
 

@@ -4,7 +4,7 @@
 
 extern VerilatedContext *contextp; // should be compiled with main.cpp
 
-void ebreak_call() {
+void ebreak_call(int isEbreak) {
   contextp->gotFinish(true);
   VL_PRINTF("ebreak called! Simulation complete.\n");
 }

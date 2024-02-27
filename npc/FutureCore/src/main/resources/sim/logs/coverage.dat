@@ -602,12 +602,10 @@ C 'f/data/peterw/Projects/ysyx/ysyx-workbench/npc/FutureCore/src/main/resource
 C 'f/data/peterw/Projects/ysyx/ysyx-workbench/npc/FutureCore/src/main/resources/sim/vsrc/FutureCore.svl213n17pagev_toggle/FutureCoreoio_debug_adderResult[7]hFutureCore.FutureCore' 4
 C 'f/data/peterw/Projects/ysyx/ysyx-workbench/npc/FutureCore/src/main/resources/sim/vsrc/FutureCore.svl213n17pagev_toggle/FutureCoreoio_debug_adderResult[8]hFutureCore.FutureCore' 4
 C 'f/data/peterw/Projects/ysyx/ysyx-workbench/npc/FutureCore/src/main/resources/sim/vsrc/FutureCore.svl213n17pagev_toggle/FutureCoreoio_debug_adderResult[9]hFutureCore.FutureCore' 4
-C 'f/data/peterw/Projects/ysyx/ysyx-workbench/npc/FutureCore/src/main/resources/sim/vsrc/FutureCore.svl286n11pagev_toggle/EbreakCalloclockhFutureCore.FutureCore.ebreakDPI' 100
-C 'f/data/peterw/Projects/ysyx/ysyx-workbench/npc/FutureCore/src/main/resources/sim/vsrc/FutureCore.svl287n11pagev_toggle/EbreakCalloresethFutureCore.FutureCore.ebreakDPI' 2
-C 'f/data/peterw/Projects/ysyx/ysyx-workbench/npc/FutureCore/src/main/resources/sim/vsrc/FutureCore.svl288n11pagev_toggle/EbreakCalloisEbreakhFutureCore.FutureCore.ebreakDPI' 2
-C 'f/data/peterw/Projects/ysyx/ysyx-workbench/npc/FutureCore/src/main/resources/sim/vsrc/FutureCore.svl290n5pagev_line/EbreakCalloblockS290hFutureCore.FutureCore.ebreakDPI' 1
-C 'f/data/peterw/Projects/ysyx/ysyx-workbench/npc/FutureCore/src/main/resources/sim/vsrc/FutureCore.svl291n10pagev_branch/EbreakCalloelsehFutureCore.FutureCore.ebreakDPI' 1
-C 'f/data/peterw/Projects/ysyx/ysyx-workbench/npc/FutureCore/src/main/resources/sim/vsrc/FutureCore.svl291n9pagev_branch/EbreakCalloifS291-294hFutureCore.FutureCore.ebreakDPI' 0
+C 'f/data/peterw/Projects/ysyx/ysyx-workbench/npc/FutureCore/src/main/resources/sim/vsrc/FutureCore.svl288n11pagev_toggle/EbreakCalloclockhFutureCore.FutureCore.ebreakDPI' 100
+C 'f/data/peterw/Projects/ysyx/ysyx-workbench/npc/FutureCore/src/main/resources/sim/vsrc/FutureCore.svl289n11pagev_toggle/EbreakCalloresethFutureCore.FutureCore.ebreakDPI' 2
+C 'f/data/peterw/Projects/ysyx/ysyx-workbench/npc/FutureCore/src/main/resources/sim/vsrc/FutureCore.svl290n11pagev_toggle/EbreakCalloisEbreakhFutureCore.FutureCore.ebreakDPI' 2
+C 'f/data/peterw/Projects/ysyx/ysyx-workbench/npc/FutureCore/src/main/resources/sim/vsrc/FutureCore.svl292n5pagev_line/EbreakCalloblockS292,294-296hFutureCore.FutureCore.ebreakDPI' 1
 C 'f/data/peterw/Projects/ysyx/ysyx-workbench/npc/FutureCore/src/main/resources/sim/vsrc/FutureCore.svl60n17pagev_toggle/regBank_combMemoR0_addr[0]hFutureCore.FutureCore.regFile.regBank_ext' 4
 C 'f/data/peterw/Projects/ysyx/ysyx-workbench/npc/FutureCore/src/main/resources/sim/vsrc/FutureCore.svl60n17pagev_toggle/regBank_combMemoR0_addr[1]hFutureCore.FutureCore.regFile.regBank_ext' 2
 C 'f/data/peterw/Projects/ysyx/ysyx-workbench/npc/FutureCore/src/main/resources/sim/vsrc/FutureCore.svl60n17pagev_toggle/regBank_combMemoR0_addr[2]hFutureCore.FutureCore.regFile.regBank_ext' 2
