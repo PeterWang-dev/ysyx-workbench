@@ -17,20 +17,18 @@
   external case of the White Rabbit switch or other product you make using
   this documentation.
  */
+package futurecore.backend
+
 import chisel3._
 
-import futurecore.backend.Adder
-import futurecore.frontend.ProgramCounter
-
-class FutureCoreIO extends Bundle {
-  val instAddrOut = Output(UInt(32.W))
-  val instIn      = Input(UInt(32.W))
+class AdderIO extends Bundle {
+  val operand1 = Input(UInt(32.W))
+  val operand2 = Input(UInt(32.W))
+  val result   = Output(UInt(32.W))
 }
 
-class FutureCore extends Module {
-  val io = IO(new FutureCoreIO)
+class Adder extends Module {
+  val io = IO(new AdderIO)
 
-  val pc = Module(new ProgramCounter)
-
-  io.instAddrOut := pc.io.instAddr
+  io.result := io.operand1 + io.operand2
 }

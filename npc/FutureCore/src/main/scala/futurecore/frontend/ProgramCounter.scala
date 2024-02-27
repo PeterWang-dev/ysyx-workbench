@@ -17,10 +17,20 @@
   external case of the White Rabbit switch or other product you make using
   this documentation.
  */
-import circt.stage._
+package futurecore.frontend
 
-object Elaborate extends App {
-  def top       = new FutureCore
-  val generator = Seq(chisel3.stage.ChiselGeneratorAnnotation(() => top))
-  (new ChiselStage).execute(args, generator :+ CIRCTTargetAnnotation(CIRCTTarget.SystemVerilog))
+import chisel3._
+
+class ProgramCounterIO extends Bundle {
+  val instAddr = Output(UInt(32.W))
+}
+
+class ProgramCounter extends Module {
+  val io        = IO(new ProgramCounterIO)
+  val instWidth = 32.W
+
+  val pc = RegInit("h8000_0000".U(instWidth)) // PC reset to 0x80000000
+  pc := pc + 4.U
+
+  io.instAddr := pc
 }

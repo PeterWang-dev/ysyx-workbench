@@ -1,12 +1,14 @@
 # Variables Definition
 TOPNAME ?= FutureCore
+NPC_HOME ?=
 
 ## Source file path
-VSRC_DIR = $(abspath vsrc)
-VSRC = $(VSRC_DIR)/$(TOPNAME).sv
+VSRC = $(TOPNAME).sv
+VANNO = $(TOPNAME).anno.json
 # INC_PATH ?=
-CSRC_DIR = $(abspath csrc)
-CSRCS = $(wildcard $(CSRC_DIR)/*.cpp)
+CSRC_DIRS = $(abspath .)
+CSRC_DIRS += $(abspath lib)
+CSRCS = $(foreach dir, $(CSRC_DIRS), $(wildcard $(dir)/*.cpp))
 # SRC_AUTO_BIND = $(abspath ./auto_bind.cpp)
 # CSRCS += $(SRC_AUTO_BIND)
 
@@ -31,6 +33,15 @@ default: run
 
 build: $(BIN)
 
+dependencies: $(VSRC) $(CSRCS)
+	@echo
+	@echo "----------- Verilating ------------"
+	$(VERILATOR) $(VERILATOR_FLAGS) \
+		--top-module $(TOPNAME) $^ \
+		--Mdir $(OBJ_DIR) -o $(abspath $(BIN))
+	@echo "-------- obj_dir Generated --------"
+	@echo
+
 run: $(BIN)
 	@echo
 	@echo "-------- Verilator tracing --------"
@@ -44,10 +55,18 @@ run: $(BIN)
 	@echo "To see waveforms, open vlt_dump.vcd in a waveform viewer"
 	@echo
 
+verilog:
+	make -C $(NPC_HOME) verilog
+
 clean:
 	-rm $(BIN)
 	-rm -r $(OBJ_DIR)
 	-rm -r logs
+
+clean-verilog:
+	-rm $(VSRC) $(VANNO)
+
+clean-all: clean clean-verilog
 
 # $(BIN): $(VSRC) $(CSRCS) $(SRC_AUTO_BIND) $(NVBOARD_ARCHIVE)
 $(BIN): $(VSRC) $(CSRCS)
@@ -68,4 +87,4 @@ $(VSRC):
 # # Include NVBoard
 # include $(NVBOARD_HOME)/scripts/nvboard.mk
 
-.PHONY: default all build run clean
+.PHONY: default all build dependencies run verilog clean clean-verilog clean-all
