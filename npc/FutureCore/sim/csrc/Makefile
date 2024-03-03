@@ -70,7 +70,7 @@ clean-verilog:
 clean-all: clean clean-verilog
 
 # $(BIN): $(VSRC) $(CSRCS) $(SRC_AUTO_BIND) $(NVBOARD_ARCHIVE)
-$(BIN): $(VSRC) $(CSRCS)
+$(BIN): $(VSRCS) $(CSRCS)
 	@echo
 	@echo "----- Verilating and Building -----"
 	$(VERILATOR) --build $(VERILATOR_FLAGS) \
