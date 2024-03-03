@@ -28,7 +28,7 @@ checkformat:
 	mill -i __.checkFormat
 
 clean:
-	-rm $(SIM_DIR)/$(TOP_NAME).sv
+	-rm $(VSRC_DIR)
 	make -C $(SIM_DIR) clean
 
 sim:

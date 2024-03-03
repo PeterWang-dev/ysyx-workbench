@@ -3,11 +3,12 @@ TOPNAME ?= FutureCore
 NPC_HOME ?=
 
 ## Source file path
-VSRC = $(TOPNAME).sv
-VANNO = $(TOPNAME).anno.json
+VSRC_DIR = $(abspath ./vsrc)
+VSRCS = $(wildcard $(VSRC_DIR)/*.sv)
 # INC_PATH ?=
-CSRC_DIRS = $(abspath .)
-CSRC_DIRS += $(abspath lib)
+CSRC_DIR = $(abspath ./csrc)
+LIB_DIR = $(CSRC_DIR)/lib
+CSRC_DIRS = $(CSRC_DIR) $(LIB_DIR)
 CSRCS = $(foreach dir, $(CSRC_DIRS), $(wildcard $(dir)/*.cpp))
 # SRC_AUTO_BIND = $(abspath ./auto_bind.cpp)
 # CSRCS += $(SRC_AUTO_BIND)
@@ -33,7 +34,7 @@ default: run
 
 build: $(BIN)
 
-dependencies: $(VSRC) $(CSRCS)
+dependencies: $(VSRCS) $(CSRCS)
 	@echo
 	@echo "----------- Verilating ------------"
 	$(VERILATOR) $(VERILATOR_FLAGS) \
@@ -64,7 +65,7 @@ clean:
 	-rm -r logs
 
 clean-verilog:
-	-rm $(VSRC) $(VANNO)
+	-rm $(VSRC_DIR)
 
 clean-all: clean clean-verilog
 
