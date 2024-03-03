@@ -10,7 +10,7 @@ test:
 
 verilog:
 	$(call git_commit, "generate verilog")
-	mill -i __.runMain Elaborate -td $(VSRC_DIR) -o $(VSRC_DIR)
+	mill -i __.runMain Elaborate --split-verilog -td $(VSRC_DIR)
 
 help:
 	mill -i __.runMain Elaborate --help

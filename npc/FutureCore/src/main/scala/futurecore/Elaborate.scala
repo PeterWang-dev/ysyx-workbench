@@ -27,6 +27,6 @@ object Elaborate extends App {
       args,
       generator
         :+ CIRCTTargetAnnotation(CIRCTTarget.SystemVerilog)
-        :+ FirtoolOption("-O=debug --split-verilog")
+        // :+ FirtoolOption("-O=debug --split-verilog")
     )
 }
