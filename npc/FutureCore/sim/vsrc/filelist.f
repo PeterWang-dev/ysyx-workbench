@@ -1,0 +1,9 @@
+regBank_combMem.sv
+./EbreakCall.sv
+ProgramCounter.sv
+InstDecoder.sv
+RegFile.sv
+ImmGenerator.sv
+extern_modules.sv
+Adder.sv
+FutureCore.sv
