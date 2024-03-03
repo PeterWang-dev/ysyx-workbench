@@ -3,13 +3,14 @@ export PATH := $(PATH):$(abspath ./utils)
 PRJ_NAME = FutureCore
 SRC_DIR = $(PRJ_NAME)/src
 SIM_DIR = $(PRJ_NAME)/sim
+VSRC_DIR = $(SIM_DIR)/vsrc
 
 test:
 	mill -i __.test
 
 verilog:
 	$(call git_commit, "generate verilog")
-	mill -i __.runMain Elaborate -td $(SIM_DIR)
+	mill -i __.runMain Elaborate -o=$(VSRC_DIR)
 
 help:
 	mill -i __.runMain Elaborate --help
