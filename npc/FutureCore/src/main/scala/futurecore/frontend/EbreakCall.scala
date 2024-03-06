@@ -9,5 +9,5 @@ class EbreakCall extends BlackBox with HasBlackBoxResource {
     val reset = Input(Reset())
     val isEbreak = Input(Bool())
   })
-  addResource("/EbreakCall.sv")
+  addResource("EbreakCall.sv")
 }

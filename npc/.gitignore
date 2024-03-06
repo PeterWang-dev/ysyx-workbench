@@ -22,7 +22,9 @@ project/metals.sbt
 
 # Simulation
 
-# Generated Verilated files
+# Generated files
+*.sv
+!resources/*.sv
 obj_dir/
 
 # C/C++
