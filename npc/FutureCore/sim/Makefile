@@ -79,8 +79,8 @@ $(BIN): $(VSRCS) $(CSRCS)
 	@echo "------ Executable Generated -------"
 	@echo
 
-$(VSRC):
-	$(error $(VSRC) is not found! Use 'make verilog' to generate it)
+$(VSRC_DIR):
+	$(error $(VSRC_DIR) is not found! Use 'make verilog' to generate it)
 
 # $(SRC_AUTO_BIND): $(NXDC_FILES)
 # 	python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py $^ $@
