@@ -48,8 +48,7 @@ char* itoa(const int value, char *str) {
 
   // reverse output
   while (p != buffer) {
-    *str = *--p;
-    str++;
+    *str++ = *--p;
   }
   *str = '\0'; // null-terminator
 
