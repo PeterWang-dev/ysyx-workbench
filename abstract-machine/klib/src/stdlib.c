@@ -31,7 +31,7 @@ int itoa(int value, char *str) {
   char buffer[10];
   int cnt = 0;
 
-  if (value == 0) {
+  if (value == 0) { //! BUG OCCURS HERE
     *str++ = '0';
     *str = '\0'; // null-terminator
     cnt = 1;
