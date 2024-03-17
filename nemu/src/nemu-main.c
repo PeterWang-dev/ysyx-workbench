@@ -1,6 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014-2022 Yanyan Jiang and Zihao Yu
- *               2023-2024 PeterWang-dev (https://github.com/PeterWang-dev)
+ * Copyright (c) 2014-2022 Zihao Yu, Nanjing University
  *
  * NEMU is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan
@@ -12,7 +11,7 @@
  * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  *
  * See the Mulan PSL v2 for more details.
- *******************************************************************************/
+ ******************************************************************************/
 
 #include "monitor/sdb/sdb.h"
 #include <common.h>
