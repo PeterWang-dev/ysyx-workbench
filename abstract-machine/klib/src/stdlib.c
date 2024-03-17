@@ -27,32 +27,32 @@ int atoi(const char *nptr) {
   return x;
 }
 
-int itoa(int value, char *str) {
-  char buffer[10];
+int itoa(const int value, char *str) {
+  char buffer[10]; // only handle int
+  char *p = buffer; // always points to the (last digit + 1)
+  int val = value;
   int cnt = 0;
 
+  // special cases: zero and negative numbers
   if (value == 0) { //! BUG OCCURS HERE
-    *str++ = '0';
-    *str = '\0'; // null-terminator
+    *p++ = '0';
     cnt = 1;
-    return cnt;
-  }
-
-  if (value < 0) {
-    value = -value;
-    *str++ = '-';
+  } else if (value < 0) {
+    val = -value;
+    *p++ = '-';
     cnt++;
   }
 
-  char *p = buffer;
-  while (value != 0) {
-    *p++ = value % 10 + '0';
-    value /= 10;
+  // modulo 10 to get the digit stack
+  while (val != 0) {
+    *p++ = val % 10 + '0';
+    val /= 10;
   }
 
   // reverse output
   while (p != buffer) {
-    *str++ = *--p;
+    *str = *--p;
+    str++;
     cnt++;
   }
   *str = '\0'; // null-terminator
