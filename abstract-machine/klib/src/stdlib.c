@@ -27,20 +27,17 @@ int atoi(const char *nptr) {
   return x;
 }
 
-int itoa(const int value, char *str) {
+char* itoa(const int value, char *str) {
   char buffer[10]; // only handle int
   char *p = buffer; // always points to the (last digit + 1)
   int val = value;
-  int cnt = 0;
 
   // special cases: zero and negative numbers
-  if (value == 0) { //! BUG OCCURS HERE
+  if (value == 0) {
     *p++ = '0';
-    cnt = 1;
   } else if (value < 0) {
     val = -value;
     *p++ = '-';
-    cnt++;
   }
 
   // modulo 10 to get the digit stack
@@ -53,12 +50,11 @@ int itoa(const int value, char *str) {
   while (p != buffer) {
     *str = *--p;
     str++;
-    cnt++;
   }
   *str = '\0'; // null-terminator
 
   // return the length of the string, excluding the null-terminator
-  return cnt;
+  return str;
 }
 
 void *malloc(size_t size) {

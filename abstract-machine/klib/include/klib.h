@@ -45,7 +45,7 @@ void *malloc(size_t size);
 void free(void *ptr);
 int abs(int x);
 int atoi(const char *nptr);
-int itoa(int value, char *str);
+char* itoa(int value, char *str);
 
 // stdio.h
 int printf(const char *format, ...);
