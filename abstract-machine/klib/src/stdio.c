@@ -1,3 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2023-2024 PeterWang-dev (https://github.com/PeterWang-dev)
+ *
+ * AbstractMachine is licensed under Mulan PSL v2.
+ * You can use this software according to the terms and conditions of the Mulan
+ * PSL v2. You may obtain a copy of Mulan PSL v2 at:
+ *          http://license.coscl.org.cn/MulanPSL2
+ *
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
+ * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ *
+ * See the Mulan PSL v2 for more details.
+ *******************************************************************************/
 #include <am.h>
 #include <klib-macros.h>
 #include <klib.h>
@@ -14,9 +28,10 @@ int sprintf(char *str, const char *format, ...) {
 
   for (const char *ch = format; *ch != '\0'; ch++) {
     switch (*ch) {
-    case '%': { // format specifier
+    case '%': { // placeholder indicator
       ch++;
-      switch (*ch) {
+
+      switch (*ch) { // different format specifiers
       case 'd': {
         int num = va_arg(ap, int);
         char *start = str, *end = itoa(num, str);
@@ -24,18 +39,22 @@ int sprintf(char *str, const char *format, ...) {
         str = end;
         break;
       }
+
       case 's': {
         const char *s = va_arg(ap, const char *);
         while (*s != '\0') {
           *str++ = *s++;
           cnt++;
         }
+
         break;
       }
+
       default: {
         panic("Not implemented");
       }
       }
+
       break;
     }
 
