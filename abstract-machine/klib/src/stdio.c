@@ -19,9 +19,8 @@ int sprintf(char *str, const char *format, ...) {
       switch (*ch) {
       case 'd': {
         int num = va_arg(ap, int);
-        *str++ = num + '0';
-        cnt += 1;
-        // cnt += itoa(num, str);
+        cnt += itoa(num, str);
+        str += cnt + 1;
         break;
       }
       case 's': {
