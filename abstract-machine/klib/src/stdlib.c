@@ -53,7 +53,7 @@ char* itoa(const int value, char *str) {
   }
   *str = '\0'; // null-terminator
 
-  // return the length of the string, excluding the null-terminator
+  // return the new pointer to the string terminator
   return str;
 }
 
