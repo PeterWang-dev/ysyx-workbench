@@ -1,8 +1,0 @@
-{
-    "recommendations": [
-        "scalameta.metals",
-        "scala-lang.scala",
-        "aaronduino.chisel",
-        "llvm-vs-code-extensions.vscode-clangd"
-    ]
-}

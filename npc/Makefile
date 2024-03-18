@@ -1,19 +1,17 @@
-export PATH := $(PATH):$(abspath ./utils)
+BUILD_DIR = ./build
 
-PRJ_NAME = FutureCore
-SRC_DIR = $(PRJ_NAME)/src
-SIM_DIR = $(PRJ_NAME)/sim
-VSRC_DIR = $(SIM_DIR)/vsrc
+export PATH := $(PATH):$(abspath ./utils)
 
 test:
 	mill -i __.test
 
 verilog:
 	$(call git_commit, "generate verilog")
-	mill -i __.runMain Elaborate --split-verilog -td $(VSRC_DIR)
+	mkdir -p $(BUILD_DIR)
+	mill -i __.test.runMain Elaborate -td $(BUILD_DIR)
 
 help:
-	mill -i __.runMain Elaborate --help
+	mill -i __.test.runMain Elaborate --help
 
 compile:
 	mill -i __.compile
@@ -28,20 +26,12 @@ checkformat:
 	mill -i __.checkFormat
 
 clean:
-	mill clean
+	-rm -rf $(BUILD_DIR)
 
-clean-verilog:
-	-rm -r $(VSRC_DIR)
-
-clean-sim:
-	make -C $(SIM_DIR) clean
-
-clean-all: clean clean-sim clean-verilog
+.PHONY: test verilog help compile bsp reformat checkformat clean
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-	make -C $(SIM_DIR) run
-
-.PHONY: test verilog help compile bsp reformat checkformat clean sim
+	@echo "Write this Makefile by yourself."
 
 -include ../Makefile
