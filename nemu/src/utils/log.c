@@ -44,7 +44,7 @@ bool log_enable() {
 void print_logbuf() {
   for (char *buf = ringbuf_iter(&iringbuf); buf != NULL;
        buf = ringbuf_iter(&iringbuf)) {
-    fprintf(stderr, "%s", buf);
+    fprintf(stderr, "%s\n", buf);
   }
 }
 

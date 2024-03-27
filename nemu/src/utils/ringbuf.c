@@ -48,6 +48,7 @@ char *ringbuf_pop(RingBuf *rb, char *buf) {
 
 char *ringbuf_iter(RingBuf *rb) {
   static int pos = -1;
+  char *content;
 
   // init iterator
   if (pos == -1) {
@@ -60,5 +61,7 @@ char *ringbuf_iter(RingBuf *rb) {
     return NULL;
   }
 
-  return rb->buf[pos];
+  content = rb->buf[pos];
+  pos = (pos + 1) % RINGBUF_SIZE;
+  return content;
 }
