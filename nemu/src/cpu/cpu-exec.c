@@ -52,6 +52,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
   isa_exec_once(s);
   cpu.pc = s->dnpc;
 #ifdef CONFIG_ITRACE
+  // record the instruction to the logbuf
   char *p = s->logbuf;
   p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);
   int ilen = s->snpc - s->pc;
@@ -76,6 +77,9 @@ static void exec_once(Decode *s, vaddr_t pc) {
 #else
   p[0] = '\0'; // the upstream llvm does not support loongarch32r
 #endif
+  // copy the logbuf to the iringbuf
+  extern RingBuf iringbuf;
+  ringbuf_push(&iringbuf, p);
 #endif
 }
 
@@ -137,6 +141,9 @@ void cpu_exec(uint64_t n) {
 
   case NEMU_END:
   case NEMU_ABORT:
+    if (nemu_state.halt_ret != 0) {
+      print_logbuf();
+    }
     Log("nemu: %s at pc = " FMT_WORD,
         (nemu_state.state == NEMU_ABORT
              ? ANSI_FMT("ABORT", ANSI_FG_RED)

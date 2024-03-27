@@ -1,24 +1,25 @@
-/***************************************************************************************
-* Copyright (c) 2014-2022 Zihao Yu, Nanjing University
-*
-* NEMU is licensed under Mulan PSL v2.
-* You can use this software according to the terms and conditions of the Mulan PSL v2.
-* You may obtain a copy of Mulan PSL v2 at:
-*          http://license.coscl.org.cn/MulanPSL2
-*
-* THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
-* EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
-* MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
-*
-* See the Mulan PSL v2 for more details.
-***************************************************************************************/
-
+/*******************************************************************************
+ * Copyright (c) 2014-2022 Zihao Yu, Nanjing University
+ *               2023-2024 PeterWang-dev (https://github.com/PeterWang-dev)
+ *
+ * NEMU is licensed under Mulan PSL v2.
+ * You can use this software according to the terms and conditions of the Mulan
+ * PSL v2. You may obtain a copy of Mulan PSL v2 at:
+ *          http://license.coscl.org.cn/MulanPSL2
+ *
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
+ * KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ *
+ * See the Mulan PSL v2 for more details.
+ ******************************************************************************/
 #include <common.h>
 
 extern uint64_t g_nr_guest_inst;
 
 #ifndef CONFIG_TARGET_AM
 FILE *log_fp = NULL;
+RingBuf iringbuf;
 
 void init_log(const char *log_file) {
   log_fp = stdout;
@@ -28,10 +29,23 @@ void init_log(const char *log_file) {
     log_fp = fp;
   }
   Log("Log is written to %s", log_file ? log_file : "stdout");
+
+  Log("Initializing intruction ring buffer");
+  ringbuf_init(&iringbuf);
 }
 
 bool log_enable() {
-  return MUXDEF(CONFIG_TRACE, (g_nr_guest_inst >= CONFIG_TRACE_START) &&
-         (g_nr_guest_inst <= CONFIG_TRACE_END), false);
+  return MUXDEF(CONFIG_TRACE,
+                (g_nr_guest_inst >= CONFIG_TRACE_START) &&
+                    (g_nr_guest_inst <= CONFIG_TRACE_END),
+                false);
 }
+
+void print_logbuf() {
+  for (char *buf = ringbuf_iter(&iringbuf); buf != NULL;
+       buf = ringbuf_iter(&iringbuf)) {
+    fprintf(log_fp, "%s", buf);
+  }
+}
+
 #endif
