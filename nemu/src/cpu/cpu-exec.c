@@ -79,7 +79,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
 #endif
   // copy the logbuf to the iringbuf
   extern RingBuf iringbuf;
-  ringbuf_push(&iringbuf, p);
+  ringbuf_push(&iringbuf, s->logbuf);
 #endif
 }
 
