@@ -54,7 +54,7 @@ void init_mem() {
 
 word_t paddr_read(paddr_t addr, int len) {
   IFDEF(CONFIG_MTRACE,
-        log_write("[mem] read %d bytes in " FMT_PADDR, len, addr));
+        log_write("[mem] read %d bytes in " FMT_PADDR "\n", len, addr));
 
   if (likely(in_pmem(addr)))
     return pmem_read(addr, len);
@@ -68,7 +68,7 @@ word_t paddr_read(paddr_t addr, int len) {
 
 void paddr_write(paddr_t addr, int len, word_t data) {
   IFDEF(CONFIG_MTRACE,
-        log_write("[mem] write %d bytes in " FMT_PADDR " with " FMT_WORD, len,
+        log_write("[mem] write %d bytes in " FMT_PADDR " with " FMT_WORD "\n", len,
                   addr, data));
 
   if (likely(in_pmem(addr))) {
