@@ -41,7 +41,7 @@ bool log_enable() {
                 false);
 }
 
-void print_logbuf() { // TODO: Pretty print
+void print_logbuf() { // output log ring buffer
   for (char *buf = ringbuf_iter(&iringbuf); buf != NULL;
        buf = ringbuf_iter(&iringbuf)) {
     fprintf(stderr, "%s\n", buf);
