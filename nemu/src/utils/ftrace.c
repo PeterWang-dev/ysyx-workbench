@@ -6,8 +6,8 @@
 static _Bool ftrace_enabled = 0;
 
 static Elf32_Ehdr elf_header;
-static Elf32_Phdr *program_header = NULL;
-static Elf32_Shdr *section_header = NULL;
+static Elf32_Phdr **ph_table = NULL; // program header table
+static Elf32_Shdr **sh_table = NULL; // section header table
 
 static void debug_print_headers();
 
@@ -24,14 +24,20 @@ void init_ftrace(const char *elf_file) {
     }
 
     // read the program header
-    program_header = malloc(elf_header.e_phentsize * elf_header.e_phnum);
+    ph_table = malloc(elf_header.e_phnum * sizeof(Elf32_Phdr *));
     fseek(file, elf_header.e_phoff, SEEK_SET);
+    for (int i = 0; i < elf_header.e_phnum; i++) {
+      ph_table[i] = malloc(sizeof(Elf32_Phdr));
+      fread(ph_table[i], sizeof(Elf32_Phdr), 1, file);
+    }
 
     // read the section header
-    section_header = malloc(elf_header.e_shentsize * elf_header.e_shnum);
+    sh_table = malloc(elf_header.e_shnum * sizeof(Elf32_Shdr *));
     fseek(file, elf_header.e_shoff, SEEK_SET);
-
-    fclose(file);
+    for (int i = 0; i < elf_header.e_shnum; i++) {
+      sh_table[i] = malloc(sizeof(Elf32_Shdr));
+      fread(sh_table[i], sizeof(Elf32_Shdr), 1, file);
+    }
 
     debug_print_headers();
 
@@ -78,7 +84,7 @@ static void debug_print_headers() {
   printf(
       "  Type\t\tOffset\t\tVirtAddr\tPhysAddr\tFileSiz\tMemSiz\tFlg\tAlign\n");
   for (int i = 0; i < elf_header.e_phnum; i++) {
-    Elf32_Phdr *phdr = &program_header[i];
+    Elf32_Phdr *phdr = ph_table[i];
     printf("  %d\t\t0x%x\t0x%x\t0x%x\t0x%x\t0x%x\t%d\t0x%x\n", phdr->p_type,
            phdr->p_offset, phdr->p_vaddr, phdr->p_paddr, phdr->p_filesz,
            phdr->p_memsz, phdr->p_flags, phdr->p_align);
@@ -89,10 +95,10 @@ static void debug_print_headers() {
   printf(
       "  [Nr]\tName\t\tType\t\tAddr\t\tOff\t\tSize\t\tES\tFlg\tLk\tInf\tAl\n");
   for (int i = 0; i < elf_header.e_shnum; i++) {
-    Elf32_Shdr *shdr = &section_header[i];
+    Elf32_Shdr *shdr = sh_table[i];
     printf(
         "  [%2d]\t%-16s\t%-16d\t0x%08x\t0x%08x\t0x%08x\t%d\t%d\t%d\t%d\t%d\n",
-        i, (char *)(section_header + shdr->sh_name), shdr->sh_type,
+        i, (char *)(sh_table + shdr->sh_name), shdr->sh_type,
         shdr->sh_addr, shdr->sh_offset, shdr->sh_size, shdr->sh_entsize,
         shdr->sh_flags, shdr->sh_link, shdr->sh_info, shdr->sh_addralign);
   }
