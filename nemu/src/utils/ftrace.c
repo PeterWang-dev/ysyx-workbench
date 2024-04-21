@@ -24,48 +24,31 @@ void init_ftrace(const char *elf_file) {
     fread(&program_header, sizeof(program_header), 1, file);
     fread(&section_header, sizeof(section_header), 1, file);
 
-    // debug print all headers
+    // print file header
     printf("ELF Header:\n");
     printf("  Magic: ");
-    for (int i = 0; i < EI_NIDENT; i++) {
+    for (int i = 0; i < SELFMAG; i++) {
       printf("%02x ", elf_header.e_ident[i]);
     }
     printf("\n");
-    printf("  Type: %d\n", elf_header.e_type);
-    printf("  Machine: %d\n", elf_header.e_machine);
-    printf("  Version: %d\n", elf_header.e_version);
-    printf("  Entry point address: %x\n", elf_header.e_entry);
-    printf("  Program header offset: %d\n", elf_header.e_phoff);
-    printf("  Section header offset: %d\n", elf_header.e_shoff);
-    printf("  Flags: %d\n", elf_header.e_flags);
-    printf("  Size of this header: %d\n", elf_header.e_ehsize);
-    printf("  Size of program headers: %d\n", elf_header.e_phentsize);
+    printf("  Class: %d-bit\n", elf_header.e_ident[EI_CLASS] == ELFCLASS32 ? 32 : 64);
+    printf("  Data: %s\n", elf_header.e_ident[EI_DATA] == ELFDATA2LSB ? "2's complement, little endian" : "2's complement, big endian");
+    printf("  Version: %d\n", elf_header.e_ident[EI_VERSION]);
+    printf("  OS/ABI: %s\n", elf_header.e_ident[EI_OSABI] == ELFOSABI_SYSV ? "UNIX - System V" : "Unknown");
+    printf("  ABI Version: %d\n", elf_header.e_ident[EI_ABIVERSION]);
+    printf("  Type: %s\n", elf_header.e_type == ET_EXEC ? "Executable file" : "Unknown");
+    printf("  Machine: %s\n", elf_header.e_machine == EM_386 ? "Intel 80386" : "Unknown");
+    printf("  Version: 0x%x\n", elf_header.e_version);
+    printf("  Entry point address: 0x%x\n", elf_header.e_entry);
+    printf("  Start of program headers: %d (bytes into file)\n", elf_header.e_phoff);
+    printf("  Start of section headers: %d (bytes into file)\n", elf_header.e_shoff);
+    printf("  Flags: 0x%x\n", elf_header.e_flags);
+    printf("  Size of this header: %d (bytes)\n", elf_header.e_ehsize);
+    printf("  Size of program headers: %d (bytes)\n", elf_header.e_phentsize);
     printf("  Number of program headers: %d\n", elf_header.e_phnum);
-    printf("  Size of section headers: %d\n", elf_header.e_shentsize);
+    printf("  Size of section headers: %d (bytes)\n", elf_header.e_shentsize);
     printf("  Number of section headers: %d\n", elf_header.e_shnum);
     printf("  Section header string table index: %d\n", elf_header.e_shstrndx);
-
-    printf("Program Header:\n");
-    printf("  Type: %d\n", program_header.p_type);
-    printf("  Offset: %d\n", program_header.p_offset);
-    printf("  Virtual address: %x\n", program_header.p_vaddr);
-    printf("  Physical address: %x\n", program_header.p_paddr);
-    printf("  File size: %d\n", program_header.p_filesz);
-    printf("  Memory size: %d\n", program_header.p_memsz);
-    printf("  Flags: %d\n", program_header.p_flags);
-    printf("  Alignment: %d\n", program_header.p_align);
-
-    printf("Section Header:\n");
-    printf("  Name: %d\n", section_header.sh_name);
-    printf("  Type: %d\n", section_header.sh_type);
-    printf("  Flags: %d\n", section_header.sh_flags);
-    printf("  Address: %x\n", section_header.sh_addr);
-    printf("  Offset: %d\n", section_header.sh_offset);
-    printf("  Size: %d\n", section_header.sh_size);
-    printf("  Link: %d\n", section_header.sh_link);
-    printf("  Info: %d\n", section_header.sh_info);
-    printf("  Address alignment: %d\n", section_header.sh_addralign);
-    printf("  Entry size: %d\n", section_header.sh_entsize);
 
     fclose(file);
 
