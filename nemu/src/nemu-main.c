@@ -52,6 +52,8 @@ int main(int argc, char *argv[]) {
   init_monitor(argc, argv);
 #endif
 
+  return 0; // test only
+
 #ifdef CONFIG_TEST_EXPR
   /* Test expr() */
   test_expr(argc, argv);

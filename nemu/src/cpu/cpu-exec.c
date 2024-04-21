@@ -80,6 +80,26 @@ static void exec_once(Decode *s, vaddr_t pc) {
   // copy the logbuf to the iringbuf
   extern RingBuf iringbuf;
   ringbuf_push(&iringbuf, s->logbuf);
+
+  // TODO: Add ftrace here
+  // 1. judge the condition of ftrace
+  // 2. check if the instruction is a procedure call/return
+  // 3. extract jump address
+  // 4. log the corresponding function name
+  void log_ftrace(uint32_t dnpc, int type);
+
+  uint8_t optcode = BITS(s->isa.inst.val, 31, 20);
+  uint8_t rd = BITS(s->isa.inst.val, 11, 7);
+  uint8_t rs1 = BITS(s->isa.inst.val, 19, 15);
+
+  if (optcode == 0x6f || optcode == 0x67) {
+    // jal, jalr (call, ret)
+    if (rd == 1) { // subroutine call
+      log_ftrace(s->dnpc, 1);
+    } else if (rd == 0 && rs1 == 1) { // subroutine return
+      log_ftrace(s->dnpc, -1);
+    }
+  }
 #endif
 }
 

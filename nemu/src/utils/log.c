@@ -20,6 +20,7 @@ extern uint64_t g_nr_guest_inst;
 #ifndef CONFIG_TARGET_AM
 FILE *log_fp = NULL;
 RingBuf iringbuf;
+static int ft_indent = 0;
 
 void init_log(const char *log_file) {
   log_fp = stdout;
@@ -45,6 +46,28 @@ void print_logbuf() { // output log ring buffer
   for (char *buf = ringbuf_iter(&iringbuf); buf != NULL;
        buf = ringbuf_iter(&iringbuf)) {
     fprintf(stderr, "%s\n", buf);
+  }
+}
+
+void log_ftrace(vaddr_t dnpc, int type) {
+  extern char *find_symbol(vaddr_t addr);
+
+  fprintf(log_fp, "[ftrace]");
+  for (int i = 0; i < ft_indent; i++) {
+    fprintf(log_fp, "  ");
+  }
+
+  switch (type) {
+  case 1:
+    ft_indent++;
+    fprintf(log_fp, "call %08x <%s>\n", dnpc, find_symbol(dnpc));
+    break;
+  case -1:
+    ft_indent--;
+    fprintf(log_fp, "return to %08x <%s>\n", dnpc, find_symbol(dnpc));
+    break;
+  default:
+    panic("Unknown ftrace type %d", type);
   }
 }
 
