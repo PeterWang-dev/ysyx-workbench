@@ -11,8 +11,8 @@ static Elf32_Shdr **sh_table = NULL; // section header table
 
 static void debug_print_headers();
 
-void init_ftrace(const char *elf_file) {
-  FILE *file = fopen(elf_file, "rb");
+void init_ftrace(const char *elf_path) {
+  FILE *file = fopen(elf_path, "rb");
   if (file) {
     // read the elf_header
     fread(&elf_header, sizeof(elf_header), 1, file);
@@ -21,6 +21,10 @@ void init_ftrace(const char *elf_file) {
     if (memcmp(elf_header.e_ident, ELFMAG, SELFMAG) != 0) {
       // invalid elf file
       panic("Invalid elf file\n");
+    }
+
+    if (elf_header.e_phoff == 0) {
+      panic("No program header found\n");
     }
 
     // BUG: read the program header
