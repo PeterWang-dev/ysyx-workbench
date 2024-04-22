@@ -82,10 +82,11 @@ static void exec_once(Decode *s, vaddr_t pc) {
   ringbuf_push(&iringbuf, s->logbuf);
 
   // TODO: Add ftrace here
-  // 1. judge the condition of ftrace
-  // 2. check if the instruction is a procedure call/return
-  // 3. extract jump address
-  // 4. log the corresponding function name
+  // [x] 1. judge the condition of ftrace
+  // [x] 2. check if the instruction is a procedure call/return
+  // [x] 3. extract jump address
+  // [ ] 4. log the corresponding function name
+  // [ ] 5. refactor it into decode_exec()
   void log_ftrace(uint32_t dnpc, int type);
 
   uint8_t optcode = BITS(s->isa.inst.val, 31, 20);

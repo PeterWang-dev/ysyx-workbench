@@ -23,7 +23,8 @@ void init_ftrace(const char *elf_file) {
       panic("Invalid elf file\n");
     }
 
-    // read the program header
+    // BUG: read the program header
+    //! Need a bug confirmation
     ph_table = malloc(elf_header.e_phnum * sizeof(Elf32_Phdr *));
     fseek(file, elf_header.e_phoff, SEEK_SET);
     for (int i = 0; i < elf_header.e_phnum; i++) {
@@ -31,7 +32,8 @@ void init_ftrace(const char *elf_file) {
       fread(ph_table[i], sizeof(Elf32_Phdr), 1, file);
     }
 
-    // read the section header
+    // BUG: read the section header
+    //! Need a bug confirmation
     sh_table = malloc(elf_header.e_shnum * sizeof(Elf32_Shdr *));
     fseek(file, elf_header.e_shoff, SEEK_SET);
     for (int i = 0; i < elf_header.e_shnum; i++) {
@@ -79,7 +81,8 @@ static void debug_print_headers() {
   printf("  Number of section headers: %d\n", elf_header.e_shnum);
   printf("  Section header string table index: %d\n", elf_header.e_shstrndx);
 
-  // print the program header table
+  // BUG: print the program header table
+  //! Need a bug confirmation
   printf("Program Header Table:\n");
   printf(
       "  Type\t\tOffset\t\tVirtAddr\tPhysAddr\tFileSiz\tMemSiz\tFlg\tAlign\n");
@@ -90,7 +93,7 @@ static void debug_print_headers() {
            phdr->p_memsz, phdr->p_flags, phdr->p_align);
   }
 
-  // print the section header table
+  // BUG:print the section header table
   printf("Section Header Table:\n");
   printf(
       "  [Nr]\tName\t\tType\t\tAddr\t\tOff\t\tSize\t\tES\tFlg\tLk\tInf\tAl\n");
@@ -98,10 +101,12 @@ static void debug_print_headers() {
     Elf32_Shdr *shdr = sh_table[i];
     printf(
         "  [%2d]\t%-16s\t%-16d\t0x%08x\t0x%08x\t0x%08x\t%d\t%d\t%d\t%d\t%d\n",
-        i, (char *)(sh_table + shdr->sh_name), shdr->sh_type,
-        shdr->sh_addr, shdr->sh_offset, shdr->sh_size, shdr->sh_entsize,
-        shdr->sh_flags, shdr->sh_link, shdr->sh_info, shdr->sh_addralign);
+        i, (char *)(sh_table + shdr->sh_name), shdr->sh_type, shdr->sh_addr,
+        shdr->sh_offset, shdr->sh_size, shdr->sh_entsize, shdr->sh_flags,
+        shdr->sh_link, shdr->sh_info, shdr->sh_addralign);
   }
 }
 
-char *find_symbol(vaddr_t addr) { TODO(); }
+char *find_symbol(vaddr_t addr) {
+  TODO(); // Implement symble lookup
+}
