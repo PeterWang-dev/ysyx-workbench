@@ -7,6 +7,7 @@ static _Bool ftrace_enabled = 0;
 
 static Elf32_Sym **sym_table = NULL; // symbol table
 static char *str_table = NULL;       // string table
+Elf32_Shdr *entry = NULL;
 
 void init_ftrace(const char *elf_path) {
   Elf32_Ehdr elf_header;
@@ -42,11 +43,9 @@ void init_ftrace(const char *elf_path) {
         symtab_size = entry->sh_size;
       } else if (entry->sh_type == SHT_STRTAB) {
         strtab_addr = entry->sh_addr;
-        strtab_offset = strtab_offset
-                            ? entry->sh_offset
-                            : strtab_offset; // use the first strtab found
-        // add up all strtab size to read whole table
-        strtab_size += entry->sh_size;
+        strtab_offset = entry->sh_offset;
+        strtab_size = entry->sh_size;
+        break; // only read the first string table (strtab not shstrtab)
       }
     }
 
@@ -60,7 +59,7 @@ void init_ftrace(const char *elf_path) {
       fread(sym_table[i], sizeof(Elf32_Sym), 1, file);
     }
 
-    // read string table (including)
+    // read string table
     fseek(file, strtab_addr + strtab_offset, SEEK_SET);
     str_table = malloc(strtab_size);
     fread(str_table, strtab_size, 1, file); // BUG: Segmentation fault
