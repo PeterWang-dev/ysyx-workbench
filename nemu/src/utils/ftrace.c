@@ -49,7 +49,6 @@ void init_ftrace(const char *elf_path) {
       }
     }
 
-    // TODO: read symbol table and string table
     // read symbol table
     fseek(file, symtab_addr + symtab_offset, SEEK_SET);
     uint32_t sym_count = symtab_size / sizeof(Elf32_Sym);
@@ -62,7 +61,7 @@ void init_ftrace(const char *elf_path) {
     // read string table
     fseek(file, strtab_addr + strtab_offset, SEEK_SET);
     str_table = malloc(strtab_size);
-    fread(str_table, strtab_size, 1, file); // BUG: Segmentation fault
+    fread(str_table, strtab_size, 1, file);
 
     ftrace_enabled = 1;
   } else {
