@@ -6,6 +6,7 @@
 static _Bool ftrace_enabled = 0;
 
 static Elf32_Sym **sym_table = NULL; // symbol table
+static uint32_t sym_count;           // number of symbol table entries
 static char *str_table = NULL;       // string table
 // Elf32_Shdr *entry = NULL;
 
@@ -51,7 +52,7 @@ void init_ftrace(const char *elf_path) {
 
     // read symbol table
     fseek(file, symtab_addr + symtab_offset, SEEK_SET);
-    uint32_t sym_count = symtab_size / sizeof(Elf32_Sym);
+    sym_count = symtab_size / sizeof(Elf32_Sym);
     sym_table = malloc(sym_count * sizeof(Elf32_Sym *));
     for (i = 0; i < sym_count; i++) {
       sym_table[i] = malloc(sizeof(Elf32_Sym));
@@ -70,5 +71,14 @@ void init_ftrace(const char *elf_path) {
 }
 
 char *find_symbol(vaddr_t addr) {
-  TODO(); // Implement symble lookup
+  int i;
+  for (i = 0; i < sym_count; i++) {
+    if (sym_table[i]->st_info == STT_FUNC) {
+      if (addr >= sym_table[i]->st_value &&
+          addr < sym_table[i]->st_value + sym_table[i]->st_size) {
+        return str_table + sym_table[i]->st_name;
+      }
+    }
+  }
+  return NULL;
 }
