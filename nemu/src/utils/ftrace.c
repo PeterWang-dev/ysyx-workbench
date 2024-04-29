@@ -63,7 +63,7 @@ void init_ftrace(const char *elf_path) {
     // read string table (including)
     fseek(file, strtab_addr + strtab_offset, SEEK_SET);
     str_table = malloc(strtab_size);
-    fread(str_table, symtab_size, 1, file);
+    fread(str_table, strtab_size, 1, file); // BUG: Segmentation fault
 
     ftrace_enabled = 1;
   } else {
