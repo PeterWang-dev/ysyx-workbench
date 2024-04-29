@@ -7,7 +7,7 @@ static _Bool ftrace_enabled = 0;
 
 static Elf32_Sym **sym_table = NULL; // symbol table
 static char *str_table = NULL;       // string table
-Elf32_Shdr *entry = NULL;
+// Elf32_Shdr *entry = NULL;
 
 void init_ftrace(const char *elf_path) {
   Elf32_Ehdr elf_header;
