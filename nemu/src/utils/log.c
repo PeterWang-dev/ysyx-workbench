@@ -52,7 +52,7 @@ void print_logbuf() { // output log ring buffer
 void log_ftrace(vaddr_t dnpc, int type) {
   extern char *find_symbol(vaddr_t addr);
 
-  fprintf(log_fp, "[ftrace]");
+  fprintf(log_fp, "[ftrace] ");
   for (int i = 0; i < ft_indent; i++) {
     fprintf(log_fp, "  ");
   }
