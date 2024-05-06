@@ -51,27 +51,23 @@ void print_logbuf() { // output log ring buffer
 
 void log_ftrace(vaddr_t dnpc, int type) {
   extern char *find_symbol(vaddr_t addr);
-  char buf[128];
 
+  fprintf(log_fp, "[ftrace]");
   switch (type) {
   case 1:
     ft_indent++;
     // BUG: UB, find_symbol returns null pointer. Here dereferenced NULL!
-    sprintf(buf, "call %08x <%s>\n", dnpc, find_symbol(dnpc));
+    fprintf(log_fp, "%*ccall %08x <%s>\n", ft_indent, ' ', dnpc,
+            find_symbol(dnpc));
     break;
   case -1:
+    fprintf(log_fp, "%*creturn to %08x <%s>\n", ft_indent, ' ', dnpc,
+            find_symbol(dnpc));
     ft_indent--;
-    sprintf(buf, "return to %08x <%s>\n", dnpc, find_symbol(dnpc));
     break;
   default:
     panic("Unknown ftrace type %d", type);
   }
-
-  fprintf(log_fp, "[ftrace] ");
-  for (int i = 0; i < ft_indent; i++) {
-    fprintf(log_fp, "  ");
-  }
-  fprintf(log_fp, "%s", buf);
 }
 
 #endif
