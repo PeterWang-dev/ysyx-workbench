@@ -141,7 +141,7 @@ static int decode_exec(Decode *s) {
       } {
         if (rd == 1)
           log_ftrace(s->dnpc, 1);
-        else if (rd == 0 && BITS(s->isa.inst.val, 19, 15) == 0)
+        else if (rd == 0 && BITS(s->isa.inst.val, 19, 15) == 1)
           log_ftrace(s->dnpc, -1);
       });
   INSTPAT(
