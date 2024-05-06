@@ -132,8 +132,6 @@ static int decode_exec(Decode *s) {
       } {
         if (rd == 1)
           log_ftrace(s->dnpc, 1);
-        else if (rd == 0)
-          log_ftrace(s->dnpc, -1);
       });
   INSTPAT(
       "???????????? ????? 000 ????? 11001 11", jalr, I,
@@ -143,7 +141,7 @@ static int decode_exec(Decode *s) {
       } {
         if (rd == 1)
           log_ftrace(s->dnpc, 1);
-        else if (rd == 0)
+        else if (rd == 0 && BITS(s->isa.inst.val, 19, 15) == 0)
           log_ftrace(s->dnpc, -1);
       });
   INSTPAT(
