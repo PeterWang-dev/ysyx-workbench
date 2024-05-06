@@ -132,7 +132,7 @@ static int decode_exec(Decode *s) {
       } {
         if (rd == 1)
           log_ftrace(s->dnpc, 1);
-        else if (rd == 0 && src1 == 1)
+        else if (rd == 0)
           log_ftrace(s->dnpc, -1);
       });
   INSTPAT(
@@ -143,7 +143,7 @@ static int decode_exec(Decode *s) {
       } {
         if (rd == 1)
           log_ftrace(s->dnpc, 1);
-        else if (rd == 0 && src1 == 1)
+        else if (rd == 0)
           log_ftrace(s->dnpc, -1);
       });
   INSTPAT(
