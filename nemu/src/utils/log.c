@@ -57,11 +57,11 @@ void log_ftrace(vaddr_t dnpc, int type) {
   case 1:
     ft_indent++;
     // BUG: UB, find_symbol returns null pointer. Here dereferenced NULL!
-    fprintf(log_fp, "%*ccall %08x <%s>\n", ft_indent, ' ', dnpc,
+    fprintf(log_fp, "%*ccall %08x <%s>\n", 2 * ft_indent, ' ', dnpc,
             find_symbol(dnpc));
     break;
   case -1:
-    fprintf(log_fp, "%*creturn to %08x <%s>\n", ft_indent, ' ', dnpc,
+    fprintf(log_fp, "%*creturn to %08x <%s>\n", 2 * ft_indent, ' ', dnpc,
             find_symbol(dnpc));
     ft_indent--;
     break;
