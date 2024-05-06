@@ -60,6 +60,7 @@ void log_ftrace(vaddr_t dnpc, int type) {
   switch (type) {
   case 1:
     ft_indent++;
+    // BUG: UB, find_symbol returns null pointer. Here dereferenced NULL!
     fprintf(log_fp, "call %08x <%s>\n", dnpc, find_symbol(dnpc));
     break;
   case -1:
