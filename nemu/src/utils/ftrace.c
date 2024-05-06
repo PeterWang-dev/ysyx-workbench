@@ -73,7 +73,8 @@ void init_ftrace(const char *elf_path) {
 char *find_symbol(vaddr_t addr) {
   int i;
   for (i = 0; i < sym_count; i++) {
-    if (sym_table[i]->st_info == STT_FUNC) {
+    if (ELF32_ST_TYPE(sym_table[i]->st_info) ==
+        STT_FUNC) { // BUG: FUNC not compatible
       if (addr >= sym_table[i]->st_value &&
           addr < sym_table[i]->st_value + sym_table[i]->st_size) {
         return str_table + sym_table[i]->st_name;
