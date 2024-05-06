@@ -53,19 +53,17 @@ void log_ftrace(vaddr_t dnpc, int type) {
   extern char *find_symbol(vaddr_t addr);
 
   fprintf(log_fp, "[ftrace]");
-  for (int i = 0; i < ft_indent; i++) {
-    fprintf(log_fp, "  ");
-  }
-
   switch (type) {
   case 1:
     ft_indent++;
     // BUG: UB, find_symbol returns null pointer. Here dereferenced NULL!
-    fprintf(log_fp, "call %08x <%s>\n", dnpc, find_symbol(dnpc));
+    fprintf(log_fp, "%*ccall %08x <%s>\n", 2 * ft_indent, ' ', dnpc,
+            find_symbol(dnpc));
     break;
   case -1:
+    fprintf(log_fp, "%*creturn to %08x <%s>\n", 2 * ft_indent, ' ', dnpc,
+            find_symbol(dnpc));
     ft_indent--;
-    fprintf(log_fp, "return to %08x <%s>\n", dnpc, find_symbol(dnpc));
     break;
   default:
     panic("Unknown ftrace type %d", type);
