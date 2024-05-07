@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-static _Bool ftrace_enabled = 0;
+bool ftrace_enabled = 0;
 
 static Elf32_Sym **sym_table = NULL; // symbol table
 static uint32_t sym_count;           // number of symbol table entries
