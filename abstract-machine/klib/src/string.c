@@ -21,7 +21,8 @@ static void *mempcpy(void *dest, const void *src, size_t n) {
   unsigned char *cdest = (unsigned char *)dest;
   const unsigned char *csrc = (unsigned char *)src;
 
-  for (size_t i = 0; i < n; i++) {
+  size_t i;
+  for (i = 0; i < n; i++) {
     cdest[i] = csrc[i];
   }
 
@@ -34,7 +35,7 @@ void *memcpy(void *dest, const void *src, size_t n) {
 }
 
 void *memmove(void *dest, const void *src, size_t n) {
-  unsigned char *tmp = (unsigned char *)malloc(n);
+  unsigned char tmp[n]; // C99 VLA
 
   memcpy(tmp, src, n);
   memcpy(dest, tmp, n);
@@ -47,7 +48,8 @@ void *memmove(void *dest, const void *src, size_t n) {
 void *memset(void *s, int c, size_t n) {
   unsigned char *cs = (unsigned char *)s;
 
-  for (size_t i = 0; i < n; i++) {
+  size_t i;
+  for (i = 0; i < n; i++) {
     cs[i] = c;
   }
 
@@ -58,7 +60,8 @@ int memcmp(const void *s1, const void *s2, size_t n) {
   const unsigned char *cs1 = (const unsigned char *)s1;
   const unsigned char *cs2 = (const unsigned char *)s2;
 
-  for (size_t i = 0; i < n; i++) {
+  size_t i;
+  for (i = 0; i < n; i++) {
     if (cs1[i] != cs2[i]) {
       return cs1[i] - cs2[i];
     }
@@ -87,7 +90,7 @@ static size_t strnlen(const char *s, size_t maxlen) {
   return len;
 }
 
-char *stpcpy(char * dst, const char * src) {
+char *stpcpy(char *dst, const char *src) {
   char *p;
 
   p = mempcpy(dst, src, strlen(src));
@@ -96,25 +99,25 @@ char *stpcpy(char * dst, const char * src) {
   return p;
 }
 
-char *strcpy(char * dst, const char * src) {
+char *strcpy(char *dst, const char *src) {
   stpcpy(dst, src);
   return dst;
 }
 
-char *strcat(char * dst, const char * src) {
+char *strcat(char *dst, const char *src) {
   stpcpy(dst + strlen(dst), src);
   return dst;
 }
 
-static char *stpncpy(char * dst, const char * src,
-                     size_t dsize) {
+static char *stpncpy(char *dst, const char *src, size_t dsize) {
   size_t dlen;
 
   dlen = strnlen(src, dsize);
+  // BUG: Segmentation fault occurs here.
   return memset(mempcpy(dst, src, dlen), 0, dsize - dlen);
 }
 
-char *strncpy(char * dst, const char * src, size_t dsize) {
+char *strncpy(char *dst, const char *src, size_t dsize) {
   stpncpy(dst, src, dsize);
   return dst;
 }
