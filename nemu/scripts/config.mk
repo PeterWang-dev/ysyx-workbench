@@ -39,6 +39,7 @@ $(MCONF):
 	$(Q)$(MAKE) $(silent) -C $(KCONFIG_PATH) NAME=mconf
 
 $(FIXDEP):
+	$(Q)echo -e "\033[0;31mCompiling fixdep:\033[0m\nCC: $(CC)"
 	$(Q)$(MAKE) $(silent) -C $(FIXDEP_PATH)
 
 menuconfig: $(MCONF) $(CONF) $(FIXDEP)
