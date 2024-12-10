@@ -33,7 +33,7 @@ function init() {
     git commit -am "$1 $2 initialized"$'\n\n'"$log"
   else
     sed -i -e "/^\/$3/d" .gitignore
-    echo "/$3" >> .gitignore
+    echo "!/$3" >> .gitignore
     git add -A .gitignore
     git commit --no-verify --allow-empty -am "$1 $2 initialized using submodule"$'\n\n'"$log"
   fi

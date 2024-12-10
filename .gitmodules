@@ -1,3 +1,7 @@
+[submodule "nvboard"]
+	path = nvboard
+	url = git@github.com:NJU-ProjectN/nvboard.git
+	branch = master
 [submodule "fceux-am"]
 	path = fceux-am
 	url = git@github.com:NJU-ProjectN/fceux-am.git
