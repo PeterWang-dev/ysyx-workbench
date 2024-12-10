@@ -44,7 +44,6 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
     IFDEF(CONFIG_ITRACE, puts(_this->logbuf));
   }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
-  IFDEF(CONFIG_WATCHPOINT, check_wp_pool());
 }
 
 static void exec_once(Decode *s, vaddr_t pc) {
@@ -53,6 +52,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
   isa_exec_once(s);
   cpu.pc = s->dnpc;
 #ifdef CONFIG_ITRACE
+  // record the instruction to the logbuf
   char *p = s->logbuf;
   p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);
   int ilen = s->snpc - s->pc;
@@ -77,6 +77,9 @@ static void exec_once(Decode *s, vaddr_t pc) {
 #else
   p[0] = '\0'; // the upstream llvm does not support loongarch32r
 #endif
+  // copy the logbuf to the iringbuf
+  extern RingBuf iringbuf;
+  ringbuf_push(&iringbuf, s->logbuf);
 #endif
 }
 
@@ -85,6 +88,7 @@ static void execute(uint64_t n) {
   for (; n > 0; n--) {
     exec_once(&s, cpu.pc);
     g_nr_guest_inst++;
+    IFDEF(CONFIG_WATCHPOINT, check_wp_pool());
     trace_and_difftest(&s, cpu.pc);
     if (nemu_state.state != NEMU_RUNNING)
       break;
@@ -137,6 +141,10 @@ void cpu_exec(uint64_t n) {
 
   case NEMU_END:
   case NEMU_ABORT:
+    // print the logbuf when the program execution is failed
+    if (nemu_state.halt_ret != 0) {
+      print_logbuf();
+    }
     Log("nemu: %s at pc = " FMT_WORD,
         (nemu_state.state == NEMU_ABORT
              ? ANSI_FMT("ABORT", ANSI_FG_RED)
