@@ -1,0 +1,4 @@
+[submodule "nvboard"]
+	path = nvboard
+	url = git@github.com:NJU-ProjectN/nvboard
+	branch = master
