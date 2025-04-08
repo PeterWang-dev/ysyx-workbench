@@ -29,6 +29,11 @@ int test_expr(int argc, char *argv[]) {
   }
 
   FILE *fp = fopen(argv[1], "r");
+  if (fp == NULL) {
+    fprintf(stderr, "error: cannot open file %s", argv[1]);
+    return -1;
+  }
+
   uint32_t answer;
   char e[65535];
   while (fscanf(fp, "%u %s", &answer, e) != EOF) {
