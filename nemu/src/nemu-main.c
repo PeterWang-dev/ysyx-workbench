@@ -25,6 +25,7 @@ int is_exit_status_bad();
 int test_expr(int argc, char *argv[]) {
   if (argc < 2) {
     fprintf(stderr, "missing input file path");
+    return -1;
   }
 
   FILE *fp = fopen(argv[1], "r");
