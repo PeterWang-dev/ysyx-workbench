@@ -21,7 +21,7 @@ void am_init_monitor();
 void engine_start();
 int is_exit_status_bad();
 
-void test_expr(int argc, char *argv[]) {
+int test_expr(int argc, char *argv[]) {
   if (argc < 2) {
     panic("missing input file path");
   }
@@ -41,9 +41,17 @@ void test_expr(int argc, char *argv[]) {
   }
 
   printf("success!\n");
+  return 0;
 }
 
 int main(int argc, char *argv[]) {
+#ifdef CONFIG_TEST_EXPR
+  /* Test expr() */
+  int ret;
+  ret = test_expr(argc, argv);
+  return ret;
+#endif
+
   /* Initialize the monitor. */
 #ifdef CONFIG_TARGET_AM
   am_init_monitor();
@@ -51,13 +59,8 @@ int main(int argc, char *argv[]) {
   init_monitor(argc, argv);
 #endif
 
-#ifdef CONFIG_TEST_EXPR
-  /* Test expr() */
-  test_expr(argc, argv);
-#else
   /* Start engine. */
   engine_start();
 
   return is_exit_status_bad();
-#endif
 }
