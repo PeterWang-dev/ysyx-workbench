@@ -1,3 +1,12 @@
+[submodule "nvboard"]
+	path = nvboard
+	url = git@github.com:NJU-ProjectN/nvboard.git
+	branch = master
+[submodule "fceux-am"]
+	path = fceux-am
+	url = git@github.com:NJU-ProjectN/fceux-am.git
+	branch = ics2021
 [submodule "am-kernels"]
 	path = am-kernels
-	url = git@github.com:PeterWang-dev/am-kernels.git
+	url = git@github.com:NJU-ProjectN/am-kernels.git
+	branch = ics2021
