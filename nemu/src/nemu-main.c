@@ -15,6 +15,7 @@
 
 #include "monitor/sdb/sdb.h"
 #include <common.h>
+#include <stdio.h>
 
 void init_monitor(int, char *[]);
 void am_init_monitor();
@@ -23,7 +24,7 @@ int is_exit_status_bad();
 
 int test_expr(int argc, char *argv[]) {
   if (argc < 2) {
-    panic("missing input file path");
+    fprintf(stderr, "missing input file path");
   }
 
   FILE *fp = fopen(argv[1], "r");
@@ -46,6 +47,8 @@ int test_expr(int argc, char *argv[]) {
 
 int main(int argc, char *argv[]) {
 #ifdef CONFIG_TEST_EXPR
+  void init_sdb();
+  init_sdb();
   /* Test expr() */
   int ret;
   ret = test_expr(argc, argv);
