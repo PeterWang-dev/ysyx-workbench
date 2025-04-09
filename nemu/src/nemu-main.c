@@ -15,7 +15,6 @@
 
 #include "monitor/sdb/sdb.h"
 #include <common.h>
-#include <stdio.h>
 
 void init_monitor(int, char *[]);
 void am_init_monitor();
