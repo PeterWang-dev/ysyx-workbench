@@ -15,18 +15,25 @@
 
 #include "monitor/sdb/sdb.h"
 #include <common.h>
+#include <stdio.h>
 
 void init_monitor(int, char *[]);
 void am_init_monitor();
 void engine_start();
 int is_exit_status_bad();
 
-void test_expr(int argc, char *argv[]) {
+int test_expr(int argc, char *argv[]) {
   if (argc < 2) {
-    panic("missing input file path");
+    fprintf(stderr, "error: missing input file path\n");
+    return -1;
   }
 
   FILE *fp = fopen(argv[1], "r");
+  if (fp == NULL) {
+    fprintf(stderr, "error: cannot open file %s\n", argv[1]);
+    return -1;
+  }
+
   uint32_t answer;
   char e[65535];
   while (fscanf(fp, "%u %s", &answer, e) != EOF) {
@@ -41,9 +48,19 @@ void test_expr(int argc, char *argv[]) {
   }
 
   printf("success!\n");
+  return 0;
 }
 
 int main(int argc, char *argv[]) {
+#ifdef CONFIG_TEST_EXPR
+  void init_sdb();
+  init_sdb();
+  /* Test expr() */
+  int ret;
+  ret = test_expr(argc, argv);
+  return ret;
+#endif
+
   /* Initialize the monitor. */
 #ifdef CONFIG_TARGET_AM
   am_init_monitor();
@@ -51,13 +68,8 @@ int main(int argc, char *argv[]) {
   init_monitor(argc, argv);
 #endif
 
-#ifdef CONFIG_TEST_EXPR
-  /* Test expr() */
-  test_expr(argc, argv);
-#else
   /* Start engine. */
   engine_start();
 
   return is_exit_status_bad();
-#endif
 }
