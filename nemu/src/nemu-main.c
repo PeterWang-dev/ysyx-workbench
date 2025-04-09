@@ -15,7 +15,6 @@
 
 #include "monitor/sdb/sdb.h"
 #include <common.h>
-#include <stdio.h>
 
 void init_monitor(int, char *[]);
 void am_init_monitor();
@@ -24,13 +23,13 @@ int is_exit_status_bad();
 
 int test_expr(int argc, char *argv[]) {
   if (argc < 2) {
-    fprintf(stderr, "error: missing input file path");
+    fprintf(stderr, "error: missing input file path\n");
     return -1;
   }
 
   FILE *fp = fopen(argv[1], "r");
   if (fp == NULL) {
-    fprintf(stderr, "error: cannot open file %s", argv[1]);
+    fprintf(stderr, "error: cannot open file %s\n", argv[1]);
     return -1;
   }
 
