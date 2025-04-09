@@ -47,7 +47,7 @@ int test_expr(int argc, char *argv[]) {
     }
   }
 
-  printf(ANSI_FMT("EXPR test success!\n", ANSI_FG_GREEN));
+  printf(ANSI_FMT("TEST EXPR SUCCESS\n", ANSI_FG_GREEN));
   return 0;
 }
 
