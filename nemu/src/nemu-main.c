@@ -14,7 +14,6 @@
  ******************************************************************************/
 
 #include "monitor/sdb/sdb.h"
-#include "utils.h"
 #include <common.h>
 
 void init_monitor(int, char *[]);
@@ -47,7 +46,7 @@ int test_expr(int argc, char *argv[]) {
     }
   }
 
-  printf(ANSI_FMT("TEST EXPR SUCCESS\n", ANSI_FG_GREEN));
+  printf("success!\n");
   return 0;
 }
 
