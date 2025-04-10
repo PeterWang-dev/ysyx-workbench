@@ -18,6 +18,7 @@
 #include <cpu/cpu.h>
 #include <cpu/decode.h>
 #include <cpu/ifetch.h>
+#include <stdint.h>
 
 #define R(i) gpr(i)
 #define Mr vaddr_read
@@ -217,13 +218,13 @@ static int decode_exec(Decode *s) {
   // RV32M XLEN = 32
   const int XLEN = 32; // actually it should be replace with macro
   INSTPAT("0000001 ????? ????? 000 ????? 01100 11", mul, R,
-          R(rd) = (__uint128_t)(sword_t)src1 * (sword_t)src2);
+          R(rd) = (uint64_t)(sword_t)src1 * (sword_t)src2);
   INSTPAT("0000001 ????? ????? 001 ????? 01100 11", mulh, R,
-          R(rd) = ((__int128_t)(sword_t)src1 * (sword_t)src2) >> XLEN);
+          R(rd) = ((uint64_t)(sword_t)src1 * (sword_t)src2) >> XLEN);
   INSTPAT("0000001 ????? ????? 010 ????? 01100 11", mulhsu, R,
-          R(rd) = ((__int128_t)(sword_t)src1 * (word_t)src2) >> XLEN);
+          R(rd) = ((uint64_t)(sword_t)src1 * (word_t)src2) >> XLEN);
   INSTPAT("0000001 ????? ????? 011 ????? 01100 11", mulhu, R,
-          R(rd) = (__uint128_t)(src1 * src2) >> (XLEN));
+          R(rd) = (uint64_t)src1 * src2 >> XLEN);
   INSTPAT("0000001 ????? ????? 100 ????? 01100 11", div, R,
           R(rd) = (sword_t)src1 / (sword_t)src2);
   INSTPAT("0000001 ????? ????? 101 ????? 01100 11", divu, R,
