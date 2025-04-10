@@ -66,14 +66,15 @@ LINKAGE   = $(OBJS) \
 ## 3. General Compilation Flags
 
 ### (Cross) compilers, e.g., mips-linux-gnu-g++
-AS        = $(CROSS_COMPILE)gcc
-CC        = $(CROSS_COMPILE)gcc
-CXX       = $(CROSS_COMPILE)g++
-LD        = $(CROSS_COMPILE)ld
-AR        = $(CROSS_COMPILE)ar
-OBJDUMP   = $(CROSS_COMPILE)objdump
-OBJCOPY   = $(CROSS_COMPILE)objcopy
-READELF   = $(CROSS_COMPILE)readelf
+CROSS_COMPILE_PREFIX = $(strip $(CROSS_COMPILE))
+AS        	  		 = $(CROSS_COMPILE_PREFIX)gcc
+CC        	  		 = $(CROSS_COMPILE_PREFIX)gcc
+CXX       	  		 = $(CROSS_COMPILE_PREFIX)g++
+LD        	  		 = $(CROSS_COMPILE_PREFIX)ld
+AR        	  		 = $(CROSS_COMPILE_PREFIX)ar
+OBJDUMP   	  		 = $(CROSS_COMPILE_PREFIX)objdump
+OBJCOPY   	  		 = $(CROSS_COMPILE_PREFIX)objcopy
+READELF   	  		 = $(CROSS_COMPILE_PREFIX)readelf
 
 ### Compilation flags
 INC_PATH += $(WORK_DIR)/include $(addsuffix /include/, $(addprefix $(AM_HOME)/, $(LIBS)))

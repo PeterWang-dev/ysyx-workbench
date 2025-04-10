@@ -50,7 +50,7 @@ static struct rule {
     {"\\(", TK_PARENTHESES_LEFT},                  // left parenthese
     {"\\)", TK_PARENTHESES_RIGHT},                 // right parenthese
     {"\\$(pc|0|ra|sp|gp|tp|t|s|a)[0-9]?", TK_REG}, // register
-    {"(0[xX])?[0-9A-Ea-e]+", TK_NUM},              // unsigned number
+    {"(0[xX])?[0-9A-Fa-f]+", TK_NUM},              // unsigned number
     {"\\*", TK_MUL},                               // multiply
     {"\\/", TK_DIV},                               // divide
     {"\\+", TK_ADD},                               // plus

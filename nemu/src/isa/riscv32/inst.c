@@ -18,6 +18,7 @@
 #include <cpu/cpu.h>
 #include <cpu/decode.h>
 #include <cpu/ifetch.h>
+#include <stdint.h>
 
 #define R(i) gpr(i)
 #define Mr vaddr_read
@@ -72,6 +73,8 @@ enum {
                 21);                                                           \
   } while (0)
 
+extern void log_ftrace(uint32_t dnpc, int type);
+
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2,
                            word_t *imm, int type) {
   uint32_t i = s->isa.inst.val;
@@ -122,10 +125,26 @@ static int decode_exec(Decode *s) {
   // RV32I
   INSTPAT("???????????????????? ????? 01101 11", lui, U, R(rd) = imm);
   INSTPAT("???????????????????? ????? 00101 11", auipc, U, R(rd) = s->pc + imm);
-  INSTPAT("???????????????????? ????? 11011 11", jal, J, R(rd) = s->pc + 4;
-          s->dnpc = s->pc + imm);
-  INSTPAT("???????????? ????? 000 ????? 11001 11", jalr, I, R(rd) = s->pc + 4;
-          s->dnpc = (src1 + imm) & ~1);
+  INSTPAT(
+      "???????????????????? ????? 11011 11", jal, J,
+      {
+        R(rd) = s->pc + 4;
+        s->dnpc = s->pc + imm;
+      } {
+        if (rd == 1)
+          log_ftrace(s->dnpc, 1);
+      });
+  INSTPAT(
+      "???????????? ????? 000 ????? 11001 11", jalr, I,
+      {
+        R(rd) = s->pc + 4;
+        s->dnpc = (src1 + imm) & ~1;
+      } {
+        if (rd == 1)
+          log_ftrace(s->dnpc, 1);
+        else if (rd == 0 && BITS(s->isa.inst.val, 19, 15) == 1)
+          log_ftrace(s->dnpc, -1);
+      });
   INSTPAT(
       "??????? ????? ????? 000 ????? 11000 11", beq, B,
       if (src1 == src2) { s->dnpc = s->pc + imm; });
@@ -199,13 +218,13 @@ static int decode_exec(Decode *s) {
   // RV32M XLEN = 32
   const int XLEN = 32; // actually it should be replace with macro
   INSTPAT("0000001 ????? ????? 000 ????? 01100 11", mul, R,
-          R(rd) = (__uint128_t)(sword_t)src1 * (sword_t)src2);
+          R(rd) = (uint64_t)(sword_t)src1 * (sword_t)src2);
   INSTPAT("0000001 ????? ????? 001 ????? 01100 11", mulh, R,
-          R(rd) = ((__int128_t)(sword_t)src1 * (sword_t)src2) >> XLEN);
+          R(rd) = ((uint64_t)(sword_t)src1 * (sword_t)src2) >> XLEN);
   INSTPAT("0000001 ????? ????? 010 ????? 01100 11", mulhsu, R,
-          R(rd) = ((__int128_t)(sword_t)src1 * (word_t)src2) >> XLEN);
+          R(rd) = ((uint64_t)(sword_t)src1 * (word_t)src2) >> XLEN);
   INSTPAT("0000001 ????? ????? 011 ????? 01100 11", mulhu, R,
-          R(rd) = (__uint128_t)(src1 * src2) >> (XLEN));
+          R(rd) = (uint64_t)src1 * src2 >> XLEN);
   INSTPAT("0000001 ????? ????? 100 ????? 01100 11", div, R,
           R(rd) = (sword_t)src1 / (sword_t)src2);
   INSTPAT("0000001 ????? ????? 101 ????? 01100 11", divu, R,
