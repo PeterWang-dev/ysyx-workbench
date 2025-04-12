@@ -49,10 +49,10 @@ void print_logbuf() { // output log ring buffer
   }
 }
 
-void log_ftrace(vaddr_t dnpc, int type) {
-  extern char *find_symbol(vaddr_t addr);
-  extern bool ftrace_enabled;
+extern char *find_symbol(vaddr_t addr);
+extern bool ftrace_enabled;
 
+void log_ftrace(vaddr_t dnpc, int type) {
   if (!ftrace_enabled) {
     return;
   }
