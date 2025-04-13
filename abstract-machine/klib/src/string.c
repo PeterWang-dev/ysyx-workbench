@@ -73,8 +73,7 @@ int memcmp(const void *s1, const void *s2, size_t n) {
 size_t strlen(const char *s) {
   size_t len = 0;
 
-  size_t i;
-  for (i = 0; s[i] != '\0'; i++) {
+  for (; *s != '\0'; s++) {
     len++;
   }
 
@@ -84,8 +83,7 @@ size_t strlen(const char *s) {
 static size_t strnlen(const char *s, size_t maxlen) {
   size_t len = 0;
 
-  size_t i;
-  for (i = 0; i < maxlen && s[i] != '\0'; i++) {
+  for (; s < s + maxlen && s[len] != '\0'; s++) {
     len++;
   }
 
@@ -113,7 +111,9 @@ char *strcat(char *dst, const char *src) {
 
 static char *stpncpy(char *dst, const char *src, size_t dsize) {
   size_t dlen;
+
   dlen = strnlen(src, dsize);
+  // BUG: Segmentation fault occurs here.
   return memset(mempcpy(dst, src, dlen), 0, dsize - dlen);
 }
 
@@ -126,11 +126,9 @@ int strcmp(const char *s1, const char *s2) {
   const unsigned char *us1 = (const unsigned char *)s1;
   const unsigned char *us2 = (const unsigned char *)s2;
 
-  // BUG: Error occurs after refactoring the code.
-  size_t i;
-  for (i = 0; us1[i] != '\0' && us2[i] != '\0'; i++) {
-    if (us1[i] != us2[i]) {
-      return us1[i] - us2[i];
+  for (; *us1 != '\0' && *us2 != '\0'; us1++, us2++) {
+    if (*us1 != *us2) {
+      return *us1 - *us2;
     }
   }
 
@@ -141,8 +139,7 @@ int strncmp(const char *s1, const char *s2, size_t n) {
   const unsigned char *us1 = (const unsigned char *)s1;
   const unsigned char *us2 = (const unsigned char *)s2;
 
-  size_t i;
-  for (i = 0; i < n; i++) {
+  for (size_t i = 0; i < n; i++) {
     if (us1[i] != us2[i]) {
       return us1[i] - us2[i];
     }
