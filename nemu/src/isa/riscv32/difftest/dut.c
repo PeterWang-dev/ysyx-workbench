@@ -20,15 +20,15 @@
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
   for (int i = 0; i < MUXDEF(CONFIG_RVE, 16, 32); i++) {
     if (gpr(i) != ref_r->gpr[i]) {
-      Log("Mismatch at gpr[%d]: DUT = " FMT_WORD ", REF = " FMT_WORD, i, gpr(i),
-          ref_r->gpr[i]);
+      // Log("Mismatch at gpr[%d]: DUT = " FMT_WORD ", REF = " FMT_WORD, i, gpr(i),
+      //     ref_r->gpr[i]);
       return false;
     }
   }
 
   if (cpu.pc != ref_r->pc) {
-    Log("Mismatch at pc: DUT = " FMT_WORD ", REF = " FMT_WORD, cpu.pc,
-        ref_r->pc);
+    // Log("Mismatch at pc: DUT = " FMT_WORD ", REF = " FMT_WORD, cpu.pc,
+    //     ref_r->pc);
     return false;
   }
 
