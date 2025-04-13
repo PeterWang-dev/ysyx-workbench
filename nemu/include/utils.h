@@ -87,7 +87,4 @@ uint64_t get_time();
 
 void print_logbuf();
 
-// ----------- log -----------
-
-
 #endif
