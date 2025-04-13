@@ -14,6 +14,7 @@
  *******************************************************************************/
 
 #include "local-include/reg.h"
+#include "macro.h"
 #include <isa.h>
 
 const char *regs[] = {"$0", "ra", "sp",  "gp",  "tp", "t0", "t1", "t2",
@@ -22,7 +23,7 @@ const char *regs[] = {"$0", "ra", "sp",  "gp",  "tp", "t0", "t1", "t2",
                       "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"};
 
 void isa_reg_display() {
-  for (int i = 0; i < 32; i++) {
+  for (int i = 0; i < MUXDEF(CONFIG_RVE, 16, 32); i++) {
     if (i > 0 && i < 5) { // pointer registers using hex to display
       printf("%s\t0x%x\t0x%x\n", regs[i], cpu.gpr[i], cpu.gpr[i]);
     } else {
@@ -37,7 +38,7 @@ word_t isa_reg_str2val(const char *s, bool *success) {
     return cpu.pc;
   }
 
-  // zero register ('$' is omitted when tokenizing)
+  // zero register ('$' is omitted when tokenizing in sdb expr)
   if (strcmp(s, "0") == 0) {
     *success = true;
     return cpu.gpr[0];
@@ -47,7 +48,7 @@ word_t isa_reg_str2val(const char *s, bool *success) {
   for (i = 1; i < 32; i++) { // general purpose registers
     if (strcmp(s, regs[i]) == 0) {
       *success = true;
-      return cpu.gpr[i];
+      return gpr(i);
     }
   }
 
