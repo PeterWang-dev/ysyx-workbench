@@ -8,5 +8,5 @@
 	branch = ics2021
 [submodule "am-kernels"]
 	path = am-kernels
-	url = git@github.com:NJU-ProjectN/am-kernels.git
+	url = git@github.com:PeterWang-dev/am-kernels.git
 	branch = ics2021
