@@ -37,7 +37,7 @@ word_t isa_reg_str2val(const char *s, bool *success) {
     return cpu.pc;
   }
 
-  // zero register ('$' is omitted when tokenizing)
+  // zero register ('$' is omitted when tokenizing in sdb expr)
   if (strcmp(s, "0") == 0) {
     *success = true;
     return cpu.gpr[0];
@@ -47,7 +47,7 @@ word_t isa_reg_str2val(const char *s, bool *success) {
   for (i = 1; i < 32; i++) { // general purpose registers
     if (strcmp(s, regs[i]) == 0) {
       *success = true;
-      return cpu.gpr[i];
+      return gpr(i);
     }
   }
 
