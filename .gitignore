@@ -1,6 +1,6 @@
-#*.*
-#*
-#!*/
+*.*
+*
+!*/
 !/nemu/*
 !/nexus-am/*
 !/nanos-lite/*
@@ -13,3 +13,4 @@
 !/nvboard
 !/fceux-am
 !/am-kernels
+!/.gitmodules

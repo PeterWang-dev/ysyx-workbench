@@ -10,3 +10,6 @@
 	path = am-kernels
 	url = git@github.com:PeterWang-dev/am-kernels.git
 	branch = ics2021
+[submodule "npc"]
+	path = npc
+	url = git@github.com:PeterWang-dev/FutureCore.git
