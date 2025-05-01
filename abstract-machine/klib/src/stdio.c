@@ -25,6 +25,8 @@ int printf(const char *format, ...) {
   int ret = sprintf(buf, format, ap);
   va_end(ap);
 
+  putch('1');
+  putch('\n');
   for (char *p = buf; *p != '\0'; p++) {
     putch(*p);
   }
