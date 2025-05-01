@@ -57,12 +57,12 @@ int sprintf(char *str, const char *format, ...) {
         break;
       }
 
-      case 'c': {
-        char c = (char)va_arg(ap, int);
-        *str++ = c;
-        cnt++;
-        break;
-      }
+      // case 'c': {
+      //   char c = (char)va_arg(ap, int);
+      //   *str++ = c;
+      //   cnt++;
+      //   break;
+      // }
 
       case 's': {
         const char *s = va_arg(ap, const char *);
