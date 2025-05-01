@@ -19,7 +19,6 @@
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
 int printf(const char *format, ...) {
-  halt(-1);
   char buf[256];
   va_list ap;
   va_start(ap, format);
