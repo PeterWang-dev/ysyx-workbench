@@ -27,8 +27,12 @@ int printf(const char *format, ...) {
 
   putch('1');
   putch('\n');
-  for (char *p = buf; *p != '\0'; p++) {
-    putch(*p);
+  // for (char *p = buf; *p != '\0'; p++) {
+  //   putch(*p);
+  // }
+
+  for (int n = 0; n < 256; n++) {
+    putch(buf[n]);
   }
 
   return ret;
