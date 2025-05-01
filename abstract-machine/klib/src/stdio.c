@@ -42,7 +42,6 @@ int sprintf(char *str, const char *format, ...) {
     switch (*ch) {
     case '%': { // placeholder indicator
       ch++;
-
       switch (*ch) { // different format specifiers
       case 'd': {
         int num = va_arg(ap, int);
@@ -58,12 +57,11 @@ int sprintf(char *str, const char *format, ...) {
           *str++ = *s++;
           cnt++;
         }
-
         break;
       }
 
       default: {
-        panic("Not implemented");
+        // panic("Not implemented");
       }
       }
 
@@ -79,7 +77,6 @@ int sprintf(char *str, const char *format, ...) {
   *str = '\0'; // null-terminator on the end of output
 
   va_end(ap);
-
   return cnt;
 }
 
