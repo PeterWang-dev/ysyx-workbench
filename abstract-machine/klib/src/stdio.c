@@ -18,7 +18,19 @@
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
-int printf(const char *format, ...) { panic("Not implemented"); }
+int printf(const char *format, ...) {
+  char buf[256];
+  va_list ap;
+  va_start(ap, format);
+  int ret = sprintf(buf, format, ap);
+  va_end(ap);
+
+  for (char *p = buf; *p != '\0'; p++) {
+    putch(*p);
+  }
+
+  return ret;
+}
 
 int sprintf(char *str, const char *format, ...) {
   int cnt = 0;
