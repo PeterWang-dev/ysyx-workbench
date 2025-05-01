@@ -57,7 +57,7 @@ int sprintf(char *str, const char *format, ...) {
         cnt++;
         break;
       }
-        
+
       case 's': {
         const char *s = va_arg(ap, const char *);
         while (*s != '\0') {
