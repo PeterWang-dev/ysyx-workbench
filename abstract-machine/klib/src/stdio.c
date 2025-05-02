@@ -55,7 +55,6 @@ int sprintf(char *str, const char *format, ...) {
         char c = (char)va_arg(ap, int);
         *str++ = c;
         cnt++;
-        putch('r');
         break;
       }
 
@@ -67,8 +66,9 @@ int sprintf(char *str, const char *format, ...) {
         }
         break;
       }
-
+      
       default: {
+        putch('r');
         // panic("Not implemented");
       }
       }
