@@ -20,9 +20,10 @@
 
 int printf(const char *format, ...) {
   char buf[256];
+
   va_list ap;
   va_start(ap, format);
-  int ret = sprintf(buf, format, ap);
+  int ret = vsprintf(buf, format, ap);
   va_end(ap);
 
   for (char *ch = buf; *ch != '\0'; ch++) {
@@ -33,14 +34,22 @@ int printf(const char *format, ...) {
 }
 
 int sprintf(char *str, const char *format, ...) {
-  int cnt = 0;
   va_list ap;
-
   va_start(ap, format);
+  int ret = vsprintf(str, format, ap);
+  va_end(ap);
+  return ret;
+}
 
+int snprintf(char *str, size_t size, const char *format, ...) {
+  panic("Not implemented");
+}
+
+int vsprintf(char *str, const char *format, va_list ap) {
+  int cnt = 0;
   for (const char *ch = format; *ch != '\0'; ch++) {
     switch (*ch) {
-    case '%': { // placeholder indicator
+    case '%':
       ch++;
       switch (*ch) { // different format specifiers
       case 'd': {
@@ -70,30 +79,16 @@ int sprintf(char *str, const char *format, ...) {
       default: {
         // panic("Not implemented");
       }
-    }
-
-    break;
-  }
-
-  default: { // normal characters
+      }
+    default: // normal characters
       putch('r');
       *str++ = *ch;
       cnt++;
-    }
+      break;
     }
   }
   *str = '\0'; // null-terminator on the end of output
-
-  va_end(ap);
   return cnt;
-}
-
-int snprintf(char *str, size_t size, const char *format, ...) {
-  panic("Not implemented");
-}
-
-int vsprintf(char *str, const char *format, va_list ap) {
-  panic("Not implemented");
 }
 
 int vsnprintf(char *str, size_t size, const char *format, va_list ap) {
