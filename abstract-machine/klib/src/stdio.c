@@ -52,6 +52,7 @@ int sprintf(char *str, const char *format, ...) {
       }
 
       case 'c': {
+        putch('r');
         char c = (char)va_arg(ap, int);
         *str++ = c;
         cnt++;
