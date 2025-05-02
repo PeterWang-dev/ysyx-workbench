@@ -81,7 +81,6 @@ int vsprintf(char *str, const char *format, va_list ap) {
       }
       }
     default: // normal characters
-      putch('r');
       *str++ = *ch;
       cnt++;
       break;
