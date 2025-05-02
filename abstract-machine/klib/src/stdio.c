@@ -25,14 +25,8 @@ int printf(const char *format, ...) {
   int ret = sprintf(buf, format, ap);
   va_end(ap);
 
-  putch('1');
-  putch('\n');
-  // for (char *p = buf; *p != '\0'; p++) {
-  //   putch(*p);
-  // }
-
-  for (int n = 0; n < 256; n++) {
-    putch(buf[n]);
+  for (char *ch = buf; *ch != '\0'; ch++) {
+    putch(*ch);
   }
 
   return ret;
@@ -57,12 +51,12 @@ int sprintf(char *str, const char *format, ...) {
         break;
       }
 
-      // case 'c': {
-      //   char c = (char)va_arg(ap, int);
-      //   *str++ = c;
-      //   cnt++;
-      //   break;
-      // }
+      case 'c': {
+        char c = (char)va_arg(ap, int);
+        *str++ = c;
+        cnt++;
+        break;
+      }
 
       case 's': {
         const char *s = va_arg(ap, const char *);
