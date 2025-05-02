@@ -53,9 +53,9 @@ int sprintf(char *str, const char *format, ...) {
 
       case 'c': {
         char c = (char)va_arg(ap, int);
-        putch('r');
         *str++ = c;
         cnt++;
+        putch('r');
         break;
       }
 
