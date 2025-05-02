@@ -57,6 +57,7 @@ int vsprintf(char *str, const char *format, va_list ap) {
         char *start = str, *end = itoa(num, str);
         cnt += end - start;
         str = end;
+        ch++;
         break;
       }
 
@@ -64,6 +65,7 @@ int vsprintf(char *str, const char *format, va_list ap) {
         char c = (char)va_arg(ap, int);
         *str++ = c;
         cnt++;
+        ch++;
         break;
       }
 
@@ -73,6 +75,7 @@ int vsprintf(char *str, const char *format, va_list ap) {
           *str++ = *s++;
           cnt++;
         }
+        ch++;
         break;
       }
 
