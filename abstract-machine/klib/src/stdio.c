@@ -66,17 +66,17 @@ int sprintf(char *str, const char *format, ...) {
         }
         break;
       }
-      
+
       default: {
-        putch('r');
         // panic("Not implemented");
       }
-      }
-
-      break;
     }
 
-    default: { // normal characters
+    break;
+  }
+
+  default: { // normal characters
+      putch('r');
       *str++ = *ch;
       cnt++;
     }
