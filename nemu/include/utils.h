@@ -44,7 +44,7 @@ char *ringbuf_pop(RingBuf *rb, char *buf);
 char *ringbuf_iter(RingBuf *rb);
 // ----------- timer -----------
 
-int64_t get_time();
+uint64_t get_time();
 
 // ----------- log -----------
 
