@@ -61,7 +61,7 @@ word_t paddr_read(paddr_t addr, int len) {
     return pmem_read(addr, len);
 
   printf("Hit here\n");
-  // printf("addr = %x, len = %d\n", addr, len);
+  printf("addr = %x, len = %d\n", addr, len);
 
   IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
 
