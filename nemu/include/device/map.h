@@ -16,7 +16,9 @@
 #ifndef __DEVICE_MAP_H__
 #define __DEVICE_MAP_H__
 
+#include "utils.h"
 #include <cpu/difftest.h>
+#include <stdio.h>
 
 typedef void(*io_callback_t)(uint32_t, int, bool);
 uint8_t* new_space(int size);
@@ -42,6 +44,9 @@ static inline int find_mapid_by_addr(IOMap *maps, int size, paddr_t addr) {
       return i;
     }
   }
+
+  printf(ANSI_FG_RED "Not found map for addr " FMT_PADDR "\n" ANSI_NONE, addr);
+
   return -1;
 }
 
