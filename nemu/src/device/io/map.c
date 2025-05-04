@@ -13,12 +13,10 @@
  * See the Mulan PSL v2 for more details.
  ***************************************************************************************/
 
-#include "debug.h"
-#include <device/map.h>
 #include <isa.h>
 #include <memory/host.h>
 #include <memory/vaddr.h>
-#include <stdio.h>
+#include <device/map.h>
 
 #define IO_SPACE_MAX (2 * 1024 * 1024)
 
@@ -66,7 +64,6 @@ word_t map_read(paddr_t addr, int len, IOMap *map) {
   paddr_t offset = addr - map->low;
   invoke_callback(map->callback, offset, len, false); // prepare data to read
   word_t ret = host_read(map->space + offset, len);
-  Log("Map readed " FMT_PADDR " %d bytes, data = " FMT_WORD, addr, len, ret);
   return ret;
 }
 

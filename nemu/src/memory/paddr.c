@@ -17,7 +17,6 @@
 #include <isa.h>
 #include <memory/host.h>
 #include <memory/paddr.h>
-#include <stdio.h>
 
 #if defined(CONFIG_PMEM_MALLOC)
 static uint8_t *pmem = NULL;
@@ -59,9 +58,6 @@ word_t paddr_read(paddr_t addr, int len) {
 
   if (likely(in_pmem(addr)))
     return pmem_read(addr, len);
-
-  printf("Hit here\n");
-  printf("addr = %x, len = %d\n", addr, len);
 
   IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
 
