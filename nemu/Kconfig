@@ -156,8 +156,11 @@ config MTRACE
   bool "Enable memory tracer"
   default n
 
-config TEST_EXPR
-  bool "Enable expression evaluation test instead of running nemu"
+config DTRACE
+  depends on TRACE && TARGET_NATIVE_ELF && ENGINE_INTERPRETER
+  bool "Enable device tracer"
+  default n
+
 
 config WATCHPOINT
   bool "Enable watchpoint"
@@ -168,8 +171,12 @@ config DIFFTEST
   bool "Enable differential testing"
   default n
   help
-    Enable differential testing with a reference design.
-    Note that this will significantly reduce the performance of NEMU.
+  Enable differential testing with a reference design.
+  Note that this will significantly reduce the performance of NEMU.
+
+config TEST_EXPR
+  bool "Enable expression evaluation test instead of running nemu"
+  default n
 
 choice
   prompt "Reference design"
