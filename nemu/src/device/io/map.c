@@ -60,17 +60,13 @@ void init_map() {
 
 word_t map_read(paddr_t addr, int len, IOMap *map) {
   IFDEF(CONFIG_DTRACE,
-        log_write("[dtrace] read %d bytes in %s at " FMT_PADDR "\n", len,
+        log_write("[dtrace] read %d bytes in %s at" FMT_PADDR "\n", len,
                   map->name, addr));
   assert(len >= 1 && len <= 8);
   check_bound(map, addr);
   paddr_t offset = addr - map->low;
   invoke_callback(map->callback, offset, len, false); // prepare data to read
   word_t ret = host_read(map->space + offset, len);
-  if (ret != 0) {
-    printf("read %d bytes in %s at " FMT_PADDR " with value " FMT_WORD "\n",
-           len, map->name, addr, ret);
-  }
   return ret;
 }
 
