@@ -60,7 +60,7 @@ void init_map() {
 
 word_t map_read(paddr_t addr, int len, IOMap *map) {
   IFDEF(CONFIG_DTRACE,
-        log_write("[dtrace] read %d bytes in %s at" FMT_PADDR "\n", len,
+        log_write("[dtrace] read %d bytes in %s at " FMT_PADDR "\n", len,
                   map->name, addr));
   assert(len >= 1 && len <= 8);
   check_bound(map, addr);
