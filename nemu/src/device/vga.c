@@ -80,8 +80,10 @@ void vga_update_screen() {
 }
 
 void init_vga() {
-  // vgactl_port_base[0]: screen size (width << 16 | height) register
-  // vgactl_port_base[1]: vsync (frame sync) register
+  /*
+   * vgactl_port_base[0]: screen size (width << 16 | height) register
+   * vgactl_port_base[1]: vsync (frame sync) register
+   */
   vgactl_port_base = (uint32_t *)new_space(8);
   vgactl_port_base[0] = (screen_width() << 16) | screen_height();
   vgactl_port_base[1] = 0;
