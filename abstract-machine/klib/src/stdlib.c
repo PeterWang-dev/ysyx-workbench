@@ -41,29 +41,38 @@ int atoi(const char *nptr) {
   return x;
 }
 
-char* itoa(const int value, char *str) {
-  char buffer[10]; // only handle int
-  char *p = buffer; // always points to the (last digit + 1)
+char *itoa(const int value, char *str) {
+  char buffer[11];    // only handle int
+  char *cur = buffer; // always points to the (last digit + 1)
   int val = value;
+  bool negative = false;
 
-  // special cases: zero and negative numbers
   if (value == 0) {
-    *p++ = '0';
-  } else if (value < 0) {
+    *str++ = '0';
+    *str = '\0'; // null-terminator
+    return str;
+  }
+
+  if (value < 0) {
     val = -value;
-    *p++ = '-';
+    negative = true;
   }
 
   // modulo 10 to get the digit stack
   while (val != 0) {
-    *p++ = val % 10 + '0';
+    *cur++ = val % 10 + '0';
     val /= 10;
   }
 
-  // reverse output
-  while (p != buffer) {
-    *str++ = *--p;
+  if (negative) {
+    *cur++ = '-';
   }
+
+  // reverse output
+  while (cur != buffer) {
+    *str++ = *--cur;
+  }
+
   *str = '\0'; // null-terminator
 
   // return the new pointer to the string terminator
@@ -74,10 +83,16 @@ void *malloc(size_t size) {
   // On native, malloc() will be called during initializaion of C runtime.
   // Therefore do not call panic() here, else it will yield a dead recursion:
   //   panic() -> putchar() -> (glibc) -> malloc() -> panic()
-#if !(defined(__ISA_NATIVE__) && defined(__NATIVE_USE_KLIB__))
-  panic("Not implemented");
-#endif
-  return NULL;
+  // #if !(defined(__ISA_NATIVE__) && defined(__NATIVE_USE_KLIB__))
+  //   panic("Not implemented");
+  // #endif
+  static char *addr = NULL; // static variable, keep track of the heap
+  if (addr == NULL) {       // first time malloc() is called
+    addr = heap.start;
+  }
+  void *ptr = addr;
+  addr += size;
+  return ptr;
 }
 
 void free(void *ptr) {}
