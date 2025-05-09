@@ -14,6 +14,9 @@
  * See the Mulan PSL v2 for more details.
  ******************************************************************************/
 
+#include "common.h"
+#include "isa-def.h"
+#include "isa.h"
 #include "local-include/reg.h"
 #include <cpu/cpu.h>
 #include <cpu/decode.h>
@@ -21,6 +24,7 @@
 #include <stdint.h>
 
 #define R(i) gpr(i)
+#define CSR(i) csr(i)
 #define Mr vaddr_read
 #define Mw vaddr_write
 
@@ -31,6 +35,7 @@ enum {
   TYPE_B,
   TYPE_U,
   TYPE_J,
+  TYPE_CSR,
   TYPE_N, // none
 };
 
@@ -73,6 +78,11 @@ enum {
                 21);                                                           \
   } while (0)
 
+#define immCSR()                                                               \
+  do {                                                                         \
+    *imm = BITS(i, 31, 20);                                                    \
+  } while (0)
+
 extern void log_ftrace(uint32_t dnpc, int type);
 
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2,
@@ -106,6 +116,10 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2,
   case TYPE_J:
     immJ();
     break;
+  case TYPE_CSR:
+    src1R();
+    immCSR();
+    break;
   }
 }
 
@@ -125,26 +139,22 @@ static int decode_exec(Decode *s) {
   // RV32I
   INSTPAT("???????????????????? ????? 01101 11", lui, U, R(rd) = imm);
   INSTPAT("???????????????????? ????? 00101 11", auipc, U, R(rd) = s->pc + imm);
-  INSTPAT(
-      "???????????????????? ????? 11011 11", jal, J,
-      {
-        R(rd) = s->pc + 4;
-        s->dnpc = s->pc + imm;
-      } {
-        if (rd == 1)
-          log_ftrace(s->dnpc, 1);
-      });
-  INSTPAT(
-      "???????????? ????? 000 ????? 11001 11", jalr, I,
-      {
-        R(rd) = s->pc + 4;
-        s->dnpc = (src1 + imm) & ~1;
-      } {
-        if (rd == 1)
-          log_ftrace(s->dnpc, 1);
-        else if (rd == 0 && BITS(s->isa.inst.val, 19, 15) == 1)
-          log_ftrace(s->dnpc, -1);
-      });
+  INSTPAT("???????????????????? ????? 11011 11", jal, J, {
+    R(rd) = s->pc + 4;
+    s->dnpc = s->pc + imm;
+    if (rd == 1) {
+      log_ftrace(s->dnpc, 1);
+    }
+  });
+  INSTPAT("???????????? ????? 000 ????? 11001 11", jalr, I, {
+    R(rd) = s->pc + 4;
+    s->dnpc = (src1 + imm) & ~1;
+    if (rd == 1) {
+      log_ftrace(s->dnpc, 1);
+    } else if (rd == 0 && BITS(s->isa.inst.val, 19, 15) == 1) {
+      log_ftrace(s->dnpc, -1);
+    }
+  });
   INSTPAT(
       "??????? ????? ????? 000 ????? 11000 11", beq, B,
       if (src1 == src2) { s->dnpc = s->pc + imm; });
@@ -235,6 +245,20 @@ static int decode_exec(Decode *s) {
           R(rd) = src1 % src2);
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak, N,
           NEMUTRAP(s->pc, R(10))); // R(10) is $a0
+  INSTPAT(
+      "0000000 00000 00000 000 00000 11100 11", ecall, N,
+      s->dnpc = isa_raise_intr(
+          R(17), s->pc)); //? R(17) is $a7, but why $a7? and what does it do?
+  INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw, I, {
+    word_t t = CSR(imm);
+    CSR(imm) = src1;
+    R(rd) = t;
+  });
+  INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs, I, {
+    word_t t = CSR(imm);
+    CSR(imm) = t | src1;
+    R(rd) = t;
+  });
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv, N, INV(s->pc));
   INSTPAT_END();
 

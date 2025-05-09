@@ -30,7 +30,7 @@ bool cte_init(Context*(*handler)(Event, Context*)) {
   return true;
 }
 
-Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
+Context *kcontext(Area kstack, void (*sentry)(void *), void *arg) {
   return NULL;
 }
 

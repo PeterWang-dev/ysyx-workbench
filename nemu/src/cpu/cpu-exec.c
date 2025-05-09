@@ -14,6 +14,8 @@
  * See the Mulan PSL v2 for more details.
  ******************************************************************************/
 
+#include "common.h"
+#include "isa-def.h"
 #include <cpu/cpu.h>
 #include <cpu/decode.h>
 #include <cpu/difftest.h>
@@ -26,7 +28,9 @@
  */
 #define MAX_INST_TO_PRINT 10
 
-CPU_state cpu = {};
+CPU_state cpu = {
+    .csr = {[MTVEC] = (word_t)0xa00001800},
+};
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
