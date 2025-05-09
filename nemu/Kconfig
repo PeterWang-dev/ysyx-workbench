@@ -157,10 +157,14 @@ config MTRACE
   default n
 
 config DTRACE
-  depends on TRACE && TARGET_NATIVE_ELF && ENGINE_INTERPRETER
+  depends on TRACE && ENGINE_INTERPRETER
   bool "Enable device tracer"
   default n
 
+config ETRACE
+  depends on TRACE && TARGET_NATIVE_ELF && ENGINE_INTERPRETER
+  bool "Enable exception tracer"
+  default n
 
 config WATCHPOINT
   bool "Enable watchpoint"
