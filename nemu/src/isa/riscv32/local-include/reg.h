@@ -16,7 +16,6 @@
 #ifndef __RISCV_REG_H__
 #define __RISCV_REG_H__
 
-#include "isa-def.h"
 #include <common.h>
 #include <isa.h>
 
