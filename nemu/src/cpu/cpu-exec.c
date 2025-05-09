@@ -26,9 +26,7 @@
  */
 #define MAX_INST_TO_PRINT 10
 
-CPU_state cpu = {
-    // .csr = {[MSTATUS] = 0x1800}, //! real behavior is not consistent with course material
-};
+CPU_state cpu = {};
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;

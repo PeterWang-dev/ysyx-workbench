@@ -14,6 +14,7 @@
  * See the Mulan PSL v2 for more details.
  ******************************************************************************/
 
+#include "isa-def.h"
 #include "local-include/reg.h"
 #include <cpu/cpu.h>
 #include <cpu/decode.h>
@@ -246,7 +247,7 @@ static int decode_exec(Decode *s) {
           //  s->dnpc = isa_raise_intr(R(17), s->pc)
           //? Guess R(17) is $a7
           //! ... NOT Correct!
-          s->dnpc = isa_raise_intr(0xb, s->pc));
+          s->dnpc = isa_raise_intr(0xb, s->pc)); //! Why 0xb?
   INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw, I, {
     word_t t = CSR(imm);
     CSR(imm) = src1;
@@ -257,6 +258,8 @@ static int decode_exec(Decode *s) {
     CSR(imm) = t | src1;
     R(rd) = t;
   });
+  INSTPAT("0011000 00010 00000 000 00000 11100 11", mret, N,
+          s->dnpc = CSR(MEPC));
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv, N, INV(s->pc));
   INSTPAT_END();
 
