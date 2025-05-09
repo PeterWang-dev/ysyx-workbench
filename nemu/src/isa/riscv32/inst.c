@@ -242,10 +242,11 @@ static int decode_exec(Decode *s) {
           R(rd) = src1 % src2);
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak, N,
           NEMUTRAP(s->pc, R(10))); // R(10) is $a0
-  INSTPAT(
-      "0000000 00000 00000 000 00000 11100 11", ecall, N,
-      s->dnpc = isa_raise_intr(
-          R(17), s->pc)); //? R(17) is $a7, but why $a7? and what does it do?
+  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, N,
+          //  s->dnpc = isa_raise_intr(R(17), s->pc)
+          //? Guess R(17) is $a7
+          //! ... NOT Correct!
+          s->dnpc = isa_raise_intr(0xb, s->pc));
   INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw, I, {
     word_t t = CSR(imm);
     CSR(imm) = src1;
