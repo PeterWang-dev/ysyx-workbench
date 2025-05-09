@@ -13,7 +13,6 @@
  * See the Mulan PSL v2 for more details.
  ***************************************************************************************/
 
-#include "isa-def.h"
 #include <isa.h>
 
 word_t isa_raise_intr(word_t NO, vaddr_t epc) {
@@ -22,6 +21,9 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   cpu.csr[MSTATUS] = 0x1800;
   cpu.csr[MEPC] = epc;
   cpu.csr[MCAUSE] = NO;
+  IFDEF(CONFIG_ETRACE, log_write("[etrace] exception triggerd at " FMT_PADDR
+                                 " because " FMT_WORD "\n",
+                                 epc, NO));
   return cpu.csr[MTVEC];
 }
 
