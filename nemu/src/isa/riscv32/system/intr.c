@@ -18,7 +18,7 @@
 word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   //! Set MSTATUS to 0x1800 because we are not using it but need to pass
   //! difftest with Spike, so keep it consistent with Spike.
-  // cpu.csr[MSTATUS] = 0x1800;
+  cpu.csr[MSTATUS] = 0x1800;
   cpu.csr[MEPC] = epc;
   cpu.csr[MCAUSE] = NO;
   IFDEF(CONFIG_ETRACE, log_write("[etrace] exception triggerd at " FMT_PADDR
