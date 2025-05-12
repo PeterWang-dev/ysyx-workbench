@@ -13,7 +13,6 @@
  *
  * See the Mulan PSL v2 for more details.
  ******************************************************************************/
-
 #include <common.h>
 
 extern uint64_t g_nr_guest_inst;
@@ -21,6 +20,7 @@ extern uint64_t g_nr_guest_inst;
 #ifndef CONFIG_TARGET_AM
 FILE *log_fp = NULL;
 RingBuf iringbuf;
+static int ft_indent = 0;
 
 void init_log(const char *log_file) {
   log_fp = stdout;
@@ -57,24 +57,21 @@ void log_ftrace(vaddr_t dnpc, int type) {
     return;
   }
 
-  IFDEF(CONFIG_FTRACE, {
-    static int ft_indent = 0;
-    fprintf(log_fp, "[ftrace]");
-    switch (type) {
-    case 1:
-      ft_indent++;
-      fprintf(log_fp, "%*ccall %08x <%s>\n", 2 * ft_indent, ' ', dnpc,
-              find_symbol(dnpc));
-      break;
-    case -1:
-      fprintf(log_fp, "%*creturn to %08x <%s>\n", 2 * ft_indent, ' ', dnpc,
-              find_symbol(dnpc));
-      ft_indent--;
-      break;
-    default:
-      panic("Unknown ftrace type %d", type);
-    }
-  });
+  fprintf(log_fp, "[ftrace]");
+  switch (type) {
+  case 1:
+    ft_indent++;
+    fprintf(log_fp, "%*ccall %08x <%s>\n", 2 * ft_indent, ' ', dnpc,
+            find_symbol(dnpc));
+    break;
+  case -1:
+    fprintf(log_fp, "%*creturn to %08x <%s>\n", 2 * ft_indent, ' ', dnpc,
+            find_symbol(dnpc));
+    ft_indent--;
+    break;
+  default:
+    panic("Unknown ftrace type %d", type);
+  }
 }
 
 #endif

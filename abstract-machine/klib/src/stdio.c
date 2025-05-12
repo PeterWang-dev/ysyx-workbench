@@ -18,54 +18,25 @@
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
-int printf(const char *format, ...) {
-  char buf[256];
-
-  va_list ap;
-  va_start(ap, format);
-  int ret = vsprintf(buf, format, ap);
-  va_end(ap);
-
-  for (char *ch = buf; *ch != '\0'; ch++) {
-    putch(*ch);
-  }
-
-  return ret;
-}
+int printf(const char *format, ...) { panic("Not implemented"); }
 
 int sprintf(char *str, const char *format, ...) {
-  va_list ap;
-  va_start(ap, format);
-  int ret = vsprintf(str, format, ap);
-  va_end(ap);
-  return ret;
-}
-
-int snprintf(char *str, size_t size, const char *format, ...) {
-  panic("Not implemented");
-}
-
-int vsprintf(char *str, const char *format, va_list ap) {
   int cnt = 0;
+  va_list ap;
+
+  va_start(ap, format);
+
   for (const char *ch = format; *ch != '\0'; ch++) {
     switch (*ch) {
-    case '%':
+    case '%': { // placeholder indicator
       ch++;
+
       switch (*ch) { // different format specifiers
       case 'd': {
         int num = va_arg(ap, int);
         char *start = str, *end = itoa(num, str);
         cnt += end - start;
         str = end;
-        ch++;
-        break;
-      }
-
-      case 'c': {
-        char c = (char)va_arg(ap, int);
-        *str++ = c;
-        cnt++;
-        ch++;
         break;
       }
 
@@ -75,22 +46,37 @@ int vsprintf(char *str, const char *format, va_list ap) {
           *str++ = *s++;
           cnt++;
         }
-        ch++;
+
         break;
       }
 
       default: {
-        // panic("Not implemented");
+        panic("Not implemented");
       }
       }
-    default: // normal characters
+
+      break;
+    }
+
+    default: { // normal characters
       *str++ = *ch;
       cnt++;
-      break;
+    }
     }
   }
   *str = '\0'; // null-terminator on the end of output
+
+  va_end(ap);
+
   return cnt;
+}
+
+int snprintf(char *str, size_t size, const char *format, ...) {
+  panic("Not implemented");
+}
+
+int vsprintf(char *str, const char *format, va_list ap) {
+  panic("Not implemented");
 }
 
 int vsnprintf(char *str, size_t size, const char *format, va_list ap) {
