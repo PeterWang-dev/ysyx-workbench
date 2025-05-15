@@ -24,8 +24,12 @@ const char *regs[] = {"$0", "ra", "sp",  "gp",  "tp", "t0", "t1", "t2",
 
 void isa_reg_display() {
   for (int i = 0; i < MUXDEF(CONFIG_RVE, 16, 32); i++) {
-    printf("%s\t0x%x\t0x%x\n", regs[i], cpu.gpr[i], cpu.gpr[i]);
+    printf("%s\t0x%x\n", regs[i], cpu.gpr[i]);
   }
+  printf("mstatus\t0x%x\n", cpu.csr[MSTATUS]);
+  printf("mtvec\t0x%x\n", cpu.csr[MTVEC]);
+  printf("mepc\t0x%x\n", cpu.csr[MEPC]);
+  printf("mcause\t0x%x\n", cpu.csr[MCAUSE]);
 }
 
 word_t isa_reg_str2val(const char *s, bool *success) {
