@@ -70,10 +70,10 @@ void sim_t::diff_set_regs(void *diff_context) {
   for (int i = 0; i < NR_GPR; i++) {
     state->XPR.write(i, (sword_t)ctx->gpr[i]);
   }
-  state->mstatus->write(ctx->csr[0x300]); // mstatus
-  state->mtvec->write(ctx->csr[0x305]);   // mtvec
-  state->mepc->write(ctx->csr[0x341]);    // mepc
-  state->mcause->write(ctx->csr[0x342]);  // mcause
+  // state->mstatus->write(ctx->csr[0x300]); // mstatus
+  // state->mtvec->write(ctx->csr[0x305]);   // mtvec
+  // state->mepc->write(ctx->csr[0x341]);    // mepc
+  // state->mcause->write(ctx->csr[0x342]);  // mcause
   state->pc = ctx->pc;
 }
 
