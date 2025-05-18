@@ -1,3 +1,4 @@
+#include "include/npc.h"
 #include <am.h>
 #include <klib-macros.h>
 
@@ -14,9 +15,7 @@ Area heap = RANGE(&_heap_start, PMEM_END);
 #endif
 static const char mainargs[] = MAINARGS;
 
-#define npc_trap(code) asm volatile("mv a0, %0; ebreak" : : "r"(code))
-
-void putch(char ch) {}
+void putch(char ch) { outb(SERIAL_PORT, ch); }
 
 void halt(int code) {
   npc_trap(code);
