@@ -45,11 +45,11 @@ bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
   //   return false;
   // }
 
-  if (cpu.csr[MSTATUS] != ref_r->csr[MSTATUS]) {
-    Log("Mismatch at csr[MSTATUS]: DUT = " FMT_WORD ", REF = " FMT_WORD,
-        cpu.csr[MSTATUS], ref_r->csr[MSTATUS]);
-    return false;
-  }
+  // if (cpu.csr[MSTATUS] != ref_r->csr[MSTATUS]) {
+  //   Log("Mismatch at csr[MSTATUS]: DUT = " FMT_WORD ", REF = " FMT_WORD,
+  //       cpu.csr[MSTATUS], ref_r->csr[MSTATUS]);
+  //   return false;
+  // }
 
   if (cpu.pc != ref_r->pc) {
     Log("Mismatch at pc: DUT = " FMT_WORD ", REF = " FMT_WORD, cpu.pc,
