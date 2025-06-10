@@ -7,7 +7,8 @@ static Context *(*user_handler)(Event, Context *) = NULL;
 Context *__am_irq_handle(Context *c) {
   if (user_handler) {
     Event ev = {0};
-    switch (c->mcause) { // mcause: interrupt(31) | exception code(30:0)
+    // mcause: interrupt(31) | exception code(30:0)
+    switch (c->mcause) {
     case 0xb: // Environment call from M-mode
       ev.event = EVENT_YIELD;
       break;
@@ -36,14 +37,19 @@ bool cte_init(Context *(*handler)(Event, Context *)) {
 }
 
 Context *kcontext(Area kstack, void (*sentry)(void *), void *arg) {
-  return NULL;
+  Context *c = (Context *)kstack.end - sizeof(Context);
+  assert(c >= (Context *)kstack.start);
+  c->mstatus = 0x1800;
+  c->mepc = (uintptr_t)sentry;
+  return c;
 }
 
 void yield() {
 #ifdef __riscv_e
   asm volatile("li a5, -1; ecall");
 #else
-  asm volatile("li a7, -1; ecall");
+  asm volatile("li a7, -1; ecall"); //! BUG: DEAD HERE! As epc is set here after
+                                    //! first time two process iterating.
 #endif
 }
 
