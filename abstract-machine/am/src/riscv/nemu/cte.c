@@ -7,8 +7,8 @@ static Context *(*user_handler)(Event, Context *) = NULL;
 Context *__am_irq_handle(Context *c) {
   if (user_handler) {
     Event ev = {0};
-    switch (c->mcause) {
-    case 0xb: //! AGAIN, why 0xb?
+    switch (c->mcause) { // mcause: interrupt(31) | exception code(30:0)
+    case 0xb: // Environment call from M-mode
       ev.event = EVENT_YIELD;
       break;
     default:

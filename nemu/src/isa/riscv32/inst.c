@@ -243,10 +243,9 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak, N,
           NEMUTRAP(s->pc, R(10))); // R(10) is $a0
   INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, N,
-          //  s->dnpc = isa_raise_intr(R(17), s->pc)
-          //? Guess R(17) is $a7
-          //! ... NOT Correct!
-          s->dnpc = isa_raise_intr(0xb, s->pc)); //! Why 0xb?
+          s->dnpc = isa_raise_intr(
+              0xb, s->pc)); // Environment call from M-mode
+                            // (interrupt = 0, exception code = 0xb)
   INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw, I, {
     word_t t = CSR(imm);
     CSR(imm) = src1;
@@ -259,7 +258,8 @@ static int decode_exec(Decode *s) {
   });
   INSTPAT("0011000 00010 00000 000 00000 11100 11", mret, N, {
     s->dnpc = CSR(MEPC);
-    CSR(MSTATUS) = 0x80; //! Also, we don't implement machine mode switch, just set it to 0x80 to pass difftest
+    CSR(MSTATUS) = 0x80; //! Also, we don't implement machine mode switch, just
+                         //! set it to 0x80 to pass difftest
   });
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv, N, INV(s->pc));
   INSTPAT_END();
