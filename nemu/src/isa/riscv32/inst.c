@@ -261,7 +261,7 @@ static int decode_exec(Decode *s) {
     s->dnpc = CSR(MEPC);
     CSR(MSTATUS) &= ~0x1800 | 0x1800; // Only support M-mode
     CSR(MSTATUS) = (CSR(MSTATUS) & ~0x8) | ((CSR(MSTATUS) & 0x80) >> 4);
-    CSR(MSTATUS) &= ~0x80; // clear MIE
+    CSR(MSTATUS) &= ~0x80 | 0x80;
   });
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv, N, INV(s->pc));
   INSTPAT_END();
