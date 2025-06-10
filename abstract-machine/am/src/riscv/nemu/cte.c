@@ -7,8 +7,9 @@ static Context *(*user_handler)(Event, Context *) = NULL;
 Context *__am_irq_handle(Context *c) {
   if (user_handler) {
     Event ev = {0};
-    switch (c->mcause) { // mcause: interrupt(31) | exception code(30:0)
-    case 0xb:            // Environment call from M-mode
+    // mcause: interrupt(31) | exception code(30:0)
+    switch (c->mcause) {
+    case 0xb: // Environment call from M-mode
       ev.event = EVENT_YIELD;
       break;
     default:
@@ -38,6 +39,7 @@ bool cte_init(Context *(*handler)(Event, Context *)) {
 Context *kcontext(Area kstack, void (*sentry)(void *), void *arg) {
   Context *c = (Context *)kstack.end - sizeof(Context);
   assert(c >= (Context *)kstack.start);
+  c->gpr[10] = (uintptr_t)arg; // set $a0 to arg
   c->mstatus = 0x1800;
   c->mepc = (uintptr_t)sentry;
   return c;
