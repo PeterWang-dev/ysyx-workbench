@@ -257,8 +257,11 @@ static int decode_exec(Decode *s) {
     R(rd) = t;
   });
   INSTPAT("0011000 00010 00000 000 00000 11100 11", mret, N, {
+    extern void difftest_skip_ref();
+    difftest_skip_ref();
     s->dnpc = CSR(MEPC);
-    // CSR(MSTATUS) = 0x80; //! Also, we don't implement machine mode switch, just
+    // CSR(MSTATUS) = 0x80; //! Also, we don't implement machine mode switch,
+    // just
     //                      //! set it to 0x80 to pass difftest
   });
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv, N, INV(s->pc));
