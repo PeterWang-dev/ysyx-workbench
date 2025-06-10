@@ -8,7 +8,7 @@ Context *__am_irq_handle(Context *c) {
   if (user_handler) {
     Event ev = {0};
     switch (c->mcause) { // mcause: interrupt(31) | exception code(30:0)
-    case 0xb: // Environment call from M-mode
+    case 0xb:            // Environment call from M-mode
       ev.event = EVENT_YIELD;
       break;
     default:
@@ -36,7 +36,9 @@ bool cte_init(Context *(*handler)(Event, Context *)) {
 }
 
 Context *kcontext(Area kstack, void (*sentry)(void *), void *arg) {
-  return NULL;
+  Context *c = (Context *)kstack.end - sizeof(Context);
+  assert(c >= (Context *)kstack.start);
+  return c;
 }
 
 void yield() {
