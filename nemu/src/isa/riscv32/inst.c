@@ -14,7 +14,6 @@
  * See the Mulan PSL v2 for more details.
  ******************************************************************************/
 
-#include "isa-def.h"
 #include "local-include/reg.h"
 #include <cpu/cpu.h>
 #include <cpu/decode.h>
@@ -259,8 +258,8 @@ static int decode_exec(Decode *s) {
   });
   INSTPAT("0011000 00010 00000 000 00000 11100 11", mret, N, {
     s->dnpc = CSR(MEPC);
-    CSR(MSTATUS) = 0x80; //! Also, we don't implement machine mode switch, just
-                         //! set it to 0x80 to pass difftest
+    // CSR(MSTATUS) = 0x80; //! Also, we don't implement machine mode switch, just
+    //                      //! set it to 0x80 to pass difftest
   });
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv, N, INV(s->pc));
   INSTPAT_END();
