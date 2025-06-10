@@ -260,9 +260,7 @@ static int decode_exec(Decode *s) {
     s->dnpc = CSR(MEPC);
     //! Also, we don't implement machine mode switch,
     //! just set it to 0x80 to pass difftest
-    // CSR(MSTATUS) = 0x80;
-    extern void difftest_skip_ref();
-    difftest_skip_ref();
+    CSR(MSTATUS) = 0x80;
   });
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv, N, INV(s->pc));
   INSTPAT_END();
