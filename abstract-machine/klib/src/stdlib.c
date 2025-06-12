@@ -41,43 +41,45 @@ int atoi(const char *nptr) {
   return x;
 }
 
-// char *itoa(const int value, char *str) {
-//   char buffer[11];    // only handle int
-//   char *cur = buffer; // always points to the (last digit + 1)
-//   int val = value;
-//   bool negative = false;
+char *itoa(const int value, char *str) __attribute__((weak));
 
-//   if (value == 0) {
-//     *str++ = '0';
-//     *str = '\0'; // null-terminator
-//     return str;
-//   }
+char *itoa(const int value, char *str) {
+  char buffer[11];    // only handle int
+  char *cur = buffer; // always points to the (last digit + 1)
+  int val = value;
+  bool negative = false;
 
-//   if (value < 0) {
-//     val = -value;
-//     negative = true;
-//   }
+  if (value == 0) {
+    *str++ = '0';
+    *str = '\0'; // null-terminator
+    return str;
+  }
 
-//   // modulo 10 to get the digit stack
-//   while (val != 0) {
-//     *cur++ = val % 10 + '0';
-//     val /= 10;
-//   }
+  if (value < 0) {
+    val = -value;
+    negative = true;
+  }
 
-//   if (negative) {
-//     *cur++ = '-';
-//   }
+  // modulo 10 to get the digit stack
+  while (val != 0) {
+    *cur++ = val % 10 + '0';
+    val /= 10;
+  }
 
-//   // reverse output
-//   while (cur != buffer) {
-//     *str++ = *--cur;
-//   }
+  if (negative) {
+    *cur++ = '-';
+  }
 
-//   *str = '\0'; // null-terminator
+  // reverse output
+  while (cur != buffer) {
+    *str++ = *--cur;
+  }
 
-//   // return the new pointer to the string terminator
-//   return str;
-// }
+  *str = '\0'; // null-terminator
+
+  // return the new pointer to the string terminator
+  return str;
+}
 
 void *malloc(size_t size) {
   // On native, malloc() will be called during initializaion of C runtime.
