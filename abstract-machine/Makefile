@@ -86,8 +86,9 @@ CFLAGS   += -O2 -MMD -Wall -Werror $(INCFLAGS) \
             -D__ARCH__=$(ARCH) -D__ARCH_$(shell echo $(ARCH) | tr a-z A-Z | tr - _) \
             -D__PLATFORM__=$(PLATFORM) -D__PLATFORM_$(shell echo $(PLATFORM) | tr a-z A-Z | tr - _) \
             -DARCH_H=\"$(ARCH_H)\" \
-            -fno-asynchronous-unwind-tables -fno-builtin -fno-stack-protector \
-            -Wno-main -U_FORTIFY_SOURCE
+			-D_FORTIFY_SOURCE=0 \
+            -fno-asynchronous-unwind-tables -fno-builtin -fno-stack-protector -ffreestanding \
+            -Wno-main
 CXXFLAGS +=  $(CFLAGS) -ffreestanding -fno-rtti -fno-exceptions
 ASFLAGS  += -MMD $(INCFLAGS)
 LDFLAGS  += -z noexecstack
