@@ -49,8 +49,7 @@ void yield() {
 #ifdef __riscv_e
   asm volatile("li a5, -1; ecall");
 #else
-  asm volatile("li a7, -1; ecall"); //! BUG: DEAD HERE! As epc is set here after
-                                    //! first time two process iterating.
+  asm volatile("li a7, -1; ecall");
 #endif
 }
 
