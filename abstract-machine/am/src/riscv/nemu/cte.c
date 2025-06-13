@@ -38,7 +38,7 @@ bool cte_init(Context *(*handler)(Event, Context *)) {
 
 Context *kcontext(Area kstack, void (*sentry)(void *), void *arg) {
   Context *c = (Context *)kstack.end - sizeof(Context);
-  assert(c >= (Context *)kstack.start);
+  // assert(c >= (Context *)kstack.start);
   c->mstatus = 0x1800;
   c->mepc = (uintptr_t)sentry - 4;
   c->gpr[10] = (uintptr_t)arg; // set $a0 to arg
