@@ -54,7 +54,7 @@ int vsprintf(char *str, const char *format, va_list ap) {
       switch (*ch) { // different format specifiers
       case 'd': {
         int num = va_arg(ap, int);
-        char *start = str, *end = itoa(num, str);
+        char *start = str, *end = itoa(num, str, 10);
         cnt += end - start;
         str = end;
         ch++;

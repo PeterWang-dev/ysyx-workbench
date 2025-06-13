@@ -41,18 +41,16 @@ int atoi(const char *nptr) {
   return x;
 }
 
-char *itoa(const int value, char *str) __attribute__((weak));
-
-char *itoa(const int value, char *str) {
+char *itoa(int value, char *string, int radix) {
   char buffer[11];    // only handle int
   char *cur = buffer; // always points to the (last digit + 1)
   int val = value;
   bool negative = false;
 
   if (value == 0) {
-    *str++ = '0';
-    *str = '\0'; // null-terminator
-    return str;
+    *string++ = '0';
+    *string = '\0'; // null-terminator
+    return string;
   }
 
   if (value < 0) {
@@ -72,13 +70,13 @@ char *itoa(const int value, char *str) {
 
   // reverse output
   while (cur != buffer) {
-    *str++ = *--cur;
+    *string++ = *--cur;
   }
 
-  *str = '\0'; // null-terminator
+  *string = '\0'; // null-terminator
 
   // return the new pointer to the string terminator
-  return str;
+  return string;
 }
 
 void *malloc(size_t size) {
