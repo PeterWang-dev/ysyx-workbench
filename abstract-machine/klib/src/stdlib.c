@@ -41,42 +41,88 @@ int atoi(const char *nptr) {
   return x;
 }
 
-char *itoa(int value, char *string, int radix) {
-  char buffer[11];    // only handle int
-  char *cur = buffer; // always points to the (last digit + 1)
-  int val = value;
-  bool negative = false;
+static char *ltoa(long value, char *string, int radix) {
+  char tmp[33];
+  char *tp = tmp;
+  long i;
+  unsigned long v;
+  int sign;
+  char *sp;
 
-  if (value == 0) {
-    *string++ = '0';
-    *string = '\0'; // null-terminator
-    return string;
+  if (string == NULL) {
+    return 0;
   }
 
-  if (value < 0) {
-    val = -value;
-    negative = true;
+  if (radix > 36 || radix <= 1) {
+    return 0;
   }
 
-  // modulo 10 to get the digit stack
-  while (val != 0) {
-    *cur++ = val % 10 + '0';
-    val /= 10;
+  sign = (radix == 10 && value < 0);
+  if (sign) {
+    v = -value;
+  } else {
+    v = (unsigned long)value;
   }
 
-  if (negative) {
-    *cur++ = '-';
+  while (v || tp == tmp) {
+    i = v % radix;
+    v = v / radix;
+    if (i < 10)
+      *tp++ = (char)(i + '0');
+    else
+      *tp++ = (char)(i + 'a' - 10);
   }
 
-  // reverse output
-  while (cur != buffer) {
-    *string++ = *--cur;
-  }
+  sp = string;
 
-  *string = '\0'; // null-terminator
+  if (sign)
+    *sp++ = '-';
+  while (tp > tmp)
+    *sp++ = *--tp;
+  *sp = 0;
 
-  // return the new pointer to the string terminator
   return string;
+}
+
+char *itoa(int value, char *string, int radix) {
+  return ltoa(value, string, radix);
+}
+
+static char *ultoa(unsigned long value, char *string, int radix) {
+  char tmp[33];
+  char *tp = tmp;
+  long i;
+  unsigned long v = value;
+  char *sp;
+
+  if (string == NULL) {
+    return 0;
+  }
+
+  if (radix > 36 || radix <= 1) {
+    return 0;
+  }
+
+  while (v || tp == tmp) {
+    i = v % radix;
+    v = v / radix;
+    if (i < 10)
+      *tp++ = (char)(i + '0');
+    else
+      *tp++ = (char)(i + 'a' - 10);
+  }
+
+  sp = string;
+
+  while (tp > tmp)
+    *sp++ = *--tp;
+  *sp = 0;
+
+  return string;
+}
+
+char *utoa(unsigned value, char *string, int radix) {
+  return ultoa(value, string, radix);
 }
 
 void *malloc(size_t size) {

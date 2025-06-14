@@ -46,6 +46,7 @@ void free(void *ptr);
 int abs(int x);
 int atoi(const char *nptr);
 char *itoa(int value, char *string, int radix) __attribute__((weak));
+char *utoa(unsigned value, char *string, int radix) __attribute__((weak));
 
 // stdio.h
 int printf(const char *format, ...);
