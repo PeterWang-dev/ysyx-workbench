@@ -16,7 +16,6 @@
 #ifndef KLIB_H__
 #define KLIB_H__
 
-#include "sys/cdefs.h"
 #include <am.h>
 #include <stdarg.h>
 #include <stddef.h>
