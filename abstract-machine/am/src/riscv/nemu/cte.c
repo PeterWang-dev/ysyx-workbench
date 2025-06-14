@@ -11,6 +11,7 @@ Context *__am_irq_handle(Context *c) {
     switch (c->mcause) {
     case 0xb: // Environment call from M-mode
       ev.event = EVENT_YIELD;
+      c->mepc += 4; // advance to next instruction
       break;
     default:
       ev.event = EVENT_ERROR;
