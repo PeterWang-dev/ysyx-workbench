@@ -54,7 +54,7 @@ int vsprintf(char *str, const char *format, va_list ap) {
       switch (*ch) { // different format specifiers
       case 'd': {
         int num = va_arg(ap, int);
-        char *start = str, *end = itoa(num, str, 10);
+        char *start = str, *end = itoa(num, str, 10) - 1;
         cnt += end - start;
         str = end;
         ch++;
@@ -80,7 +80,7 @@ int vsprintf(char *str, const char *format, va_list ap) {
       }
 
       default: {
-        // panic("Not implemented");
+        panic("Not implemented");
       }
       }
     default: // normal characters
