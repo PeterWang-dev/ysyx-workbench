@@ -63,9 +63,6 @@ __am_asm_trap:
 
   LOAD t1, OFFSET_STATUS(sp)
   LOAD t2, OFFSET_EPC(sp)
-#   # increment mepc to point to the next instruction after the trap
-#   # this marks the trap has been handled
-#   addi t2, t2, 4;
   csrw mstatus, t1
   csrw mepc, t2
 
