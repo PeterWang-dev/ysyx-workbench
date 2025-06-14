@@ -41,7 +41,7 @@ int atoi(const char *nptr) {
   return x;
 }
 
-static char *ltoa(long value, char *string, int radix) {
+char *ltoa(long value, char *string, int radix) {
   char tmp[33];
   char *tp = tmp;
   long i;
@@ -88,7 +88,7 @@ char *itoa(int value, char *string, int radix) {
   return ltoa(value, string, radix);
 }
 
-static char *ultoa(unsigned long value, char *string, int radix) {
+char *ultoa(unsigned long value, char *string, int radix) {
   char tmp[33];
   char *tp = tmp;
   long i;
