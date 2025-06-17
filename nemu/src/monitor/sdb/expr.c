@@ -46,18 +46,19 @@ static struct rule {
   const char *regex;
   int token_type;
 } rules[] = {
-    {" +", TK_NOTYPE},                             // spaces
-    {"\\(", TK_PARENTHESES_LEFT},                  // left parenthese
-    {"\\)", TK_PARENTHESES_RIGHT},                 // right parenthese
-    {"\\$(pc|0|ra|sp|gp|tp|t|s|a)[0-9]?", TK_REG}, // register
-    {"(0[xX])?[0-9A-Fa-f]+", TK_NUM},              // unsigned number
-    {"\\*", TK_MUL},                               // multiply
-    {"\\/", TK_DIV},                               // divide
-    {"\\+", TK_ADD},                               // plus
-    {"-", TK_SUB},                                 // minus
-    {"==", TK_EQ},                                 // equal
-    {"!=", TK_NEQ},                                // not equal
-    {"&&", TK_AND}                                 // and
+    {" +", TK_NOTYPE},             // spaces
+    {"\\(", TK_PARENTHESES_LEFT},  // left parenthese
+    {"\\)", TK_PARENTHESES_RIGHT}, // right parenthese
+    {"\\$(pc|0|ra|sp|gp|tp|t|s|a|mstatus|mtvec|mepc|mcause)[0-9]?",
+     TK_REG},                         // register
+    {"(0[xX])?[0-9A-Fa-f]+", TK_NUM}, // unsigned number
+    {"\\*", TK_MUL},                  // multiply
+    {"\\/", TK_DIV},                  // divide
+    {"\\+", TK_ADD},                  // plus
+    {"-", TK_SUB},                    // minus
+    {"==", TK_EQ},                    // equal
+    {"!=", TK_NEQ},                   // not equal
+    {"&&", TK_AND}                    // and
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -247,7 +248,8 @@ static int find_op(int sp, int ep) {
            "spaces should not exists after making token");
 
     /* Rule 1: elems which is not an operator is definately not a main_op */
-    if (tokens[i].type == TK_REG || tokens[i].type == TK_NUM || tokens[i].type == TK_NEGTIVE) {
+    if (tokens[i].type == TK_REG || tokens[i].type == TK_NUM ||
+        tokens[i].type == TK_NEGTIVE) {
       // TK_NUM and TK_NEGTIVE are not operators
       continue;
     }
