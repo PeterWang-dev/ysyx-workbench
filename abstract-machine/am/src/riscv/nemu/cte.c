@@ -1,14 +1,21 @@
 #include <am.h>
-#include <riscv/riscv.h>
 #include <klib.h>
+#include <riscv/riscv.h>
 
-static Context* (*user_handler)(Event, Context*) = NULL;
+static Context *(*user_handler)(Event, Context *) = NULL;
 
-Context* __am_irq_handle(Context *c) {
+Context *__am_irq_handle(Context *c) {
   if (user_handler) {
     Event ev = {0};
+    // mcause: interrupt(31) | exception code(30:0)
     switch (c->mcause) {
-      default: ev.event = EVENT_ERROR; break;
+    case 0xb: // Environment call from M-mode
+      ev.event = EVENT_YIELD;
+      c->mepc += 4; // advance to next instruction
+      break;
+    default:
+      ev.event = EVENT_ERROR;
+      break;
     }
 
     c = user_handler(ev, c);
@@ -20,7 +27,7 @@ Context* __am_irq_handle(Context *c) {
 
 extern void __am_asm_trap(void);
 
-bool cte_init(Context*(*handler)(Event, Context*)) {
+bool cte_init(Context *(*handler)(Event, Context *)) {
   // initialize exception entry
   asm volatile("csrw mtvec, %0" : : "r"(__am_asm_trap));
 
@@ -30,8 +37,13 @@ bool cte_init(Context*(*handler)(Event, Context*)) {
   return true;
 }
 
-Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
-  return NULL;
+Context *kcontext(Area kstack, void (*sentry)(void *), void *arg) {
+  Context *c = (Context *)kstack.end - 1;
+  assert(c >= (Context *)kstack.start);
+  c->mstatus = 0x1800;
+  c->mepc = (uintptr_t)sentry;
+  c->gpr[10] = (uintptr_t)arg; // set $a0 to arg
+  return c;
 }
 
 void yield() {
@@ -42,9 +54,6 @@ void yield() {
 #endif
 }
 
-bool ienabled() {
-  return false;
-}
+bool ienabled() { return false; }
 
-void iset(bool enable) {
-}
+void iset(bool enable) {}
