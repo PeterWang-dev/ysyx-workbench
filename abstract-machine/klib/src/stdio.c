@@ -53,12 +53,11 @@ int vsprintf(char *str, const char *format, va_list ap) {
       ch++;
       switch (*ch) { // different format specifiers
       case 'd': {
-        ch++;
         int num = va_arg(ap, int);
         char *start = str;
         itoa(num, str, 10);
         while (*str != '\0')
-          str++; // 找到字符串结束位置
+          str++;
         cnt += str - start;
         break;
       }
@@ -66,20 +65,18 @@ int vsprintf(char *str, const char *format, va_list ap) {
       case 'l': {
         ch++;
         if (*ch == 'd') {
-          ch++;
           long num = va_arg(ap, long);
           char *start = str;
           ltoa(num, str, 10);
           while (*str != '\0')
-            str++; // 找到字符串结束位置
+            str++;
           cnt += str - start;
         } else if (*ch == 'u') {
-          ch++;
           unsigned long num = va_arg(ap, unsigned long);
           char *start = str;
           ultoa(num, str, 10);
           while (*str != '\0')
-            str++; // 找到字符串结束位置
+            str++;
           cnt += str - start;
         } else {
           panic("Not implemented");
@@ -88,7 +85,6 @@ int vsprintf(char *str, const char *format, va_list ap) {
       }
 
       case 'c': {
-        ch++;
         char c = (char)va_arg(ap, int);
         *str++ = c;
         cnt++;
@@ -96,7 +92,6 @@ int vsprintf(char *str, const char *format, va_list ap) {
       }
 
       case 's': {
-        ch++;
         const char *s = va_arg(ap, const char *);
         while (*s != '\0') {
           *str++ = *s++;
@@ -110,7 +105,7 @@ int vsprintf(char *str, const char *format, va_list ap) {
         break;
       }
       }
-      break; // 添加这个break，确保不会继续到外层default
+      break;
     default: // normal characters
       *str++ = *ch;
       cnt++;
