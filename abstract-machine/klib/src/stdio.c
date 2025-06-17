@@ -53,29 +53,48 @@ int vsprintf(char *str, const char *format, va_list ap) {
       ch++;
       switch (*ch) { // different format specifiers
       case 'd': {
+        ch++;
         int num = va_arg(ap, int);
-        char *start = str, *end = itoa(num, str);
+        char *start = str, *end = itoa(num, str, 10) - 1;
         cnt += end - start;
         str = end;
-        ch++;
         break;
       }
 
+      case 'l': {
+        ch++;
+        if (*ch == 'd') {
+          ch++;
+          long num = va_arg(ap, long);
+          char *start = str, *end = ltoa(num, str, 10) - 1;
+          cnt += end - start;
+          str = end;
+        } else if (*ch == 'u') {
+          ch++;
+          unsigned long num = va_arg(ap, unsigned long);
+          char *start = str, *end = ultoa(num, str, 10) - 1;
+          cnt += end - start;
+          str = end;
+        } else {
+          panic("Not implemented");
+        }
+      }
+
       case 'c': {
+        ch++;
         char c = (char)va_arg(ap, int);
         *str++ = c;
         cnt++;
-        ch++;
         break;
       }
 
       case 's': {
+        ch++;
         const char *s = va_arg(ap, const char *);
         while (*s != '\0') {
           *str++ = *s++;
           cnt++;
         }
-        ch++;
         break;
       }
 
