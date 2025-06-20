@@ -47,10 +47,12 @@ int snprintf(char *str, size_t size, const char *format, ...) {
 
 int vsprintf(char *str, const char *format, va_list ap) {
   int cnt = 0;
+  // note: ch will be incremented, so no need to increment it manually to skip
+  // LAST format specifier
   for (const char *ch = format; *ch != '\0'; ch++) {
     switch (*ch) {
     case '%':
-      ch++;
+      ch++;          // skip the '%'
       switch (*ch) { // different format specifiers
       case 'd': {
         int num = va_arg(ap, int);
@@ -63,7 +65,7 @@ int vsprintf(char *str, const char *format, va_list ap) {
       }
 
       case 'l': {
-        ch++;
+        ch++; // skip the 'l'
         if (*ch == 'd') {
           long num = va_arg(ap, long);
           char *start = str;
