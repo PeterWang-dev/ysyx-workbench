@@ -56,10 +56,10 @@ word_t paddr_read(paddr_t addr, int len) {
   IFDEF(CONFIG_MTRACE,
         log_write("[mtrace] read %d bytes at " FMT_PADDR "\n", len, addr));
 
-  IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
-
   if (likely(in_pmem(addr)))
     return pmem_read(addr, len);
+
+  IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
 
   out_of_bound(addr);
 
@@ -71,12 +71,12 @@ void paddr_write(paddr_t addr, int len, word_t data) {
                                  " with" FMT_WORD " at " FMT_PADDR "\n",
                                  len, data, addr));
 
-  IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
-
   if (likely(in_pmem(addr))) {
     pmem_write(addr, len, data);
     return;
   }
+
+  IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
 
   out_of_bound(addr);
 }
