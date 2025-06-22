@@ -16,7 +16,6 @@
 #include "mmu.h"
 #include "sim.h"
 #include "../../include/common.h"
-#include <cstdio>
 #include <difftest-def.h>
 
 #define NR_GPR MUXDEF(CONFIG_RVE, 16, 32)
