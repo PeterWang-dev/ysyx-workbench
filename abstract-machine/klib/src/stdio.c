@@ -47,17 +47,42 @@ int snprintf(char *str, size_t size, const char *format, ...) {
 
 int vsprintf(char *str, const char *format, va_list ap) {
   int cnt = 0;
+  // note: ch will be incremented, so no need to increment it manually to skip
+  // LAST format specifier
   for (const char *ch = format; *ch != '\0'; ch++) {
     switch (*ch) {
     case '%':
-      ch++;
+      ch++;          // skip the '%'
       switch (*ch) { // different format specifiers
       case 'd': {
         int num = va_arg(ap, int);
-        char *start = str, *end = itoa(num, str);
-        cnt += end - start;
-        str = end;
-        ch++;
+        char *start = str;
+        itoa(num, str, 10);
+        while (*str != '\0')
+          str++;
+        cnt += str - start;
+        break;
+      }
+
+      case 'l': {
+        ch++; // skip the 'l'
+        if (*ch == 'd') {
+          long num = va_arg(ap, long);
+          char *start = str;
+          ltoa(num, str, 10);
+          while (*str != '\0')
+            str++;
+          cnt += str - start;
+        } else if (*ch == 'u') {
+          unsigned long num = va_arg(ap, unsigned long);
+          char *start = str;
+          ultoa(num, str, 10);
+          while (*str != '\0')
+            str++;
+          cnt += str - start;
+        } else {
+          panic("Not implemented");
+        }
         break;
       }
 
@@ -65,7 +90,6 @@ int vsprintf(char *str, const char *format, va_list ap) {
         char c = (char)va_arg(ap, int);
         *str++ = c;
         cnt++;
-        ch++;
         break;
       }
 
@@ -75,14 +99,15 @@ int vsprintf(char *str, const char *format, va_list ap) {
           *str++ = *s++;
           cnt++;
         }
-        ch++;
         break;
       }
 
       default: {
         // panic("Not implemented");
+        break;
       }
       }
+      break;
     default: // normal characters
       *str++ = *ch;
       cnt++;

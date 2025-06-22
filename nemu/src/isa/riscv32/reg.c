@@ -16,6 +16,8 @@
 #include "local-include/reg.h"
 #include "macro.h"
 #include <isa.h>
+#include <stdio.h>
+#include <string.h>
 
 const char *regs[] = {"$0", "ra", "sp",  "gp",  "tp", "t0", "t1", "t2",
                       "s0", "s1", "a0",  "a1",  "a2", "a3", "a4", "a5",
@@ -23,9 +25,14 @@ const char *regs[] = {"$0", "ra", "sp",  "gp",  "tp", "t0", "t1", "t2",
                       "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"};
 
 void isa_reg_display() {
+  printf("pc\t0x%x\n", cpu.pc);
   for (int i = 0; i < MUXDEF(CONFIG_RVE, 16, 32); i++) {
-    printf("%s\t0x%x\t0x%x\n", regs[i], cpu.gpr[i], cpu.gpr[i]);
+    printf("%s\t0x%x\n", regs[i], cpu.gpr[i]);
   }
+  printf("mstatus\t0x%x\n", cpu.csr[MSTATUS]);
+  printf("mtvec\t0x%x\n", cpu.csr[MTVEC]);
+  printf("mepc\t0x%x\n", cpu.csr[MEPC]);
+  printf("mcause\t0x%x\n", cpu.csr[MCAUSE]);
 }
 
 word_t isa_reg_str2val(const char *s, bool *success) {
@@ -46,6 +53,26 @@ word_t isa_reg_str2val(const char *s, bool *success) {
       *success = true;
       return gpr(i);
     }
+  }
+
+  if (strcmp(s, "mstatus") == 0) { // mstatus CSR
+    *success = true;
+    return csr(MSTATUS);
+  }
+
+  if (strcmp(s, "mtvec") == 0) { // mtvec CSR
+    *success = true;
+    return csr(MTVEC);
+  }
+
+  if (strcmp(s, "mepc") == 0) { // mepc CSR
+    *success = true;
+    return csr(MEPC);
+  }
+
+  if (strcmp(s, "mcause") == 0) { // mcause CSR
+    *success = true;
+    return csr(MCAUSE);
   }
 
   *success = false; // if register not found
