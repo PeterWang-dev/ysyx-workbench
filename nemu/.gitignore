@@ -9,5 +9,7 @@
 !README.md
 !LICENSE
 !Kconfig
+!*.nix
+!.envrc
 include/config
 include/generated
