@@ -21,9 +21,11 @@ stdenv.mkDerivation {
     # For difftest Spike compilation
     dtc
     boost
+    # NEMU build dependency
+    llvmPackages.llvm
+    llvmPackages.bintools
   ];
   buildInputs = [
-    llvmPackages.llvm
     readline
     SDL2
     SDL2_ttf
