@@ -7,7 +7,10 @@ in
 pkgs.mkShell rec {
   name = "nemu-dev";
   inputsFrom = [ nemu ];
-  packages = [ ];
+  packages = with pkgs; [
+    llvmPackages.clang-tools
+    bear
+   ];
   shellHook = ''
     export NEMU_HOME=${NEMU_HOME}
   '';

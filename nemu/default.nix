@@ -22,10 +22,10 @@ stdenv.mkDerivation {
     dtc
     boost
     # NEMU build dependency
-    llvmPackages.llvm
-    llvmPackages.bintools
+    llvmPackages.bintools # enable the ability to use correct rpath
   ];
   buildInputs = [
+    llvmPackages.llvm # for disassemble support
     readline
     SDL2
     SDL2_ttf
