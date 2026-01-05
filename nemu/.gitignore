@@ -9,5 +9,9 @@
 !README.md
 !LICENSE
 !Kconfig
+!*.nix
+!.envrc
+!/.vscode/
+!/.vscode/*
 include/config
 include/generated
