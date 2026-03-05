@@ -10,7 +10,6 @@
   SDL2,
   SDL2_ttf,
   SDL2_image,
-  sdl3,
 }:
 stdenv.mkDerivation {
   pname = "nemu";
@@ -24,11 +23,6 @@ stdenv.mkDerivation {
     # For difftest Spike compilation
     dtc
     boost
-    # NEMU build dependency
-    # (with llvmPackages; [
-    #   clang
-    #   bintools # enable the ability to use correct rpath
-    # ])
   ];
   buildInputs = [
     llvmPackages.llvm # for disassemble support
@@ -36,6 +30,5 @@ stdenv.mkDerivation {
     SDL2
     SDL2_ttf
     SDL2_image
-    sdl3
   ];
 }
