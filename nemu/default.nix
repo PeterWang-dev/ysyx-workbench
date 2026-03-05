@@ -10,7 +10,7 @@
   SDL2,
   SDL2_ttf,
   SDL2_image,
-  sdl3
+  sdl3,
 }:
 stdenv.mkDerivation {
   pname = "nemu";
@@ -25,7 +25,10 @@ stdenv.mkDerivation {
     dtc
     boost
     # NEMU build dependency
-    llvmPackages.bintools # enable the ability to use correct rpath
+    (with llvmPackages; [
+      clang
+      bintools # enable the ability to use correct rpath
+    ])
   ];
   buildInputs = [
     llvmPackages.llvm # for disassemble support
