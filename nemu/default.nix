@@ -1,6 +1,7 @@
 {
   stdenv,
   llvmPackages,
+  ncurses,
   bison,
   flex,
   dtc,
@@ -16,13 +17,12 @@ stdenv.mkDerivation {
   src = ./.;
   nativeBuildInputs = [
     # For menuconfig
+    ncurses
     bison
     flex
     # For difftest Spike compilation
     dtc
     boost
-    # NEMU build dependency
-    llvmPackages.bintools # enable the ability to use correct rpath
   ];
   buildInputs = [
     llvmPackages.llvm # for disassemble support
