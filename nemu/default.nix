@@ -25,10 +25,10 @@ stdenv.mkDerivation {
     dtc
     boost
     # NEMU build dependency
-    (with llvmPackages; [
-      clang
-      bintools # enable the ability to use correct rpath
-    ])
+    # (with llvmPackages; [
+    #   clang
+    #   bintools # enable the ability to use correct rpath
+    # ])
   ];
   buildInputs = [
     llvmPackages.llvm # for disassemble support
