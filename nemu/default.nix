@@ -1,6 +1,7 @@
 {
   stdenv,
   llvmPackages,
+  ncurses,
   bison,
   flex,
   dtc,
@@ -16,6 +17,7 @@ stdenv.mkDerivation {
   src = ./.;
   nativeBuildInputs = [
     # For menuconfig
+    ncurses
     bison
     flex
     # For difftest Spike compilation
