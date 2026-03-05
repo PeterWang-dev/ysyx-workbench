@@ -10,6 +10,7 @@
   SDL2,
   SDL2_ttf,
   SDL2_image,
+  sdl3
 }:
 stdenv.mkDerivation {
   pname = "nemu";
@@ -32,5 +33,6 @@ stdenv.mkDerivation {
     SDL2
     SDL2_ttf
     SDL2_image
+    sdl3
   ];
 }
