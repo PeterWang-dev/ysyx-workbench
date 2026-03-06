@@ -1,6 +1,6 @@
 {
   stdenvNoCC,
-  gcc-unwrapped,
+  gcc,
   binutils,
 }:
 stdenvNoCC.mkDerivation {
@@ -8,8 +8,7 @@ stdenvNoCC.mkDerivation {
   version = "0.1.0";
   src = ./.;
   nativeBuildInputs = [
-    gcc-unwrapped
+    gcc
     binutils
   ];
-  buildInputs = [ ];
 }

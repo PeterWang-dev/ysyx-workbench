@@ -4,8 +4,13 @@
   npc-env,
 }:
 let
-  # ! Must use buildPackages otherwise LD_LIBRARY_PATH would be interfered
-  pkgsCross = pkgs.pkgsCross.riscv32.buildPackages;
+  pkgsCross = pkgs.pkgsCross.riscv32;
+
+  # ! WARNING: am is a riscv32 package, that is, if use
+  # ! 'pkgsCross.callPackage ... { }' directly, the setup phrase of
+  # ! this package may include riscv32 libraries and modify NIX_LD_FLAGS
+  # ! that brought by dependencies, which may cause unexpected build behavior!
+  # ! Meanwhile, devShell is hybrid, both for native and cross compile!
   am = pkgsCross.callPackage ./default.nix { };
 in
 pkgs.mkShell rec {
